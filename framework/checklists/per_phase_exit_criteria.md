@@ -8,6 +8,7 @@ phase-completion note and fill it in honestly.
 
 ### Build
 - [ ] `./gradlew qualityCheck` green
+- [ ] `./scripts/compliance_check.sh` exits 0
 - [ ] `./gradlew :app:assembleRelease` succeeds, APK under 12 MB (actual: ____ MB)
 - [ ] CI green on the pushed branch
 

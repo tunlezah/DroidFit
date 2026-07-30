@@ -55,6 +55,12 @@ jobs:
           # poison the cache other builds read.
           cache-read-only: ${{ github.ref != format('refs/heads/{0}', github.event.repository.default_branch) }}
 
+      - name: Architecture compliance
+        # The rules the compiler and detekt cannot enforce: module boundaries, injected
+        # dispatchers, no INTERNET permission, no destructive migration, no hard-coded
+        # colours. See framework/05_architecture.md §9.
+        run: ./scripts/compliance_check.sh
+
       - name: Static analysis (detekt, incl. ktlint formatting rules)
         # --continue so one run reports every violation, rather than the agent fixing
         # one, pushing, and waiting to discover the next.

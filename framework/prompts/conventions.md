@@ -89,7 +89,8 @@ What changed and why, 2-5 lines. Not a file list — the diff is the file list.
 Project memory: decisions.md D-0021..D-0023, technical_debt.md TD-0004
 ```
 
-Every commit compiles and passes `./gradlew qualityCheck`. The memory line is not optional.
+Every commit compiles and passes both `./gradlew qualityCheck` and
+`./scripts/compliance_check.sh`. The memory line is not optional.
 
 ## Things that are always wrong
 

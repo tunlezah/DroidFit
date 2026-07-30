@@ -154,16 +154,37 @@ repository interface in `domain`. Bump the DB version and write a tested migrati
 Run before every commit:
 
 ```bash
-./gradlew qualityCheck          # detekt (incl. ktlint rules) + unit tests
+./gradlew qualityCheck          # detekt (incl. ktlint rules) + every module's unit tests
+./scripts/compliance_check.sh   # the rules below, automated
 ```
 
-Check by inspection at review:
+`compliance_check.sh` enforces all of these. It runs in CI too, so a violation fails the
+build rather than depending on a reviewer noticing:
 
 - [ ] No `android.*` import in `domain/`.
 - [ ] No `projects.data` in any `feature-*` build file.
 - [ ] No `feature-*` dependency in another `feature-*` build file.
+- [ ] No `projects.domain` in `core:designsystem`.
 - [ ] No `Dispatchers.IO`/`Default`/`Main` outside `core:common`.
+- [ ] No `GlobalScope`.
 - [ ] No `hiltViewModel()` inside a `*Screen` composable.
-- [ ] No version literal in a module build file.
-- [ ] No `INTERNET` permission.
+- [ ] No `INTERNET` permission in the source manifest.
 - [ ] No `fallbackToDestructiveMigration`.
+- [ ] No hard-coded dependency version in a module build file.
+- [ ] No literal `Color(0x…)` outside `core:designsystem`.
+
+The script strips comments before matching, because the framework's own documentation
+*about* these patterns would otherwise register as uses of them — the manifest comment
+explaining why there is no `INTERNET` permission contains the string `INTERNET`.
+
+Two things it deliberately does **not** cover, because they need a build first:
+
+1. **The merged manifest.** A library can add a permission via manifest merging, so the
+   source-manifest check is necessary but not sufficient. Before a release, check
+   `app/build/intermediates/merged_manifest/release/AndroidManifest.xml` — see
+   `framework/agents/security_privacy_agent.md` §Verification.
+2. **The dependency graph.** `./gradlew :app:dependencies` is the check for an HTTP client
+   or analytics SDK arriving transitively.
+
+If you believe a rule should change, record an ADR **before** changing the script. Editing
+the check to make a violation pass is the failure mode this exists to prevent.

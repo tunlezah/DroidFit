@@ -256,3 +256,33 @@ Append-only log of choices with more than one defensible answer. Template:
   signing config changes.
 - **Affects:** `.github/workflows/android-ci.yml`.
 - **Refines:** D-0003.
+
+### D-0017 — Architecture rules enforced by a script, not by review
+- **Date:** 2026-07-30
+- **Phase:** Framework authoring
+- **Decision:** `scripts/compliance_check.sh` enforces the eleven architecture rules that neither
+  the compiler nor detekt can check: module boundaries, injected dispatchers, no `GlobalScope`, no
+  `hiltViewModel()` in a `*Screen`, no `INTERNET` permission, no destructive migration, no
+  hard-coded versions, no literal colours outside the design system. It runs in CI.
+- **Alternatives considered:**
+  - *A review checklist only.* Rejected: `framework/05_architecture.md` §9 was originally exactly
+    that, and a checklist is only as good as the reviewer's attention on the day. These rules are
+    mechanically checkable, so checking them mechanically is strictly better.
+  - *Custom detekt rules.* Rejected for now: writing a detekt rule set is a project of its own, and
+    several of these checks are about Gradle files and the manifest, which detekt does not see.
+  - *Konsist or a similar architecture-test library.* A reasonable future option; recorded as a
+    possibility rather than adopted, because a shell script with no dependency was verifiable
+    immediately.
+- **Reason:** Every rule in this list is one the framework asserts repeatedly. Asserting something
+  in four documents and checking it nowhere is how it stops being true.
+- **Verification:** the script was tested against **planted violations** (an `android.*` import in
+  `domain/`, a literal `Color(0x…)` in a feature) and correctly failed with exit code 2 — so it is
+  a real check, not one that always passes. That distinction is the difference between a gate and
+  decoration, and the QA agent brief calls out tests that assert nothing as an anti-pattern.
+- **Reverses if:** the checks are replaced by a typed architecture-test library, which would be an
+  improvement rather than a reversal.
+- **Affects:** `scripts/compliance_check.sh`, `.github/workflows/android-ci.yml`,
+  `framework/05_architecture.md` §9, the per-phase checklist.
+- **Known limits, stated in the script and the doc:** it reads the **source** manifest, so a
+  permission added by manifest merging is not caught; and it does not inspect the dependency graph.
+  Both need a build, and both are in the Security & Privacy agent's release verification.
