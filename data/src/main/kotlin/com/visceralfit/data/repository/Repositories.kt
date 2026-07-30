@@ -13,6 +13,7 @@ import com.visceralfit.domain.model.MeasurementKind
 import com.visceralfit.domain.model.Modality
 import com.visceralfit.domain.model.TrainingLoadSummary
 import com.visceralfit.domain.model.UserPreferences
+import com.visceralfit.domain.model.WorkoutStyle
 import com.visceralfit.domain.repository.BodyMassProvider
 import com.visceralfit.domain.repository.ExerciseRepository
 import com.visceralfit.domain.repository.HistoryRepository
@@ -24,13 +25,19 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayIn
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Clock
 
 @Singleton
 class DefaultExerciseRepository @Inject constructor(
@@ -75,17 +82,104 @@ class DefaultHistoryRepository @Inject constructor(
     }
 
     /**
-     * NOT YET IMPLEMENTED — phase 09. Emits an empty list rather than throwing so
-     * the skeleton runs; the Progress screen renders its documented empty state.
-     * Implement per /framework/07_workout_engine_spec.md §Recovery recommender and
-     * delete this comment. The exit criteria for phase 09 include a test that
-     * fails while this returns a constant.
+     * Training load for the last [weeks] ISO weeks, most recent first.
+     *
+     * Weeks start on Monday and are bounded by *local* midnights, for the same reason
+     * [observeBetween] is: a session started at 23:59 on Sunday belongs to the week the
+     * user trained in, not to UTC's idea of it.
+     *
+     * WHAT COUNTS TOWARD WHAT (D-0035): `totalMinutes` sums the active minutes of **every**
+     * session, including ones abandoned early. `sessionCount` counts only sessions past
+     * [CompletedSession.COMPLETION_THRESHOLD]. The split is deliberate — twenty honest
+     * minutes are twenty minutes toward the WHO 150 whether or not forty were planned, but
+     * a session abandoned at 20% is not a session for the purposes of consistency.
+     *
+     * KNOWN LIMITATION: the week boundaries are computed when the flow is collected, so a
+     * screen left open across midnight on a Sunday shows the previous week until it is
+     * re-collected. Recorded as KI-0019 rather than papered over with a ticking clock.
      */
-    override fun observeWeeklyLoad(weeks: Int): Flow<List<TrainingLoadSummary>> = flowOf(emptyList())
+    override fun observeWeeklyLoad(weeks: Int): Flow<List<TrainingLoadSummary>> {
+        require(weeks > 0) { "weeks must be positive, was $weeks" }
+        val zone = TimeZone.currentSystemDefault()
+        val currentWeekStart = Clock.System.todayIn(zone).startOfIsoWeek()
+        val earliestWeekStart = currentWeekStart.minus(weeks - 1, DateTimeUnit.WEEK)
+        val fromMs = earliestWeekStart.atStartOfDayIn(zone).toEpochMilliseconds()
+        val toMs = currentWeekStart.plus(1, DateTimeUnit.WEEK).atStartOfDayIn(zone).toEpochMilliseconds()
+
+        return dao.observeBetween(fromMs, toMs).map { rows ->
+            val sessions = rows.mapNotNull { it.toDomainOrNull() }
+            List(weeks) { index -> currentWeekStart.minus(index, DateTimeUnit.WEEK) }
+                .map { weekStart -> summarise(weekStart, sessions, zone) }
+        }
+    }
+
+    private fun summarise(
+        weekStart: LocalDate,
+        sessions: List<CompletedSession>,
+        zone: TimeZone,
+    ): TrainingLoadSummary {
+        val weekEnd = weekStart.plus(1, DateTimeUnit.WEEK)
+        val inWeek = sessions.filter { session ->
+            val day = session.startedAt.toLocalDateTime(zone).date
+            day >= weekStart && day < weekEnd
+        }
+        return TrainingLoadSummary(
+            weekStart = weekStart,
+            totalMinutes = inWeek.sumOf { it.activeDuration.inWholeMinutes }.toInt(),
+            vigorousMinutes = inWeek.filter { it.style.countsAsVigorous }
+                .sumOf { it.activeDuration.inWholeMinutes }
+                .toInt(),
+            sessionCount = inWeek.count { it.wasCompleted },
+            consecutiveVigorousDays = consecutiveVigorousDays(inWeek, zone),
+        )
+    }
+
+    /**
+     * The longest run of consecutive calendar days ending at the most recent vigorous day.
+     *
+     * The recovery recommender treats two or more as a reason to suggest a rest day
+     * (`framework/07_workout_engine_spec.md` §8), so the run has to end at the *latest*
+     * vigorous session — a pair of hard days a fortnight ago is not a reason to rest today.
+     */
+    private fun consecutiveVigorousDays(sessions: List<CompletedSession>, zone: TimeZone): Int {
+        val vigorousDays = sessions
+            .filter { it.style.countsAsVigorous }
+            .map { it.startedAt.toLocalDateTime(zone).date }
+            .toSortedSet()
+        if (vigorousDays.isEmpty()) return 0
+        var run = 1
+        var previous = vigorousDays.last()
+        vigorousDays.toList().dropLast(1).asReversed().forEach { day ->
+            if (day == previous.minus(1, DateTimeUnit.DAY)) {
+                run++
+                previous = day
+            } else {
+                return run
+            }
+        }
+        return run
+    }
 
     override suspend fun record(session: CompletedSession): Long = dao.insert(session.toEntity())
 
     override suspend fun delete(sessionId: Long) = dao.delete(sessionId)
+
+    private companion object {
+        /**
+         * Which styles contribute vigorous minutes.
+         *
+         * Approximated from the session's style because `CompletedSession` records the
+         * style but not per-segment intensity — the same gap as KI-0012. Interval sessions
+         * obviously count. Mixed sessions count too, even though their surges are threshold
+         * rather than vigorous: the recovery recommender uses this figure to *warn*, and
+         * over-warning is the safe direction. Steady and recovery sessions contribute none,
+         * which is what makes a Pilates session honest (engine spec §7.3) — those are
+         * recorded as RECOVERY by the generator.
+         */
+        val VIGOROUS_STYLES = setOf(WorkoutStyle.HIIT, WorkoutStyle.MIXED)
+
+        val WorkoutStyle.countsAsVigorous: Boolean get() = this in VIGOROUS_STYLES
+    }
 }
 
 @Singleton
@@ -142,3 +236,15 @@ abstract class RepositoryModule {
     @IntoSet
     abstract fun manualBodyMassProvider(impl: ManualEntryBodyMassProvider): BodyMassProvider
 }
+
+/**
+ * The Monday of the week containing this date.
+ *
+ * ISO weeks rather than Sunday-start, because the WHO's weekly activity guidance and every
+ * European convention the operator is in agree on Monday. Adding a preference for it would
+ * be a setting nobody asked for.
+ */
+private fun LocalDate.startOfIsoWeek(): LocalDate =
+    minus(dayOfWeek.isoDayNumber - DayOfWeek.MONDAY.isoDayNumber, DateTimeUnit.DAY)
+
+private val DayOfWeek.isoDayNumber: Int get() = ordinal + 1

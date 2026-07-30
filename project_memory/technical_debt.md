@@ -111,7 +111,10 @@ This file is not a list of things that are wrong. It is a list of things that we
 - **Repay when:** phase 09. This is a **release blocker**, not optional cleanup, and it
   is listed in `17_definition_of_done.md`.
 - **Estimated effort:** included in phase 09.
-- **Status:** open — **blocks release**
+- **Status:** **repaid in phase 09.** Implemented with a test whose first assertion is that the
+  function is not a constant, because that is the shape the defect had — a passing build with a
+  permanently wrong number on screen. The release-blocking part is closed; two of engine spec §8's
+  four recovery signals still need a schema change (KI-0012, D-0037).
 
 ### TD-0008 — `write()` in `PreferencesDataSource` is one long function
 - **Date:** 2026-07-30

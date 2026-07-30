@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,12 +43,34 @@ internal fun ProgressScreen(state: ProgressUiState) {
                     progress = { state.goalProgress },
                     modifier = Modifier.fillMaxWidth(),
                 )
+                Text(state.weekSummaryLine(), style = MaterialTheme.typography.bodyMedium)
                 Text(
                     "The World Health Organization recommends 150–300 minutes of moderate " +
                         "activity a week, or 75–150 vigorous.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+            }
+        }
+
+        // Advice, not instruction, and only when there is something to say.
+        state.restDaySuggestion?.let { suggestion ->
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
+            ) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        "Worth considering",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    )
+                    Text(
+                        suggestion,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    )
+                }
             }
         }
 
@@ -75,5 +98,13 @@ internal fun ProgressScreen(state: ProgressUiState) {
 @Preview(showBackground = true)
 @Composable
 private fun ProgressPreview() {
-    VisceralFitTheme { ProgressScreen(ProgressUiState(minutesThisWeek = 95)) }
+    VisceralFitTheme {
+        ProgressScreen(
+            ProgressUiState(
+                minutesThisWeek = 95,
+                vigorousMinutesThisWeek = 38,
+                sessionsThisWeek = 3,
+            ),
+        )
+    }
 }

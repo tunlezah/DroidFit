@@ -39,8 +39,11 @@ what went wrong survives.
 - **Cause:** `DefaultHistoryRepository.observeWeeklyLoad` returns `flowOf(emptyList())`
   (see TD-0007), and `ProgressViewModel` hard-codes `minutesThisWeek = 0`.
 - **Workaround:** History lists individual sessions correctly.
-- **Status:** open — phase 09. **Must not ship in this state**: a number that is wrong is
-  worse than a number that is absent.
+- **Status:** **fixed in phase 09.** `observeWeeklyLoad` returns one summary per ISO week, most
+  recent first, bounded by local midnights. The Progress screen shows real minutes, the completed-
+  session count, vigorous minutes and — when there is something to say — rest-day advice.
+  `WeeklyLoadTest` covers it, and its first assertion is simply that the function is not a constant,
+  because that is the shape the bug had.
 
 ### KI-0003 — 12 of 14 seeded exercises have no illustration
 - **Date:** 2026-07-30
@@ -334,3 +337,18 @@ what went wrong survives.
   usable without them and it would be easy to mistake "the player is done" for "phase 07 is done".
 - **Status:** open — phase 08 (cues) and phase 13 (landscape). Machine mode *is* implemented: the
   countdown scales to 148 sp and the technique block is dropped.
+
+### KI-0019 — Week boundaries are fixed when the flow is collected
+- **Date:** 2026-07-30
+- **Severity:** minor
+- **Area:** `data/repository`
+- **Symptom:** A Progress screen left open across midnight on a Sunday keeps showing the previous
+  week until the flow is re-collected — which happens on any navigation away and back, so it needs
+  the screen to be genuinely left open across the boundary.
+- **Cause:** `observeWeeklyLoad` reads the clock once, at collection, to compute the week start and
+  the query range.
+- **Why it is recorded rather than fixed:** the fix is a flow that re-emits on a date change, which
+  means either a ticking clock or a broadcast receiver for `ACTION_DATE_CHANGED`. Both are real
+  machinery for a case that resolves itself the moment the user touches the app.
+- **Status:** open, low priority. Fix with `ACTION_DATE_CHANGED` if it ever matters; do not add a
+  polling clock.

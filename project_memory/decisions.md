@@ -9,6 +9,7 @@ Append-only log of choices with more than one defensible answer. Template:
 
 | Phase | Completed | New assumptions? | Notes |
 |---|---|---|---|
+| 09 — Tracking (partial) | 2026-07-30 | No new ones | `observeWeeklyLoad` implemented, closing KI-0002 and TD-0007: the Progress screen shows real minutes, sessions, vigorous minutes and rest-day advice. Two of engine spec §8's four signals; the other two need a schema change. D-0035..D-0037, KI-0019 |
 | 07 — Workout player (partial) | 2026-07-30 | No new ones | Session runs end to end: generate, begin, count down, pause, skip, end, record. Safety notice added, closing KI-0005. Clock in a foreground service per ADR-0008, tested by arithmetic rather than by waiting. **Not done:** TTS cues (phase 08), landscape, device verification — KI-0016..KI-0018. D-0029..D-0034 |
 | 06 — Workout engine | 2026-07-30 | Yes — A-0010 | Generator implemented; KI-0001 and KI-0006 closed. Golden file reproduces engine spec §9 exactly, including its exercise choices. Invariants asserted across 1,680 requests. Verified: `qualityCheck` green, 57 data checks, 11 compliance checks, release APK 2.5 MB. D-0020..D-0028, KI-0012..KI-0014, TD-0009 |
 | 02 — Content authoring | 2026-07-30 | Yes — A-0009 | Catalogue grown 14 → 65 exercises; KI-0004 and KI-0006 closed. Balance and pool minimums now checked rather than counted. D-0019 |
@@ -574,3 +575,57 @@ Append-only log of choices with more than one defensible answer. Template:
   only device testing answers. Recorded as a divergence from the screen spec.
 - **Affects:** `WorkoutPlayerScreen`, and `framework/10_screen_specs.md` §4 now disagrees with the
   code by one detail.
+
+### D-0035 — Weekly volume counts every minute performed; session counts only count completed sessions
+- **Date:** 2026-07-30
+- **Phase:** 09 (partial)
+- **Decision:** `TrainingLoadSummary.totalMinutes` sums the active minutes of **every** session in
+  the week, including ones abandoned early. `sessionCount` counts only sessions past
+  `CompletedSession.COMPLETION_THRESHOLD` (0.7).
+- **Supersedes:** the blanket rule in `CompletedSession.COMPLETION_THRESHOLD`'s own documentation,
+  "Sessions past this fraction count toward streaks **and volume**". Volume is now unfiltered.
+- **Reason:** Twenty minutes performed are twenty minutes toward the WHO 150, whether or not forty
+  were planned. Filtering them out makes the headline number on the Progress screen *wrong* in the
+  direction of under-reporting real activity — which is the same class of error as the bug this
+  work fixes (KI-0002, a number that always read zero). Consistency is a different question, and
+  there a threshold is right: a session abandoned at 20% is not a session you turned up for.
+- **Alternatives considered:**
+  - *Filter both.* Rejected for the reason above.
+  - *Filter neither.* Rejected: streaks and the session count would then reward opening the app and
+    stopping.
+- **Reverses if:** the completion threshold acquires a second meaning that makes the split
+  confusing. It should then be two named constants rather than one reused.
+- **Affects:** `DefaultHistoryRepository.observeWeeklyLoad`, `ProgressViewModel`, `WeeklyLoadTest`.
+
+### D-0036 — Vigorous minutes are approximated from the session's style
+- **Date:** 2026-07-30
+- **Phase:** 09 (partial)
+- **Decision:** HIIT and MIXED sessions contribute all their active minutes as vigorous minutes;
+  ZONE_2 and RECOVERY contribute none.
+- **Why an approximation at all:** `CompletedSession` records the style but not per-segment
+  intensity, so the true figure — the sum of the work intervals — is not recoverable. The same
+  schema gap as KI-0012.
+- **Why it errs high:** a Mixed session's surges are threshold (76–84% HRmax) rather than vigorous
+  (85–95%), so counting the whole session overstates. That is deliberate. The figure feeds the
+  recovery recommender, whose job is to *warn*; over-warning costs the user an unnecessary easy
+  day, under-warning costs them an overreach. Under-counting would be the unsafe direction.
+- **What it gets right for free:** a Pilates-only session is recorded as RECOVERY by the generator
+  (D-0023), so it contributes zero vigorous minutes — which is exactly what engine spec §7.3
+  requires, with no special case anywhere.
+- **Reverses if:** a `session_exercises` table lands (KI-0012), after which the real figure is a
+  query rather than a guess.
+- **Affects:** `DefaultHistoryRepository.VIGOROUS_STYLES`.
+
+### D-0037 — Rest-day advice is shown only when there is something to say
+- **Date:** 2026-07-30
+- **Phase:** 09 (partial)
+- **Decision:** `ProgressUiState.restDaySuggestion` is null unless one of the two computable signals
+  from engine spec §8 fires — two or more consecutive vigorous days, or a week more than 30% above
+  the trailing average. The other two conditions in §8 are **not** implemented, because they need
+  data the schema does not carry, and they are absent rather than approximated.
+- **Reason:** An advice card that always shows something stops being read, and a rest-day
+  recommendation invented from data that is not there is worse than no recommendation. The copy is
+  advice with a reason attached ("that is three hard days in a row"), never an instruction.
+- **Reverses if:** the missing signals become computable, at which point the card gets more to say
+  rather than a different design.
+- **Affects:** `ProgressViewModel.restDaySuggestion`, `ProgressScreen`.
