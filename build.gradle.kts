@@ -45,11 +45,29 @@ subprojects {
     }
 }
 
-// Convenience aggregate: `./gradlew qualityCheck` is what CI and the building
-// agent run before every commit.
+// Convenience aggregate: `./gradlew qualityCheck` is what CI and the building agent run
+// before every commit.
+//
+// IMPORTANT — why this enumerates test tasks by module type rather than just calling
+// `testDebugUnitTest`: `:domain` is a pure Kotlin/JVM module, so its test task is `test`,
+// not `testDebugUnitTest`. Running only `testDebugUnitTest` silently skips the entire
+// domain test suite — which is where the workout engine's property tests live, i.e. the
+// most important tests in the project. Gradle reports success either way, so the gap is
+// invisible. If you add a module, make sure it is covered here.
 tasks.register("qualityCheck") {
     group = "verification"
-    description = "Runs detekt (incl. ktlint formatting rules) and all unit tests."
+    description = "Runs detekt (incl. ktlint formatting rules) and every module's unit tests."
     dependsOn(subprojects.map { "${it.path}:detekt" })
-    dependsOn(":app:testDebugUnitTest")
+    dependsOn(
+        subprojects
+            // `:core` is a container with no build file of its own, so it has no test
+            // task at all. Including it fails configuration with "Task with path
+            // ':core:test' not found".
+            .filter { it.buildFile.exists() }
+            .map { project ->
+                // Android modules get a per-variant test task; JVM modules get plain `test`.
+                val isAndroid = project.path != ":domain"
+                if (isAndroid) "${project.path}:testDebugUnitTest" else "${project.path}:test"
+            },
+    )
 }

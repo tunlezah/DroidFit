@@ -9,7 +9,7 @@ Append-only log of choices with more than one defensible answer. Template:
 
 | Phase | Completed | New assumptions? | Notes |
 |---|---|---|---|
-| Framework authoring (phase −1) | 2026-07-30 | Yes — A-0001..A-0008 | Framework, skeleton and CI created and verified building |
+| Framework authoring (phase −1) | 2026-07-30 | Yes — A-0001..A-0008 | Framework, skeleton and CI created. Verified locally: `qualityCheck` green, release APK 2.38 MB, debug APK 32.58 MB. D-0001..D-0016, ADR-0001..ADR-0012, KI-0001..KI-0008, TD-0001..TD-0008, R-0001..R-0008, FF-0001..FF-0009, UF-0001..UF-0004 |
 
 ---
 
@@ -164,3 +164,95 @@ Append-only log of choices with more than one defensible answer. Template:
 - **Reverses if:** the catalogue grows large enough that parsing cost at startup
   becomes measurable (it is ~60 records; it will not).
 - **Affects:** `data/seed/ExerciseSeeder.kt`, `app/src/main/assets/`.
+
+### D-0011 — Four hand-authored icons instead of an icon library
+- **Date:** 2026-07-30
+- **Phase:** Framework authoring
+- **Decision:** The app's four navigation icons are declared as `ImageVector`s in
+  `core/designsystem/icon/VisceralFitIcons.kt`. No icon dependency of any kind.
+- **Alternatives considered:**
+  - *`material-icons-extended`.* **Tried and reverted.** It inflated the debug APK from a few
+    megabytes to **66 MB**, because it dexes several thousand `ImageVector` declarations and a
+    debug build does not shrink them.
+  - *`material-icons-core`.* Covers only two of the four glyphs, is a separate artefact Material 3
+    does not bring in, and is on the deprecated path in current Compose. A dependency plus a
+    version constraint for two icons.
+- **Reason:** Measured, not preferred. Four icons is not worth a dependency, and the APK size is
+  one of the app's actual selling points.
+- **Reverses if:** the icon count grows past roughly a dozen, at which point `material-icons-core`
+  becomes worth its constraint — but never `material-icons-extended` in an unminified variant.
+- **Affects:** `core/designsystem/icon/`, `app/ui/VisceralFitApp.kt`, `gradle/libs.versions.toml`.
+- **Guard:** the CI APK size ceiling (12 MB) exists because of this incident. It is a real check.
+
+### D-0012 — Settings icon is three sliders, not a gear
+- **Date:** 2026-07-30
+- **Phase:** Framework authoring
+- **Decision:** `VisceralFitIcons.Settings` draws three sliders with knobs.
+- **Reason:** A gear's teeth need roughly a dozen path segments to read correctly at 24 dp, and a
+  hand-authored one looks crude at that size. Sliders are at least as recognisable for a
+  preferences screen and are three lines and three rectangles.
+- **Reverses if:** user feedback shows the sliders are not read as "settings".
+- **Affects:** `core/designsystem/icon/VisceralFitIcons.kt`.
+
+### D-0013 — Intensity bounds validated against named constants, not inline literals
+- **Date:** 2026-07-30
+- **Phase:** Framework authoring
+- **Decision:** `IntensityTarget`'s `init` checks against `BORG_SCALE` (1..10) and
+  `PLAUSIBLE_HR_PERCENT` (30..100) rather than inline ranges.
+- **Reason:** detekt's `MagicNumber` rule flagged the inline literals, and it was right to: the
+  numbers are meaningful (the Borg scale's actual bounds, and the range outside which a zone
+  definition must be a programming error) and naming them says so. The validation fails loudly
+  rather than clamping, because a zone defined outside these bounds is a bug in the framework, not
+  bad user input.
+- **Affects:** `domain/model/WorkoutStyle.kt`.
+
+### D-0014 — Preferences read path split per section
+- **Date:** 2026-07-30
+- **Phase:** Framework authoring
+- **Decision:** `Preferences.toUserPreferences()` delegates to `toCoachingPreferences`,
+  `toDisplayPreferences` and `toBodyPreferences`.
+- **Alternatives considered:**
+  - *Suppress the detekt rule.* Rejected: the rule was right. Every `?:` is a branch, and a single
+    function reading ~30 keys scored a cyclomatic complexity of 29.
+  - *Raise the complexity threshold.* Rejected: that hides the next genuinely complex function too.
+- **Reason:** Someone checking whether one setting falls back correctly should not have to scan
+  thirty lines to find it. The rule surfaced a real readability problem rather than a false
+  positive.
+- **Reverses if:** never; this is strictly better.
+- **Affects:** `core/datastore/PreferencesDataSource.kt`. Write path asymmetry recorded as TD-0008.
+
+### D-0015 — `MagicNumber` excluded for the illustration and icon packages only
+- **Date:** 2026-07-30
+- **Phase:** Framework authoring
+- **Decision:** `config/detekt/detekt.yml` excludes `core/designsystem/illustration/**` and
+  `core/designsystem/icon/**` from the `MagicNumber` rule.
+- **Alternatives considered:**
+  - *Name every coordinate as a constant.* Rejected: `LEFT_KNEE_X = 62f` is strictly less readable
+    than `62f` in a `lineTo`, and a single figure has twenty of them. Phase 03 authors ~60 more
+    drawings; this would multiply into roughly a thousand meaningless constants.
+  - *Disable `MagicNumber` globally.* Rejected: it caught a real problem in
+    `IntensityTarget` (D-0013), where the numbers *did* carry hidden meaning.
+  - *`@Suppress` per function.* Rejected: ~60 suppressions is worse than one scoped exclusion,
+    and each one is a place a future author might extend the suppression to cover something else.
+- **Reason:** Vector artwork is coordinates. In a figure drawn in the 100×100 logical box the
+  numbers *are* the content, and no name can convey more than the number does. This is the only
+  package in the codebase where that is true.
+- **Reverses if:** never for these two packages; **the exclusion must not be widened to any
+  other**. A number outside artwork almost always has a meaning worth naming.
+- **Affects:** `config/detekt/detekt.yml`.
+- **Note:** this is a scoped exclusion with a stated reason, not a weakened gate — the rule stays
+  active and blocking everywhere else. Compare `framework/14_ci_cd_and_release.md` §8: "never fix a
+  red build by weakening the gate."
+
+### D-0016 — CI ships the release variant rather than the debug variant
+- **Date:** 2026-07-30
+- **Phase:** Framework authoring
+- **Decision:** The workflow's published artefact is `assembleRelease` (debug-signed, R8-minified),
+  not `assembleDebug`. See ADR-0012 for the full record.
+- **Reason:** Measured: 2.38 MB versus 32.58 MB. This supersedes the natural reading of D-0003
+  ("debug-signed" implying the debug variant) — signing and variant are separate choices, and the
+  right combination is release-variant with debug-signing.
+- **Reverses if:** a real keystore is introduced, at which point the variant stays and only the
+  signing config changes.
+- **Affects:** `.github/workflows/android-ci.yml`.
+- **Refines:** D-0003.

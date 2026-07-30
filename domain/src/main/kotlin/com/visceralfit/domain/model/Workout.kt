@@ -64,11 +64,15 @@ data class Segment(
 }
 
 enum class SegmentKind(val id: String) {
+    /** The effort itself. Always names an exercise. */
     WORK("work"),
+
     /** Active recovery inside an interval set — the user keeps moving. */
     ACTIVE_RECOVERY("active_recovery"),
+
     /** Full rest between sets or exercises. */
     REST("rest"),
+
     /** Time budgeted for changing position or equipment. */
     TRANSITION("transition"),
 }

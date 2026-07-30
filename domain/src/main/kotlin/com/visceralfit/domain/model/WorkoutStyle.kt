@@ -49,15 +49,26 @@ data class IntensityTarget(
     val percentHrMaxRange: IntRange,
 ) {
     init {
-        require(rpeRange.first in 1..10 && rpeRange.last in 1..10) {
+        require(rpeRange.first in BORG_SCALE && rpeRange.last in BORG_SCALE) {
             "RPE must sit on the Borg CR10 scale, was $rpeRange"
         }
-        require(percentHrMaxRange.first in 30..100 && percentHrMaxRange.last in 30..100) {
+        require(
+            percentHrMaxRange.first in PLAUSIBLE_HR_PERCENT && percentHrMaxRange.last in PLAUSIBLE_HR_PERCENT,
+        ) {
             "%HRmax outside plausible bounds, was $percentHrMaxRange"
         }
     }
 
     companion object {
+        /** The Borg CR10 scale runs 1 to 10; anything outside it is a programming error. */
+        private val BORG_SCALE = 1..10
+
+        /**
+         * Below 30% of HRmax is not exercise; above 100% is not possible. A value outside
+         * this means a zone was defined wrongly, so it fails loudly rather than being clamped.
+         */
+        private val PLAUSIBLE_HR_PERCENT = 30..100
+
         /** Values sourced from /framework/02_evidence_base.md §Intensity anchors. */
         val RECOVERY = IntensityTarget(rpeRange = 2..3, percentHrMaxRange = 50..60)
         val ZONE_2 = IntensityTarget(rpeRange = 3..4, percentHrMaxRange = 60..70)

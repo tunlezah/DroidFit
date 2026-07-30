@@ -49,6 +49,20 @@ style:
     ignoreAnnotated: ['Composable', 'Preview']
     ignorePropertyDeclaration: true
     ignoreCompanionObjectPropertyDeclaration: true
+    # Vector artwork is coordinates. In `illustration/` and `icon/` the numbers *are*
+    # the content: a figure drawn in the 100x100 logical box (see
+    # framework/11_illustration_spec.md) is a list of points, and naming each one
+    # (`LEFT_KNEE_X = 62f`) would be less readable than the coordinate itself, not more.
+    # This is the only place in the codebase where a bare number carries no hidden
+    # meaning. Do NOT widen this exclusion to any other package.
+    # NOTE: specifying `excludes` REPLACES detekt's defaults rather than adding to them,
+    # so the test-source entries below must be restated. Dropping them makes every
+    # expected value in a test ("assertEquals(360, …)") a violation.
+    excludes:
+      - '**/test/**'
+      - '**/androidTest/**'
+      - '**/core/designsystem/illustration/**'
+      - '**/core/designsystem/icon/**'
   MaxLineLength:
     active: true
     maxLineLength: 120

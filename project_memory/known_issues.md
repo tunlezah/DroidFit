@@ -115,3 +115,22 @@ what went wrong survives.
 - **Workaround:** The job is gated to the default branch and manual dispatch, so if it is
   misconfigured it cannot block a PR.
 - **Status:** open — verify on the first `workflow_dispatch` run.
+
+### KI-0009 — CI's unit-test step originally skipped the entire :domain test suite
+- **Date:** 2026-07-30
+- **Severity:** major
+- **Area:** CI, root `build.gradle.kts`
+- **Symptom:** `./gradlew testDebugUnitTest` reported success while running **zero** domain tests.
+- **Reproduction:** was `./gradlew testDebugUnitTest` and inspect which `:test` tasks executed —
+  `:domain:test` was absent.
+- **Cause:** `:domain` is a pure Kotlin/JVM module, so its test task is `test`, not
+  `testDebugUnitTest`. Gradle runs a named task only in projects that have it, and reports success
+  when some projects do — so the gap is completely invisible in the log.
+- **Why this mattered more than it looks:** `:domain` is where the workout engine and all
+  programming rules live, and phase 06's property and golden-file tests are the most important
+  tests in the project. They would have been written, passed locally, and then never run in CI.
+- **Fix:** `qualityCheck` now enumerates the correct test task per module type, and the workflow
+  calls `qualityCheck` rather than `testDebugUnitTest`. Verified by checking `:domain:test` appears
+  in the executed task list.
+- **Status:** fixed in the framework commit. **Recorded rather than silently corrected** because
+  the same trap catches any future pure-JVM module — if you add one, add it to the aggregate.

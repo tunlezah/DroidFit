@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://visceralfit.local/schemas/exercise_seed.json",
+  "title": "VisceralFit exercise catalogue",
+  "description": "Schema for app/src/main/assets/exercises_seed.json. The Kotlin wire format is data/seed/ExerciseSeeder.kt (ExerciseCatalogue / SeedExercise), parsed with ignoreUnknownKeys=false, so an unrecognised field is a hard failure at seed time rather than a silently empty field. Authoring standard: framework/08_exercise_library_spec.md.",
+  "type": "object",
+  "required": ["version", "exercises"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Catalogue version. Increment on every content change; the seeder upserts when this exceeds the lowest seed_version in the exercises table. Not a schema version."
+    },
+    "exercises": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/exercise" }
+    }
+  },
+  "$defs": {
+    "exercise": {
+      "type": "object",
+      "required": [
+        "id", "name", "modality", "difficulty", "met_value", "how_to",
+        "spoken_instruction", "safety_notes", "common_mistakes",
+        "muscles_worked", "illustration_id"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(floor_pilates|reformer|elliptical|spin_bike|warmup|cooldown)_[a-z0-9_]+$",
+          "description": "Stable slug, modality-prefixed. NEVER renamed once shipped: session history and favourites reference it."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 3,
+          "description": "What a competent instructor would call it. Use the established Pilates name where one exists."
+        },
+        "modality": {
+          "enum": ["floor_pilates", "reformer_pilates", "elliptical", "spin_bike"],
+          "description": "Must match a Modality.id in domain/model/Modality.kt."
+        },
+        "difficulty": {
+          "enum": ["beginner", "intermediate", "advanced"],
+          "description": "See spec §2. When in doubt, rate it harder: a beginner served an intermediate movement is inconvenienced; the reverse is a hazard."
+        },
+        "met_value": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 20,
+          "description": "From framework/data/met_values.json, with its Compendium code. Never invented."
+        },
+        "how_to": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 8,
+          "items": { "type": "string", "minLength": 10 },
+          "description": "Ordered steps, one action each. Setup before movement. Must be complete enough to perform correctly with no video (REQ-041). State the endpoint, not just the direction."
+        },
+        "spoken_instruction": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 140,
+          "description": "One sentence read aloud at segment start. Must finish inside the shortest interval this exercise can appear in — roughly 14 words for a 30 s interval (REQ-044). Say it aloud and time it."
+        },
+        "safety_notes": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 10 },
+          "description": "The specific failure mode, not generic caution. Anything with met_value >= 8.0 must include a stop-if-symptoms note (REQ-006)."
+        },
+        "common_mistakes": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 10 },
+          "description": "What actually goes wrong, and ideally why it matters."
+        },
+        "muscles_worked": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 5,
+          "items": { "type": "string" },
+          "description": "Plain names, not Latin. Primary movers first."
+        },
+        "illustration_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$",
+          "description": "Key into core:designsystem's drawing registry. May reference a drawing that does not exist yet; the placeholder handles it (REQ-046). Reuse where the position is genuinely identical."
+        },
+        "caution_tags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "lower_back", "neck", "shoulder", "wrist", "knee",
+              "hip", "ankle", "pregnancy", "cardiac_caution", "balance"
+            ]
+          },
+          "description": "Closed set — the settings UI enumerates it. Do not invent tags. Tag generously: a false positive costs one exercise, a false negative costs an injury."
+        },
+        "is_per_side": {
+          "type": "boolean",
+          "description": "True when the movement is bilateral-alternating and should be cued per side."
+        },
+        "evidence_keys": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z]+[0-9]{4}[a-z]*$" },
+          "description": "Keys from framework/data/references.md. NEVER a key that is not in that file — the validation test parses references.md and checks."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "$comment": [
+    "Interval templates for the HIIT style, and the structural parameters for the others.",
+    "This file is REFERENCE DATA for the phase-06 implementer, not something the app loads.",
+    "The engine implements these as code constants; keeping them here as well gives a",
+    "reviewer one table to check the implementation against.",
+    "Authoritative narrative: framework/07_workout_engine_spec.md.",
+    "",
+    "'main_seconds_needed' = rounds * work + (rounds - 1) * recovery.",
+    "Note the (rounds - 1): there is deliberately NO recovery after the final work",
+    "interval, because the cool-down serves that purpose. Getting this wrong is the",
+    "most likely arithmetic error in the whole engine."
+  ],
+  "source_spec": "framework/07_workout_engine_spec.md",
+
+  "budget_split": {
+    "$comment": "warmUp = clamp(round(T * fraction), min, max); coolDown = clamp(round(T * 0.10), min, 300); main = T - warmUp - coolDown.",
+    "cool_down_fraction": 0.10,
+    "cool_down_max_seconds": 300,
+    "duration_bounds_seconds": { "min": 180, "max": 7200 },
+    "duration_tolerance_seconds": 30,
+    "styles": {
+      "hiit": {
+        "warm_up_fraction": 0.20,
+        "warm_up_min_seconds": 300,
+        "warm_up_max_seconds": 600,
+        "cool_down_min_seconds": 180,
+        "main_min_seconds": 480,
+        "total_min_seconds": 960,
+        "min_level": "intermediate"
+      },
+      "zone_2": {
+        "warm_up_fraction": 0.12,
+        "warm_up_min_seconds": 180,
+        "warm_up_max_seconds": 420,
+        "cool_down_min_seconds": 120,
+        "main_min_seconds": 240,
+        "total_min_seconds": 540,
+        "min_level": "beginner"
+      },
+      "mixed": {
+        "warm_up_fraction": 0.15,
+        "warm_up_min_seconds": 180,
+        "warm_up_max_seconds": 480,
+        "cool_down_min_seconds": 120,
+        "main_min_seconds": 300,
+        "total_min_seconds": 600,
+        "min_level": "beginner",
+        "is_default": true
+      },
+      "recovery": {
+        "warm_up_fraction": 0.15,
+        "warm_up_min_seconds": 120,
+        "warm_up_max_seconds": 300,
+        "cool_down_min_seconds": 120,
+        "main_min_seconds": 180,
+        "total_min_seconds": 420,
+        "min_level": "beginner"
+      }
+    }
+  },
+
+  "hiit_templates": [
+    {
+      "id": "4x4",
+      "work_seconds": 240,
+      "recovery_seconds": 180,
+      "rounds": 4,
+      "main_seconds_needed": 1500,
+      "evidence_key": "helgerud2007",
+      "$note": "The Norwegian 4x4. The only template with direct trial evidence; prefer it whenever the duration allows."
+    },
+    { "id": "5x3", "work_seconds": 180, "recovery_seconds": 150, "rounds": 5, "main_seconds_needed": 1470, "evidence_key": "derived" },
+    { "id": "6x2", "work_seconds": 120, "recovery_seconds": 120, "rounds": 6, "main_seconds_needed": 1320, "evidence_key": "derived" },
+    { "id": "8x1", "work_seconds": 60, "recovery_seconds": 90, "rounds": 8, "main_seconds_needed": 1080, "evidence_key": "derived" },
+    { "id": "10x30s", "work_seconds": 30, "recovery_seconds": 60, "rounds": 10, "main_seconds_needed": 870, "evidence_key": "derived" },
+    { "id": "6x30s", "work_seconds": 30, "recovery_seconds": 60, "rounds": 6, "main_seconds_needed": 510, "evidence_key": "derived" }
+  ],
+
+  "mixed_parameters": {
+    "$comment": "surgeCount = clamp(main / 300, 2, 5). If baseTotal < surgeCount * 120, drop one surge and recompute; below 2 surges, fall back to zone_2 and downgrade the title.",
+    "surge_count_min": 2,
+    "surge_count_max": 5,
+    "surge_seconds_per_count": 300,
+    "surge_duration_by_main_seconds": [
+      { "main_at_least": 1800, "surge_seconds": 180 },
+      { "main_at_least": 1200, "surge_seconds": 120 },
+      { "main_at_least": 0, "surge_seconds": 60 }
+    ],
+    "base_min_seconds_per_segment": 120,
+    "surge_placement": "middle third of the main block; never in the first 90 s or the last 60 s"
+  },
+
+  "zone_2_parameters": {
+    "segment_count": "min(3, max(1, main / 600))",
+    "$note": "Splitting a steady block into segments does not change intensity. It exists so the coach can cue a change of position or cadence, and so the halfway cue has a boundary to land on."
+  },
+
+  "recovery_parameters": {
+    "segment_seconds_min": 60,
+    "segment_seconds_max": 120,
+    "alternates_between": ["mobility_pool", "strength_pool"],
+    "$note": "No ACTIVE_RECOVERY or REST segments; the whole block is already low intensity. Prefer variety: repeating a movement is most noticeable in a recovery session."
+  },
+
+  "transition_seconds": 20,
+  "$transition_note": "Inserted only between segments on different modalities. Charged against the block's own budget, which is why the worked example in spec §9 has a 70 s warm-up segment rather than 90 s."
+}

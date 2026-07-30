@@ -51,12 +51,19 @@ class PreferencesDataSource @Inject constructor(
         }
     }
 
+    // Split one-section-per-function rather than one large mapper. Each `?:` is a
+    // branch, so a single function reading all ~30 keys scores a cyclomatic complexity
+    // around 29 — detekt flags it, correctly: a reader checking whether one setting
+    // falls back properly should not have to scan thirty lines to find it.
+
     private fun Preferences.toUserPreferences(): UserPreferences {
         val defaults = UserPreferences()
         return UserPreferences(
             enabledModalities = this[Keys.EnabledModalities]
                 ?.mapNotNull(Modality::fromId)
                 ?.toSet()
+                // An empty set would make workout generation impossible, so a stored
+                // empty (or wholly unrecognised) set falls back rather than sticking.
                 ?.takeIf { it.isNotEmpty() }
                 ?: defaults.enabledModalities,
             level = this[Keys.Level]?.let(ExperienceLevel::fromId) ?: defaults.level,
@@ -64,42 +71,49 @@ class PreferencesDataSource @Inject constructor(
             defaultDuration = this[Keys.DefaultDurationSeconds]?.seconds ?: defaults.defaultDuration,
             weeklyMinutesGoal = this[Keys.WeeklyMinutesGoal] ?: defaults.weeklyMinutesGoal,
             safetyNoticeAcknowledged = this[Keys.SafetyAcknowledged] ?: defaults.safetyNoticeAcknowledged,
-            coaching = CoachingPreferences(
-                speechEnabled = this[Keys.SpeechEnabled] ?: defaults.coaching.speechEnabled,
-                announceNextExercise = this[Keys.AnnounceNext] ?: defaults.coaching.announceNextExercise,
-                announceCountdown = this[Keys.AnnounceCountdown] ?: defaults.coaching.announceCountdown,
-                announceHalfway = this[Keys.AnnounceHalfway] ?: defaults.coaching.announceHalfway,
-                announceRemainingTime = this[Keys.AnnounceRemaining] ?: defaults.coaching.announceRemainingTime,
-                motivationalPrompts = this[Keys.Motivational] ?: defaults.coaching.motivationalPrompts,
-                announceRestCountdown = this[Keys.AnnounceRest] ?: defaults.coaching.announceRestCountdown,
-                speakFullInstructions = this[Keys.SpeakFullInstructions]
-                    ?: defaults.coaching.speakFullInstructions,
-                speechRate = this[Keys.SpeechRate]?.coerceRate() ?: defaults.coaching.speechRate,
-                speechPitch = this[Keys.SpeechPitch]?.coerceRate() ?: defaults.coaching.speechPitch,
-                cueTones = this[Keys.CueTones] ?: defaults.coaching.cueTones,
-                hapticCues = this[Keys.HapticCues] ?: defaults.coaching.hapticCues,
-            ),
-            display = DisplayPreferences(
-                keepScreenOn = this[Keys.KeepScreenOn] ?: defaults.display.keepScreenOn,
-                theme = this[Keys.Theme]?.let { id -> ThemePreference.entries.firstOrNull { it.id == id } }
-                    ?: defaults.display.theme,
-                amoledDarkMode = this[Keys.Amoled] ?: defaults.display.amoledDarkMode,
-                dynamicColour = this[Keys.DynamicColour] ?: defaults.display.dynamicColour,
-                machineMode = this[Keys.MachineMode] ?: defaults.display.machineMode,
-            ),
-            body = BodyPreferences(
-                availableEquipment = this[Keys.AvailableEquipment]
-                    ?.mapNotNull(Modality::fromId)
-                    ?.toSet()
-                    ?: defaults.body.availableEquipment,
-                bodyMassKg = this[Keys.BodyMassKg]?.toDouble()?.takeIf { it > 0.0 },
-                ageYears = this[Keys.AgeYears]?.takeIf { it in MIN_AGE..MAX_AGE },
-                units = this[Keys.Units]?.let { id -> UnitSystem.entries.firstOrNull { it.id == id } }
-                    ?: defaults.body.units,
-                avoidTags = this[Keys.AvoidTags] ?: defaults.body.avoidTags,
-            ),
+            coaching = toCoachingPreferences(defaults.coaching),
+            display = toDisplayPreferences(defaults.display),
+            body = toBodyPreferences(defaults.body),
         )
     }
+
+    private fun Preferences.toCoachingPreferences(defaults: CoachingPreferences) = CoachingPreferences(
+        speechEnabled = this[Keys.SpeechEnabled] ?: defaults.speechEnabled,
+        announceNextExercise = this[Keys.AnnounceNext] ?: defaults.announceNextExercise,
+        announceCountdown = this[Keys.AnnounceCountdown] ?: defaults.announceCountdown,
+        announceHalfway = this[Keys.AnnounceHalfway] ?: defaults.announceHalfway,
+        announceRemainingTime = this[Keys.AnnounceRemaining] ?: defaults.announceRemainingTime,
+        motivationalPrompts = this[Keys.Motivational] ?: defaults.motivationalPrompts,
+        announceRestCountdown = this[Keys.AnnounceRest] ?: defaults.announceRestCountdown,
+        speakFullInstructions = this[Keys.SpeakFullInstructions] ?: defaults.speakFullInstructions,
+        speechRate = this[Keys.SpeechRate]?.coerceRate() ?: defaults.speechRate,
+        speechPitch = this[Keys.SpeechPitch]?.coerceRate() ?: defaults.speechPitch,
+        cueTones = this[Keys.CueTones] ?: defaults.cueTones,
+        hapticCues = this[Keys.HapticCues] ?: defaults.hapticCues,
+    )
+
+    private fun Preferences.toDisplayPreferences(defaults: DisplayPreferences) = DisplayPreferences(
+        keepScreenOn = this[Keys.KeepScreenOn] ?: defaults.keepScreenOn,
+        theme = this[Keys.Theme]?.let { id -> ThemePreference.entries.firstOrNull { it.id == id } }
+            ?: defaults.theme,
+        amoledDarkMode = this[Keys.Amoled] ?: defaults.amoledDarkMode,
+        dynamicColour = this[Keys.DynamicColour] ?: defaults.dynamicColour,
+        machineMode = this[Keys.MachineMode] ?: defaults.machineMode,
+    )
+
+    private fun Preferences.toBodyPreferences(defaults: BodyPreferences) = BodyPreferences(
+        availableEquipment = this[Keys.AvailableEquipment]
+            ?.mapNotNull(Modality::fromId)
+            ?.toSet()
+            ?: defaults.availableEquipment,
+        // A non-positive stored mass is treated as unknown, so the energy estimate
+        // stays null rather than producing a negative or zero figure (D-0005).
+        bodyMassKg = this[Keys.BodyMassKg]?.toDouble()?.takeIf { it > 0.0 },
+        ageYears = this[Keys.AgeYears]?.takeIf { it in MIN_AGE..MAX_AGE },
+        units = this[Keys.Units]?.let { id -> UnitSystem.entries.firstOrNull { it.id == id } }
+            ?: defaults.units,
+        avoidTags = this[Keys.AvoidTags] ?: defaults.avoidTags,
+    )
 
     private fun androidx.datastore.preferences.core.MutablePreferences.write(prefs: UserPreferences) {
         this[Keys.EnabledModalities] = prefs.enabledModalities.mapTo(mutableSetOf()) { it.id }

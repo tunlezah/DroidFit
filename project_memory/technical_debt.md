@@ -112,3 +112,21 @@ This file is not a list of things that are wrong. It is a list of things that we
   is listed in `17_definition_of_done.md`.
 - **Estimated effort:** included in phase 09.
 - **Status:** open — **blocks release**
+
+### TD-0008 — `write()` in `PreferencesDataSource` is one long function
+- **Date:** 2026-07-30
+- **Shortcut:** The read path was split into `toCoachingPreferences`, `toDisplayPreferences` and
+  `toBodyPreferences` (D-0014) when detekt flagged its complexity. The corresponding **write** path
+  is still one `write()` function assigning all ~30 keys.
+- **Why it was acceptable now:** A sequence of unconditional assignments has a cyclomatic
+  complexity of roughly 1 — it is long, not complex, so detekt does not flag it and a reader can
+  scan it linearly. The read path was genuinely hard to check because each line carries a fallback
+  branch.
+- **Cost of leaving it:** The read and write paths are now asymmetric, which makes it slightly
+  easier to add a key to one and forget the other.
+- **Repay when:** the next time a settings section is added — split `write()` the same way at that
+  point, so the two paths stay mirror images. Better still, add a round-trip test that writes a
+  fully-populated `UserPreferences` and reads it back, which catches a forgotten key regardless of
+  how the functions are shaped.
+- **Estimated effort:** 30 minutes, including the round-trip test.
+- **Status:** open
