@@ -150,3 +150,20 @@ This file is not a list of things that are wrong. It is a list of things that we
   fixture becomes a parser over the real file and the generated table goes away.
 - **Estimated effort:** 1 hour, most of it deciding where the asset should live.
 - **Status:** open
+
+### TD-0010 — The player's Route composables are not covered by any test
+- **Date:** 2026-07-30
+- **Phase:** 07
+- **Shortcut:** `WorkoutPlayerRoute` and `WorkoutHomeRoute` wire the ViewModel to the service and to
+  navigation, and neither is tested. The stateless `Screen` composables and the coordinator are.
+- **Why:** Testing them needs either Robolectric or an emulator. The logic in them is deliberately
+  thin — start the service, call one ViewModel method, navigate — precisely so that the untested
+  surface is as small as it can be.
+- **Cost of leaving it:** the seams most likely to be wrong are exactly here: is the coordinator
+  loaded before the service starts, and does the service stop when the session ends? Both are
+  ordering bugs that no unit test can see.
+- **Repay when:** the emulator job is confirmed working (KI-0008, KI-0017). A single instrumentation
+  test that starts a session from the Train screen and asserts the service is running covers most of
+  it.
+- **Estimated effort:** 2 hours once the emulator job is trusted.
+- **Status:** open

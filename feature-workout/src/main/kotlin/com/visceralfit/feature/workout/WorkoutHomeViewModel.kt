@@ -1,5 +1,6 @@
 package com.visceralfit.feature.workout
 
+import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.visceralfit.domain.engine.GenerationFailure
@@ -12,6 +13,7 @@ import com.visceralfit.domain.model.WorkoutStyle
 import com.visceralfit.domain.repository.ExerciseRepository
 import com.visceralfit.domain.repository.PreferencesRepository
 import com.visceralfit.domain.usecase.GenerateWorkout
+import com.visceralfit.feature.workout.player.SessionCoordinator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,12 +24,14 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 
 @HiltViewModel
 class WorkoutHomeViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val generateWorkout: GenerateWorkout,
+    private val sessionCoordinator: SessionCoordinator,
     exerciseRepository: ExerciseRepository,
 ) : ViewModel() {
 
@@ -98,7 +102,26 @@ class WorkoutHomeViewModel @Inject constructor(
         }
     }
 
-    /** Called once the player has taken the workout, so returning to Train shows Train. */
+    /**
+     * Hands the generated plan to the session coordinator and clears this screen's state.
+     *
+     * The caller starts the foreground service — that needs a `Context`, which a ViewModel
+     * must not hold, and the split keeps this class testable without Robolectric.
+     * Returns false when there is nothing to begin, so the caller does not navigate into an
+     * empty player.
+     */
+    fun beginSession(): Boolean {
+        val ready = generation.value as? GenerationUiState.Ready ?: return false
+        sessionCoordinator.begin(
+            workout = ready.workout,
+            startedAt = Clock.System.now(),
+            nowMillis = SystemClock.elapsedRealtime(),
+        )
+        generation.value = GenerationUiState.Idle
+        return true
+    }
+
+    /** Discards the generated plan without starting it. */
     fun consumeGeneratedWorkout() {
         generation.value = GenerationUiState.Idle
     }

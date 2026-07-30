@@ -45,6 +45,10 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.speech)
     implementation(libs.androidx.core.ktx)
+    // The session clock lives in a foreground service (ADR-0008); LifecycleService gives it
+    // a lifecycleScope so the ticker is cancelled with the service rather than leaked.
+    implementation(libs.androidx.lifecycle.service)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)

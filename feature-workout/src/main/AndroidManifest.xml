@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The workout service is declared by the feature that owns it rather than by :app, so
+  moving or removing the feature cannot leave a dangling service declaration behind.
+  Manifest merging pulls it into the application manifest.
+
+  foregroundServiceType="mediaPlayback" per ADR-0008: the service's ongoing output is
+  audio coaching, and unlike most types mediaPlayback has no six-hour cap — which a
+  90-minute session plus a forgotten pause could otherwise approach.
+
+  exported="false" — nothing outside the app has any business starting a workout.
+  stopWithTask="true" — swiping the app away is an unambiguous "I am done"; leaving a
+  clock running and a notification posted after that would be user-hostile.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <service
+            android:name=".player.WorkoutService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback"
+            android:stopWithTask="true" />
+    </application>
+</manifest>

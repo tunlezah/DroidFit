@@ -9,6 +9,7 @@ Append-only log of choices with more than one defensible answer. Template:
 
 | Phase | Completed | New assumptions? | Notes |
 |---|---|---|---|
+| 07 — Workout player (partial) | 2026-07-30 | No new ones | Session runs end to end: generate, begin, count down, pause, skip, end, record. Safety notice added, closing KI-0005. Clock in a foreground service per ADR-0008, tested by arithmetic rather than by waiting. **Not done:** TTS cues (phase 08), landscape, device verification — KI-0016..KI-0018. D-0029..D-0034 |
 | 06 — Workout engine | 2026-07-30 | Yes — A-0010 | Generator implemented; KI-0001 and KI-0006 closed. Golden file reproduces engine spec §9 exactly, including its exercise choices. Invariants asserted across 1,680 requests. Verified: `qualityCheck` green, 57 data checks, 11 compliance checks, release APK 2.5 MB. D-0020..D-0028, KI-0012..KI-0014, TD-0009 |
 | 02 — Content authoring | 2026-07-30 | Yes — A-0009 | Catalogue grown 14 → 65 exercises; KI-0004 and KI-0006 closed. Balance and pool minimums now checked rather than counted. D-0019 |
 | Framework authoring (phase −1) | 2026-07-30 | Yes — A-0001..A-0008 | Framework, skeleton and CI created. Verified locally: `qualityCheck` green, release APK 2.38 MB, debug APK 32.58 MB. D-0001..D-0016, ADR-0001..ADR-0012, KI-0001..KI-0008, TD-0001..TD-0008, R-0001..R-0008, FF-0001..FF-0009, UF-0001..UF-0004 |
@@ -484,3 +485,92 @@ Append-only log of choices with more than one defensible answer. Template:
   prevent: the user picks a style and generation fails.
 - **Reverses if:** never.
 - **Affects:** `domain/engine/SessionBudget.kt`, `WorkoutHomeViewModel`, `WorkoutHomeScreen`.
+
+### D-0029 — The safety notice gates the whole shell, not just the player
+- **Date:** 2026-07-30
+- **Phase:** 07
+- **Decision:** `MainActivity` shows `SafetyNoticeScreen` instead of `VisceralFitApp` until
+  `UserPreferences.safetyNoticeAcknowledged` is true. It is not dismissible by back.
+- **Alternatives considered:**
+  - *Gate only the player.* Rejected: REQ-005 says "before the first session", but a user who has
+    already opened Settings and set their level to advanced has made an intensity decision before
+    being told to stop on chest pain.
+  - *A dismissible banner.* Rejected: acknowledgement is the mitigation for A-0007, and a notice
+    that can be swiped away has not been acknowledged.
+- **Reason:** REQ-005, and A-0007 remains an open assumption — nobody has confirmed the operator is
+  cleared for vigorous exercise, and the app's default programme reaches 85–95% HRmax.
+- **Reverses if:** onboarding grows into several steps, in which case the notice becomes the first
+  of them rather than a special case.
+- **Affects:** `MainActivity`, `MainViewModel`, `app/ui/SafetyNoticeScreen.kt`. Closes KI-0005.
+- **Not done:** the copy promises "You can read this notice again at any time from Settings", and
+  Settings does not yet offer that. Recorded as KI-0015 rather than left as a lie in shipped copy.
+
+### D-0030 — Skipped time is not credited to the session
+- **Date:** 2026-07-30
+- **Phase:** 07
+- **Decision:** `SessionState.activeElapsed` counts only real elapsed unpaused time, so skipping a
+  four-minute interval lowers the completion ratio by four minutes' worth.
+- **Alternatives considered:** crediting a skipped segment as completed. Rejected: the completion
+  ratio feeds the recovery recommender, which reads two consecutive sessions below 0.7 as a signal
+  that the prescription is too hard (engine spec §8). Crediting skips would hide exactly the signal
+  that matters, and it is the signal a user generates by skipping.
+- **Reason:** A skipped interval was not performed.
+- **Reverses if:** never.
+- **Affects:** `SessionCoordinator.skip`, `SessionState.completionRatio`.
+
+### D-0031 — An abandoned session is still recorded
+- **Date:** 2026-07-30
+- **Phase:** 07
+- **Decision:** Ending a session early records it, with its real completion ratio, rather than
+  discarding it.
+- **Reason:** Two reasons, and the second is the important one. A history of good days only is a
+  history that cannot show a pattern. And the recovery recommender needs low completion ratios to
+  notice the prescription is too hard — a discarded session is a deleted signal.
+- **Alternatives considered:** asking whether to save. Rejected: it is a decision the user has no
+  basis to make, presented at the worst moment.
+- **Reverses if:** users report the history feeling like a record of failures. The fix would then be
+  in how history *presents* short sessions, not in whether they are kept.
+- **Affects:** `WorkoutPlayerViewModel.finishAndRecord`, the summary screen's neutral wording.
+
+### D-0032 — The energy estimate charges only the part performed
+- **Date:** 2026-07-30
+- **Phase:** 07
+- **Decision:** `finishAndRecord` builds a synthetic `Workout` containing the segments actually
+  performed — completed ones in full, the current one truncated to what was done — and estimates
+  from that.
+- **Reason:** Charging the whole plan when the user stopped a third of the way in would overstate
+  expenditure by a factor of three. REQ-081 and D-0005 are about not inflating a number the user
+  reads as measured; that applies to the numerator as much as to the body-mass input.
+- **Reverses if:** never.
+- **Affects:** `WorkoutPlayerViewModel.performedPortionOf`.
+
+### D-0033 — The session clock is computed from timestamps, never accumulated from ticks
+- **Date:** 2026-07-30
+- **Phase:** 07
+- **Decision:** Every `SessionCoordinator` method takes the current monotonic reading as a
+  parameter, and elapsed time is `now − lastTick`. A single late advance rolls through as many
+  segment boundaries as it covers.
+- **Alternatives considered:** counting ticks and multiplying by the interval. Rejected: the process
+  will be descheduled, and a 45-minute session that ticked 2,690 times instead of 2,700 would end
+  two seconds short — invisibly, and worse on a loaded device.
+- **Reason:** Correctness under stalls, and testability: the whole state machine is exercised with
+  plain integers, no scheduler and no waiting. A timer you have to wait for is a timer nobody tests
+  at the boundaries.
+- **Reverses if:** never.
+- **Affects:** `SessionCoordinator`, `SessionState.advancedTo`, `SessionCoordinatorTest`.
+
+### D-0034 — Pausing releases the keep-screen-on flag immediately, not after 60 seconds
+- **Date:** 2026-07-30
+- **Phase:** 07
+- **Decision:** `KeepScreenOn(enabled = prefs.keepScreenOn && !isPaused)`.
+- **Alternatives considered:** the 60-second grace period `framework/10_screen_specs.md` §4
+  specifies. Rejected as written: it needs a second timer whose only job is to release a flag, and
+  the case it protects — a pause shorter than a minute — is one where the user is looking at the
+  phone anyway, which keeps the screen on by itself.
+- **Reason:** Simpler, and it fails in the safe direction. The failure the grace period guards
+  against is a screen that dims during a brief pause; the failure immediate release guards against
+  is a phone held awake all night. The second is worse.
+- **Reverses if:** the dim-on-brief-pause behaviour proves annoying in real use, which is a question
+  only device testing answers. Recorded as a divergence from the screen spec.
+- **Affects:** `WorkoutPlayerScreen`, and `framework/10_screen_specs.md` §4 now disagrees with the
+  code by one detail.

@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.visceralfit.app.ui.SafetyNoticeScreen
 import com.visceralfit.app.ui.VisceralFitApp
 import com.visceralfit.core.designsystem.theme.VisceralFitTheme
 import com.visceralfit.domain.model.ThemePreference
@@ -43,7 +44,15 @@ class MainActivity : ComponentActivity() {
                 amoled = ready?.amoled == true,
                 dynamicColour = ready?.dynamicColour != false,
             ) {
-                VisceralFitApp()
+                // The safety notice gates the shell rather than the player: REQ-005 says
+                // "before the first session", and a user who has already chosen an
+                // experience level in Settings has made an intensity decision before being
+                // told to stop on chest pain. See SafetyNoticeScreen.
+                when {
+                    ready == null -> Unit
+                    ready.safetyNoticeAcknowledged -> VisceralFitApp()
+                    else -> SafetyNoticeScreen(onAcknowledge = viewModel::acknowledgeSafetyNotice)
+                }
             }
         }
     }

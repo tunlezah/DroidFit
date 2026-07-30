@@ -82,8 +82,11 @@ what went wrong survives.
 - **Reproduction:** Fresh install; no notice appears.
 - **Cause:** The onboarding flow is phase 07 work.
 - **Workaround:** None.
-- **Status:** open — phase 07. This is the mitigation for A-0007 and is a release
-  blocker.
+- **Status:** **fixed in phase 07.** `SafetyNoticeScreen` gates the whole shell until
+  `safetyNoticeAcknowledged` is set (D-0029). Covers all three points REQ-005 enumerates: stop on
+  chest pain, dizziness or unusual breathlessness; consult a clinician if you have a condition or
+  are new to vigorous exercise; this app is not medical advice. A-0007 remains an open assumption —
+  the notice is its mitigation, not its answer.
 
 ### KI-0006 — Nothing verifies the seed asset at build time
 - **Date:** 2026-07-30
@@ -270,3 +273,64 @@ what went wrong survives.
   would have caught two of the three; (2) the Fitness Science sign-off in phase 06's exit criteria,
   which is a human reading generated sessions at each style and several durations. **Neither has
   been done.** The sign-off in particular is an exit criterion this phase has not met.
+
+### KI-0015 — The safety notice cannot be read again from Settings
+- **Date:** 2026-07-30
+- **Severity:** minor
+- **Area:** `feature-settings`, `app/ui`
+- **Symptom:** The notice's own copy says "You can read this notice again at any time from
+  Settings". There is no such entry in Settings.
+- **Reproduction:** acknowledge the notice, open Settings, look for it.
+- **Cause:** The notice lives in `app/ui` and Settings is a feature module, so re-showing it needs
+  either a route or the screen moved somewhere both can reach.
+- **Why it is recorded rather than fixed by deleting the sentence:** the sentence describes the
+  behaviour the app *should* have. A user who wants to re-read a medical safety notice should be
+  able to. Deleting the promise would be the wrong repair.
+- **Status:** open. Fix with the rest of the Settings work; a `notice` route in the app graph that
+  Settings navigates to is enough.
+
+### KI-0016 — POST_NOTIFICATIONS is never requested, so the session notification may not appear
+- **Date:** 2026-07-30
+- **Severity:** major
+- **Area:** `app`, `feature-workout/player`
+- **Symptom:** On Android 13 and above the workout notification — which carries the pause, skip and
+  end controls — will not be shown unless the user has separately granted notifications. Nothing
+  asks.
+- **Reproduction:** fresh install on API 33+, start a session, background the app. The service runs
+  and the clock stays correct, but there is no notification and therefore no lock-screen controls.
+- **Cause:** The permission is declared in the manifest but never requested at runtime. Foreground
+  services still start without it; only the notification is suppressed.
+- **Impact:** the session itself is unaffected — this is the one saving grace. The clock, the
+  service and the recording all work; the user simply has to reopen the app to control the session.
+- **Status:** open. Needs a rationale-then-request flow at the point the first session starts, which
+  is where the permission's purpose is obvious, rather than at launch.
+
+### KI-0017 — The player has never run on a device or emulator
+- **Date:** 2026-07-30
+- **Severity:** major
+- **Area:** `feature-workout/player`, CI
+- **Symptom:** Everything about the player that can be tested on the JVM is tested — the clock has
+  twelve tests covering boundary crossing, stalls, pause accounting, skips, backwards clocks and
+  completion. Nothing about it has been *seen*: not the foreground service starting, not the
+  notification, not the countdown rendering, not `KeepScreenOn`, not rotation mid-session.
+- **Cause:** No emulator in the authoring environment (the same cause as KI-0008), and the
+  instrumentation CI job is gated to the default branch.
+- **What this means concretely:** the parts that could be wrong and would not show up are the
+  service lifecycle (does `startForeground` succeed with the declared type?), the manifest merge of
+  the service declaration, and whether the session survives an activity recreation in practice
+  rather than in principle.
+- **Status:** open, and it should be closed before this is called done. Cheapest route: dispatch the
+  existing `instrumentation` workflow job manually against this branch, then add an instrumentation
+  test that starts a session, rotates, and asserts the remaining time did not jump.
+
+### KI-0018 — No spoken coaching, and no landscape layout
+- **Date:** 2026-07-30
+- **Severity:** minor
+- **Area:** `feature-workout/player`, `core:speech`
+- **Symptom:** The player is silent. `SpeechCoach` and its Android implementation exist and are
+  complete, but nothing calls them, so a user on a bike must look at the phone to know a segment
+  changed. Landscape (REQ-073) renders the portrait layout in a scrolling column.
+- **Cause:** Both are phase 08 and phase 13 work respectively. Recorded here because the player is
+  usable without them and it would be easy to mistake "the player is done" for "phase 07 is done".
+- **Status:** open — phase 08 (cues) and phase 13 (landscape). Machine mode *is* implemented: the
+  countdown scales to 148 sp and the technique block is dropped.

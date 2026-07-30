@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -37,10 +38,15 @@ import com.visceralfit.domain.model.Modality
 import com.visceralfit.domain.model.SegmentKind
 import com.visceralfit.domain.model.Workout
 import com.visceralfit.domain.model.WorkoutStyle
+import com.visceralfit.feature.workout.player.WorkoutService
 
 @Composable
-fun WorkoutHomeRoute(viewModel: WorkoutHomeViewModel = hiltViewModel()) {
+fun WorkoutHomeRoute(
+    onSessionStarted: () -> Unit,
+    viewModel: WorkoutHomeViewModel = hiltViewModel(),
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     WorkoutHomeScreen(
         state = state,
         onDurationSelected = viewModel::selectDuration,
@@ -48,6 +54,14 @@ fun WorkoutHomeRoute(viewModel: WorkoutHomeViewModel = hiltViewModel()) {
         onStart = viewModel::start,
         onDismissFailure = viewModel::dismissFailure,
         onDiscardPlan = viewModel::consumeGeneratedWorkout,
+        onBeginSession = {
+            // Starting the service is the caller's job because it needs a Context. The
+            // coordinator is loaded first so the service finds a session to run.
+            if (viewModel.beginSession()) {
+                WorkoutService.start(context)
+                onSessionStarted()
+            }
+        },
     )
 }
 
@@ -59,6 +73,7 @@ internal fun WorkoutHomeScreen(
     onStart: () -> Unit,
     onDismissFailure: () -> Unit,
     onDiscardPlan: () -> Unit,
+    onBeginSession: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -102,7 +117,7 @@ internal fun WorkoutHomeScreen(
 
         when (val generation = state.generation) {
             is GenerationUiState.Failed -> FailureCard(generation.message, onDismissFailure)
-            is GenerationUiState.Ready -> PlanCard(generation.workout, onDiscardPlan)
+            is GenerationUiState.Ready -> PlanCard(generation.workout, onBeginSession, onDiscardPlan)
             GenerationUiState.Generating, GenerationUiState.Idle -> Unit
         }
 
@@ -223,7 +238,7 @@ private fun FailureCard(message: GenerationMessage, onDismiss: () -> Unit) {
  * or cap something, the user is told, in the same place they are told what the session is.
  */
 @Composable
-private fun PlanCard(workout: Workout, onDiscard: () -> Unit) {
+private fun PlanCard(workout: Workout, onBegin: () -> Unit, onDiscard: () -> Unit) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(workout.title, style = MaterialTheme.typography.titleMedium)
@@ -261,7 +276,8 @@ private fun PlanCard(workout: Workout, onDiscard: () -> Unit) {
                     }
                 }
             }
-            OutlinedButton(onClick = onDiscard) { Text("Discard and choose again") }
+            Button(onClick = onBegin, modifier = Modifier.fillMaxWidth()) { Text("Begin session") }
+            OutlinedButton(onClick = onDiscard) { Text("Choose again") }
         }
     }
 }
@@ -310,6 +326,7 @@ private fun WorkoutHomePreview() {
             onStart = {},
             onDismissFailure = {},
             onDiscardPlan = {},
+            onBeginSession = {},
         )
     }
 }
