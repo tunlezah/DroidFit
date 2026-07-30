@@ -54,7 +54,7 @@ Every claim the app makes is traced to a citation in
 
 **Working and verified:**
 
-- Multi-module Gradle build (11 modules), compiling on JDK 21 / Gradle 8.14.3 / AGP 8.13.2
+- Multi-module Gradle build (13 modules), compiling on JDK 21 / Gradle 8.14.3 / AGP 8.13.2
 - Debug APK 32.58 MB; minified release APK **2.38 MB**
 - CI: detekt (with ktlint rules), unit tests, APK build, APK verification and size gate
 - Domain models, Room schema, DataStore preferences, TTS coach, theme and design tokens

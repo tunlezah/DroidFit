@@ -55,7 +55,7 @@ This file is not a list of things that are wrong. It is a list of things that we
 - **Cost of leaving it:** Changing the JVM target or a source-set convention means
   editing 14 files, and they will drift.
 - **Repay when:** the first time a build-wide change has to be made by hand, or before
-  adding a twelfth module — whichever comes first. Extract
+  adding a fourteenth module — whichever comes first. Extract
   `visceralfit.android.library`, `visceralfit.android.feature`,
   `visceralfit.android.compose` and `visceralfit.jvm.library` convention plugins into
   `build-logic/`.

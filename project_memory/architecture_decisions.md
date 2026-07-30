@@ -30,7 +30,7 @@ Numbering: `ADR-NNNN`. An ADR is for decisions that shape *where code lives* and
   - Easy: adding a feature without touching existing ones.
   - Hard (deliberately): a feature reaching into the database directly. It would have to
     add a dependency, which shows up in review.
-  - Cost: eleven modules means a slower clean build and more build files. Accepted;
+  - Cost: thirteen modules means a slower clean build and more build files. Accepted;
     incremental builds are faster because a UI change does not recompile the engine.
 - **Compliance:** `domain/build.gradle.kts` applies `kotlin-jvm`, not
   `android-library`. Any `android.*` import there is a compile error. No `feature-*`

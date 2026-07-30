@@ -175,6 +175,25 @@ check(
     ", ".join(missing_symptom_note),
 )
 
+# --- documented module count matches settings.gradle.kts --------------------------
+# Counts stated in prose drift. This one was wrong (11 stated, 13 actual) until checked.
+settings_text = (ROOT / "settings.gradle.kts").read_text()
+module_count = len(re.findall(r'^include\("', settings_text, re.MULTILINE))
+readme_text = (ROOT / "README.md").read_text()
+check(
+    "README's module count matches settings.gradle.kts",
+    f"({module_count} modules)" in readme_text,
+    f"settings.gradle.kts declares {module_count} modules; README says otherwise",
+)
+
+# One build file per module, plus the root. TD-0003 tracks this duplication.
+build_files = len(list(ROOT.glob("*/build.gradle.kts"))) + len(list(ROOT.glob("*/*/build.gradle.kts"))) + 1
+check(
+    "one build file per module plus the root",
+    build_files == module_count + 1,
+    f"{build_files} build files for {module_count} modules",
+)
+
 # --- summary ----------------------------------------------------------------------
 print()
 if failures:
