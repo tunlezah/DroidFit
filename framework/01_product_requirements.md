@@ -19,7 +19,7 @@ Notation: **MUST** = release blocker. **SHOULD** = expected, may be deferred wit
 | "customisable time period" | REQ-012, REQ-013 |
 | "heavily slanted towards a Motorola edge 60 … Android 15" | REQ-070..076 |
 | "option to announce the exercise coming up" | REQ-051 |
-| "research what are evidence backed exercises and pull them in locally" | REQ-001..004, REQ-040..047, REQ-060 |
+| "research what are evidence backed exercises and pull them in locally" | REQ-001..004, REQ-040..047 (REQ-043 is the "locally" part) |
 | "describe both verbally and written how to perform that exercise properly" | REQ-041, REQ-044, REQ-053 |
 | "best features and highest rated features from other apps" | REQ-020..023 |
 | "keeping the screen on" | REQ-070 |

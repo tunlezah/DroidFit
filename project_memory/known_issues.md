@@ -134,3 +134,54 @@ what went wrong survives.
   in the executed task list.
 - **Status:** fixed in the framework commit. **Recorded rather than silently corrected** because
   the same trap catches any future pure-JVM module — if you add one, add it to the aggregate.
+
+### KI-0010 — Four of six HIIT interval durations in the engine spec were arithmetically wrong
+- **Date:** 2026-07-30
+- **Severity:** major (in the specification, not the code)
+- **Area:** `framework/07_workout_engine_spec.md` §4.2, `framework/data/workout_templates.json`
+- **Symptom:** The `main_seconds_needed` column stated 1470 / 1080 / 870 / 510 for the `5x3`,
+  `8x1`, `10x30s` and `6x30s` templates; the correct values are 1500 / 1110 / 840 / 480.
+- **Reproduction:** `rounds × work + (rounds − 1) × recovery` for each row.
+- **Cause:** Hand-computed while authoring, with the `(rounds − 1)` on the recovery term applied
+  inconsistently.
+- **Why it mattered:** the spec is written to be implemented literally, and the phase-06 exit
+  criteria tell the implementer to use the numbers given. They would have produced HIIT sessions
+  30–60 s off the requested duration and then failed the ±30 s duration-fit property test, with the
+  failure appearing to be in the implementation rather than in the spec. A `4x4`/`5x3` tie at
+  1500 s also emerged, which the spec now resolves explicitly in favour of the evidence-backed
+  `4x4`.
+- **Fix:** values corrected in both files; the spec now shows the arithmetic inline rather than
+  just the result. `scripts/check_framework_data.py` added, which recomputes every template and
+  also checks template ordering, the style budget sums, MET-table coverage and citation keys —
+  24 checks, run in CI.
+- **Status:** fixed. Recorded because it is the clearest evidence in this project that **a
+  specification needs tests too**: four wrong numbers sat in a document that reads as
+  authoritative, and only recomputing them found it.
+
+### KI-0011 — The seed catalogue violated the authoring standard the same document defines
+- **Date:** 2026-07-30
+- **Severity:** major (specification/content inconsistency)
+- **Area:** `app/src/main/assets/exercises_seed.json`,
+  `framework/08_exercise_library_spec.md`
+- **Symptom:** The 14 worked examples — presented to the building agent as "match their depth" —
+  broke two of the spec's own rules:
+  1. Eleven of fourteen `spoken_instruction` values exceeded the stated 14-word limit (up to 21
+     words).
+  2. Three of the four exercises at `met_value >= 8.0` had **no stop-if-symptoms safety note**,
+     which REQ-006 requires: `spin_bike_seated_flat` (9.0), `spin_bike_seated_climb` (10.8),
+     `spin_bike_sprint` (12.5).
+- **Cause:** The rules and the examples were authored separately and never cross-checked. The
+  14-word limit was also derived loosely: at a typical TTS rate of ~150 wpm it corresponds to
+  ~5.5 s, which is right for a 30 s HIIT interval but needlessly tight for a movement that only
+  ever appears in a multi-minute block.
+- **Why it mattered:** the seed is the *exemplar*. An agent told to match examples that contradict
+  the rules will follow the examples, and would have propagated both faults across ~40 more
+  exercises — including the missing safety notes on vigorous work, which is the one category where
+  the omission has a physical consequence.
+- **Fix:** two-tier word limit, which is what the reasoning actually supports — **≤14 words when
+  `met_value >= 8.0`** (30 s intervals), **≤20 words otherwise**. Over-long cues trimmed, the three
+  missing safety notes added, catalogue version bumped to 2. Both rules are now enforced by
+  `scripts/check_framework_data.py` (26 checks) rather than only stated in prose.
+- **Status:** fixed. Recorded because the general lesson applies to every phase: **an exemplar that
+  contradicts its own rules is followed in preference to the rules.** Phase 02 must run the data
+  check after each authoring batch, not once at the end.

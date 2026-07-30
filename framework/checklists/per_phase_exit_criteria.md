@@ -30,6 +30,7 @@ phase-completion note and fill it in honestly.
 - [ ] All four screen states handled (loading / empty / content / error)
 
 ### Content or claims changed
+- [ ] `python3 scripts/check_framework_data.py` exits 0
 - [ ] Every claim traces to `framework/02_evidence_base.md` §7
 - [ ] Nothing on the prohibited-claims list (§6)
 - [ ] Content validation test green

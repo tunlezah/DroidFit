@@ -22,6 +22,16 @@ generated sessions match the prescriptions).
 
 ## Work
 
+### 0. Verify the spec's own arithmetic
+```bash
+python3 scripts/check_framework_data.py
+```
+Do this before implementing anything. The spec restates the same numbers in prose, in a
+table and in `framework/data/workout_templates.json`, and those can disagree — four of the
+six HIIT template durations were wrong when first authored. If this script fails, the
+specification is wrong and implementing it faithfully would produce sessions of the wrong
+length. Fix the data and the prose together, and record it in `decisions.md`.
+
 ### 1. Build the migration test harness first
 `KI-0007`. The engine phase is the last comfortable moment to build it, because phase 09 adds
 tables. Set up `MigrationTestHelper` in `core:database`'s `androidTest` with a passing
@@ -79,6 +89,8 @@ suggested fix — never a generic error.
 - [ ] Fitness Science sign-off: generated sessions at each style and several durations match the
       §3 prescriptions in `02_evidence_base.md`.
 - [ ] `./gradlew qualityCheck` green.
+- [ ] `python3 scripts/check_framework_data.py` green, and the implementation's constants
+      match `framework/data/workout_templates.json` exactly.
 
 ## Project memory updates
 - `known_issues.md` — close KI-0001 and KI-0007.

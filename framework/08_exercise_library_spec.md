@@ -68,8 +68,15 @@ Ordered steps. Each step is one action. Requirements:
 ### `spoken_instruction`
 One sentence, read aloud when the segment starts. Constraints:
 
-- **Must finish inside the shortest interval this exercise can appear in** (REQ-044). For a
-  30 s interval that is roughly **12 words**. Say it aloud at speaking pace and time it.
+- **Must finish inside the shortest interval this exercise can appear in** (REQ-044). At a
+  typical TTS rate of ~150 words per minute, the limits are:
+
+  | Exercise | Limit | Why |
+  |---|---|---|
+  | `met_value >= 8.0` | **14 words** (~5.5 s) | These appear in 30 s HIIT work intervals, so the cue must be a small fraction of the segment |
+  | everything else | **20 words** (~8 s) | These appear in multi-minute blocks, where 8 s is comfortable |
+
+  Say it aloud at speaking pace and time it. The validation test enforces both limits.
 - Names the exercise, then gives the single most important cue.
 - No numbers that duplicate the on-screen timer.
 - Avoid words TTS mangles: prefer "eight to nine out of ten" over "8–9/10".
@@ -140,7 +147,8 @@ A JVM test in `data` that reads the asset from resources and asserts:
 - [ ] Every `modality` and `difficulty` resolves to a known enum id.
 - [ ] `met_value > 0` and appears in `met_values.json` (or is documented as approximated).
 - [ ] `how_to` has ≥ 3 entries, none blank.
-- [ ] `spoken_instruction` non-blank and **≤ 14 words**.
+- [ ] `spoken_instruction` non-blank, **≤ 14 words when `met_value >= 8.0`, ≤ 20 words
+      otherwise**.
 - [ ] `safety_notes` and `common_mistakes` each ≥ 1, none blank.
 - [ ] `muscles_worked` ≥ 2.
 - [ ] Every `caution_tag` is in the closed set from §2.

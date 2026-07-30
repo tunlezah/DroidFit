@@ -63,7 +63,7 @@
           "type": "string",
           "minLength": 10,
           "maxLength": 140,
-          "description": "One sentence read aloud at segment start. Must finish inside the shortest interval this exercise can appear in — roughly 14 words for a 30 s interval (REQ-044). Say it aloud and time it."
+          "description": "One sentence read aloud at segment start. Must finish inside the shortest interval this exercise can appear in (REQ-044): <= 14 words when met_value >= 8.0 (30 s HIIT intervals), <= 20 words otherwise. Say it aloud at speaking pace and time it."
         },
         "safety_notes": {
           "type": "array",

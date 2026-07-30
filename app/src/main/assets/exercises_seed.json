@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "exercises": [
     {
       "id": "floor_pilates_dead_bug",
@@ -15,7 +15,7 @@
         "Stop before your lower back lifts. Breathe in and return to the start.",
         "Alternate sides, moving slowly enough that the movement takes about four seconds each way."
       ],
-      "spoken_instruction": "Dead bug. On your back, knees above hips. Extend the opposite arm and leg slowly, keeping your lower back pressed down.",
+      "spoken_instruction": "Dead bug. Knees above hips. Extend the opposite arm and leg slowly, keeping your lower back down.",
       "safety_notes": [
         "Stop lowering the leg the moment your lower back arches away from the floor.",
         "Keep your neck relaxed; if it strains, rest your head on a folded towel."
@@ -43,7 +43,7 @@
         "Breathe in for five pulses and out for five pulses.",
         "Keep your ribs drawing down toward your hips throughout."
       ],
-      "spoken_instruction": "The hundred, preparation. Curl your shoulders off the mat and pulse your arms, breathing in for five and out for five.",
+      "spoken_instruction": "The hundred. Curl your shoulders off the mat and pulse your arms, five counts in, five out.",
       "safety_notes": [
         "If your neck tires, lower your head to the mat and keep pulsing the arms.",
         "Keep the curl small; height is not the point."
@@ -259,10 +259,11 @@
         "Add enough resistance that the flywheel feels connected rather than spinning freely.",
         "Hold a smooth cadence of roughly 80 to 90 revolutions per minute."
       ],
-      "spoken_instruction": "Seated flat road. Sit tall, hands light on the bars, smooth cadence around eighty to ninety.",
+      "spoken_instruction": "Seated flat road. Sit tall, smooth cadence around eighty to ninety.",
       "safety_notes": [
         "Never pedal with no resistance; the flywheel will drive your legs faster than you can control.",
-        "Keep your knees tracking forward, not bowing outward."
+        "Keep your knees tracking forward, not bowing outward.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
       ],
       "common_mistakes": [
         "Saddle set too low, which loads the front of the knee.",
@@ -286,10 +287,11 @@
         "Push through the whole pedal circle rather than stamping down.",
         "Hold an effort of six to seven out of ten."
       ],
-      "spoken_instruction": "Seated climb. Add resistance, let the cadence drop, and drive through the whole pedal stroke.",
+      "spoken_instruction": "Seated climb. Add resistance and drive through the whole pedal stroke.",
       "safety_notes": [
         "Reduce resistance if your hips start rocking side to side.",
-        "Keep breathing rhythmically; do not hold your breath through the hard part."
+        "Keep breathing rhythmically; do not hold your breath through the hard part.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
       ],
       "common_mistakes": [
         "Pulling on the bars to compensate for too much resistance.",
@@ -316,7 +318,8 @@
       "spoken_instruction": "Standing sprint. Out of the saddle, fast and strong, nine out of ten.",
       "safety_notes": [
         "Do not stand with light resistance; you will lose control of the pedals.",
-        "Skip this movement entirely if you have knee or hip pain today."
+        "Skip this movement entirely if you have knee or hip pain today.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
       ],
       "common_mistakes": [
         "Bouncing the hips rather than staying centred over the pedals.",

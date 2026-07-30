@@ -70,11 +70,11 @@
       "evidence_key": "helgerud2007",
       "$note": "The Norwegian 4x4. The only template with direct trial evidence; prefer it whenever the duration allows."
     },
-    { "id": "5x3", "work_seconds": 180, "recovery_seconds": 150, "rounds": 5, "main_seconds_needed": 1470, "evidence_key": "derived" },
+    { "id": "5x3", "work_seconds": 180, "recovery_seconds": 150, "rounds": 5, "main_seconds_needed": 1500, "evidence_key": "derived" },
     { "id": "6x2", "work_seconds": 120, "recovery_seconds": 120, "rounds": 6, "main_seconds_needed": 1320, "evidence_key": "derived" },
-    { "id": "8x1", "work_seconds": 60, "recovery_seconds": 90, "rounds": 8, "main_seconds_needed": 1080, "evidence_key": "derived" },
-    { "id": "10x30s", "work_seconds": 30, "recovery_seconds": 60, "rounds": 10, "main_seconds_needed": 870, "evidence_key": "derived" },
-    { "id": "6x30s", "work_seconds": 30, "recovery_seconds": 60, "rounds": 6, "main_seconds_needed": 510, "evidence_key": "derived" }
+    { "id": "8x1", "work_seconds": 60, "recovery_seconds": 90, "rounds": 8, "main_seconds_needed": 1110, "evidence_key": "derived" },
+    { "id": "10x30s", "work_seconds": 30, "recovery_seconds": 60, "rounds": 10, "main_seconds_needed": 840, "evidence_key": "derived" },
+    { "id": "6x30s", "work_seconds": 30, "recovery_seconds": 60, "rounds": 6, "main_seconds_needed": 480, "evidence_key": "derived" }
   ],
 
   "mixed_parameters": {

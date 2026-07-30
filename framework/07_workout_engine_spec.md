@@ -144,19 +144,29 @@ modality.
 
 Choose the largest interval template that fits `main`:
 
+"Main seconds needed" = `rounds × work + (rounds − 1) × recovery`. Note the
+`(rounds − 1)`: there is **no recovery after the final work interval**, because the
+cool-down serves that purpose. This is the most likely arithmetic slip in the whole
+engine — the table below is computed, and your implementation must reproduce it.
+
 | Template | Work | Recovery | Rounds | Main seconds needed | Source |
 |---|---|---|---|---|---|
-| `4x4` | 240 s | 180 s | 4 | 1500 s | `helgerud2007` |
-| `5x3` | 180 s | 150 s | 5 | 1470 s | derived |
-| `6x2` | 120 s | 120 s | 6 | 1320 s | derived |
-| `8x1` | 60 s | 90 s | 8 | 1080 s | derived |
-| `10x30s` | 30 s | 60 s | 10 | 870 s | derived |
-| `6x30s` | 30 s | 60 s | 6 | 510 s | derived |
+| `4x4` | 240 s | 180 s | 4 | 4×240 + 3×180 = **1500 s** | `helgerud2007` |
+| `5x3` | 180 s | 150 s | 5 | 5×180 + 4×150 = **1500 s** | derived |
+| `6x2` | 120 s | 120 s | 6 | 6×120 + 5×120 = **1320 s** | derived |
+| `8x1` | 60 s | 90 s | 8 | 8×60 + 7×90 = **1110 s** | derived |
+| `10x30s` | 30 s | 60 s | 10 | 10×30 + 9×60 = **840 s** | derived |
+| `6x30s` | 30 s | 60 s | 6 | 6×30 + 5×60 = **480 s** | derived |
 
-"Main seconds needed" = `rounds * work + (rounds - 1) * recovery`, i.e. no recovery after
-the last work interval — the cool-down serves that purpose.
+Pick the largest template whose requirement is `<= main`. **`4x4` and `5x3` both need
+1500 s**; break that tie in favour of `4x4`, because it is the only template with direct
+trial evidence behind it (`helgerud2007`). Order the list with `4x4` first and take the
+first match.
 
-Pick the largest template whose requirement is `<= main`. Distribute the leftover
+Note the smallest template needs exactly 480 s, which is why `styleMinMain` for HIIT is
+480 s — the two numbers are the same fact and must stay in step.
+
+Distribute the leftover
 (`main - needed`) by lengthening each recovery segment equally, capped at +60 s each; any
 remaining leftover becomes an extra `ACTIVE_RECOVERY` segment at the end of the main block.
 

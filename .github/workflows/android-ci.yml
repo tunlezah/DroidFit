@@ -55,6 +55,12 @@ jobs:
           # poison the cache other builds read.
           cache-read-only: ${{ github.ref != format('refs/heads/{0}', github.event.repository.default_branch) }}
 
+      - name: Framework data consistency
+        # The framework asserts the same numbers in prose, in a table and in JSON. This
+        # checks they agree — four of the six HIIT template durations were wrong on first
+        # authoring, and nothing else would have caught it. See the script's docstring.
+        run: python3 scripts/check_framework_data.py
+
       - name: Architecture compliance
         # The rules the compiler and detekt cannot enforce: module boundaries, injected
         # dispatchers, no INTERNET permission, no destructive migration, no hard-coded

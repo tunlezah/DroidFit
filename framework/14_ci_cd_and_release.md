@@ -37,13 +37,14 @@ change at a time. Record the result in `decisions.md` either way.
 Job `verify` (every push and PR):
 
 1. Check out, set up JDK 21, set up Gradle with caching.
-2. `./scripts/compliance_check.sh` — the architecture rules the compiler cannot enforce.
-3. `./gradlew detekt --continue` — static analysis and formatting.
-4. `./gradlew qualityCheck` — every module's unit tests, including `:domain:test`.
-5. `./gradlew :app:assembleRelease` — the sideload artefact.
-6. **Verify the APK.** Not just that a file exists: assert it contains `AndroidManifest.xml`
+2. `python3 scripts/check_framework_data.py` — the framework's own numbers agree with each other.
+3. `./scripts/compliance_check.sh` — the architecture rules the compiler cannot enforce.
+4. `./gradlew detekt --continue` — static analysis and formatting.
+5. `./gradlew qualityCheck` — every module's unit tests, including `:domain:test`.
+6. `./gradlew :app:assembleRelease` — the sideload artefact.
+7. **Verify the APK.** Not just that a file exists: assert it contains `AndroidManifest.xml`
    and `classes.dex`, and that it is under the 12 MB ceiling.
-7. Upload the APK (30-day retention) and test reports (14 days, always).
+8. Upload the APK (30-day retention) and test reports (14 days, always).
 
 Job `instrumentation` (default branch and manual dispatch only): KVM, emulator at API 35
 (matching the Edge 60's shipping OS), `connectedDebugAndroidTest`.
@@ -127,6 +128,7 @@ phone.
 ```bash
 ./gradlew qualityCheck            # detekt + every module's unit tests. Run before every commit
 ./scripts/compliance_check.sh     # module boundaries, permissions, migrations, colours
+python3 scripts/check_framework_data.py  # the spec's own numbers agree with each other
 ./gradlew :domain:test            # fast: the engine and use cases
 ./gradlew :app:assembleRelease    # the sideload APK
 ./gradlew :app:assembleDebug      # the debuggable build

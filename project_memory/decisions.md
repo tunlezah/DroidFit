@@ -286,3 +286,24 @@ Append-only log of choices with more than one defensible answer. Template:
 - **Known limits, stated in the script and the doc:** it reads the **source** manifest, so a
   permission added by manifest merging is not caught; and it does not inspect the dependency graph.
   Both need a build, and both are in the Security & Privacy agent's release verification.
+
+### D-0018 — The specification has its own test suite
+- **Date:** 2026-07-30
+- **Phase:** Framework authoring
+- **Decision:** `scripts/check_framework_data.py` validates the framework's reference data for
+  internal consistency — 24 checks covering interval arithmetic, template ordering, style budget
+  sums, MET-table coverage, citation-key existence and catalogue id uniqueness. It runs in CI and
+  is step 0 of phase 06.
+- **Reason:** KI-0010. Four of six HIIT interval durations were wrong, in a document written to be
+  implemented literally. The framework deliberately restates the same numbers in prose, in a table
+  and in JSON so a reviewer can cross-check them — but nothing was cross-checking them, so the
+  redundancy created three places to be wrong instead of one place to be right.
+- **Alternatives considered:**
+  - *Single source of truth: delete the duplication.* Better in principle, but the prose table is
+    what the implementer actually reads, and a JSON file alone is not a specification. Keeping both
+    and checking they agree preserves readability without the drift.
+  - *Trust careful authoring.* This is what was tried, and it produced four errors.
+- **Reverses if:** never. Any project whose specification contains computed values should check
+  them.
+- **Affects:** `scripts/check_framework_data.py`, CI, phase 06's step 0 and exit criteria, the
+  per-phase checklist.

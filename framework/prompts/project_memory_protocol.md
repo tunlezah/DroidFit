@@ -52,7 +52,8 @@ The distinctions that get confused:
 
 ## Writing a good entry
 
-Compare:
+Compare these two versions of the same entry. (`D-0031` here is an invented illustration, not a
+real entry — do not go looking for it.)
 
 > ### D-0031 — Use Paging 3
 > - **Decision:** Added Paging 3 to the history list.
