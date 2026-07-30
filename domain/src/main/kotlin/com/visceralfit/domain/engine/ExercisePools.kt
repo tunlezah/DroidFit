@@ -1,7 +1,6 @@
 package com.visceralfit.domain.engine
 
 import com.visceralfit.domain.model.Exercise
-import com.visceralfit.domain.model.Modality
 
 /**
  * The role-based partition of the eligible exercises, spec §3.
@@ -10,7 +9,7 @@ import com.visceralfit.domain.model.Modality
  * vigorous pool, because whether it is steady or hard work depends on how the segment is
  * prescribed, not on the exercise.
  *
- * MET RANGE **AND** ANCHOR (D-0026). The specification defines these pools by MET range
+ * MET RANGE **AND** ANCHOR (D-0027). The specification defines these pools by MET range
  * alone. Implemented literally, that mis-prescribes real sessions, because MET is a cost
  * of work and not a description of it:
  *
@@ -44,9 +43,6 @@ internal class ExercisePools private constructor(
 ) {
     /** True when no machine-cardio exercise is available, i.e. this is a Pilates session (§7). */
     val isPilatesOnly: Boolean get() = cardio.isEmpty()
-
-    /** Machine-cardio modalities present in the eligible set, in a stable order. */
-    val cardioModalities: List<Modality> get() = cardio.map { it.modality }.distinct().sortedBy { it.id }
 
     companion object {
         fun partition(eligible: List<Exercise>): ExercisePools {

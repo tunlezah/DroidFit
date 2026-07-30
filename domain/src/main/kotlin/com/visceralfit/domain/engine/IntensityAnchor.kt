@@ -7,7 +7,7 @@ import kotlin.math.roundToLong
  * How hard a modality is being worked at a given MET value, as anchored by the 2024
  * Adult Compendium of Physical Activities.
  *
- * WHY THIS IS A LOOKUP AND NOT A MET THRESHOLD (D-0019): the anchor is not monotonic
+ * WHY THIS IS A LOOKUP AND NOT A MET THRESHOLD (D-0020): the anchor is not monotonic
  * in MET. A spin class averages 9.0 MET and the Compendium anchors it at Zone 2
  * (code 01270); the elliptical at the same 9.0 MET is anchored vigorous (code 02049).
  * Any rule of the form "MET >= x is vigorous" therefore mislabels one of the two, and
@@ -48,14 +48,10 @@ enum class IntensityAnchor(val id: String) {
          * The fallback exists so an exercise added to the catalogue without a matching
          * MET-table row still generates rather than crashing; the data check makes that
          * situation a CI failure, so in a shipped build every lookup hits the table.
-         * The thresholds are the Compendium's own moderate/vigorous boundaries (D-0020).
+         * The thresholds are the Compendium's own moderate/vigorous boundaries (D-0021).
          */
         fun of(modality: Modality, metValue: Double): IntensityAnchor =
             TABLE[key(modality, metValue)] ?: approximateFrom(metValue)
-
-        /** True when the pair is in the table, i.e. the anchor is authored rather than guessed. */
-        fun isTabulated(modality: Modality, metValue: Double): Boolean =
-            TABLE.containsKey(key(modality, metValue))
 
         private fun approximateFrom(metValue: Double): IntensityAnchor = when {
             metValue < RECOVERY_CEILING_MET -> RECOVERY

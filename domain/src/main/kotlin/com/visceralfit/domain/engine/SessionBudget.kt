@@ -70,8 +70,7 @@ internal data class StyleBudget(
  */
 object SessionLimits {
 
-    /** The accepted request range (A-0003). */
-    val minimumDuration: Duration = SessionConstants.MIN_TOTAL_SECONDS.seconds
+    /** The upper end of the accepted request range (A-0003). */
     val maximumDuration: Duration = SessionConstants.MAX_TOTAL_SECONDS.seconds
 
     /** The shortest session that can honestly be built in [style]. */
@@ -87,9 +86,7 @@ internal data class BlockBudget(
     val warmUpSeconds: Int,
     val mainSeconds: Int,
     val coolDownSeconds: Int,
-) {
-    val totalSeconds: Int get() = warmUpSeconds + mainSeconds + coolDownSeconds
-}
+)
 
 /**
  * Session-wide constants. Kept in one object so the engine has no bare literals and a
@@ -117,7 +114,7 @@ internal object SessionConstants {
      * No segment shorter than this is ever emitted. A 4-second "segment" is a rounding
      * artefact, not a prescription: it cannot be cued, and it reads as a bug on screen.
      * Residue below this threshold is folded into the neighbouring segment instead
-     * (D-0024).
+     * (D-0025).
      */
     const val MIN_SEGMENT_SECONDS = 20
 
@@ -130,8 +127,6 @@ internal object SessionConstants {
     const val THRESHOLD_MAX_MET = 10.9
     const val STEADY_MIN_MET = 4.0
     const val STEADY_MAX_MET = 9.0
-
-    val transition: Duration = TRANSITION_SECONDS.seconds
 
     /**
      * Splits [totalSeconds] into the three blocks. Order matters and is specified:
@@ -196,7 +191,7 @@ internal data class IntervalTemplate(
          * leaves a 60-minute HIIT request with a 20-minute tail of easy spinning — the
          * duration invariant holds but the programming is wrong. Extra rounds of the
          * chosen template are added while they fit, up to this bound, which keeps a long
-         * interval session an interval session (D-0025).
+         * interval session an interval session (D-0026).
          */
         const val MAX_ROUNDS = 20
     }

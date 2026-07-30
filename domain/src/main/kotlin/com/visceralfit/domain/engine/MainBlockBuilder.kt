@@ -41,7 +41,7 @@ internal class MainBlockBuilder(
         // aerobic training — the one substitution the evidence base explicitly forbids
         // (02_evidence_base.md §1.5). RECOVERY is the honest recording because it is
         // defined as work that counts toward weekly volume but contributes no vigorous
-        // minutes, which is exactly what spec §7.3 requires of a Pilates session (D-0022).
+        // minutes, which is exactly what spec §7.3 requires of a Pilates session (D-0023).
         pools.isPilatesOnly -> recovery(mainSeconds).let { block ->
             if (style == WorkoutStyle.RECOVERY) block else block.copy(notes = block.notes + PILATES_ONLY_NOTE)
         }
@@ -157,7 +157,7 @@ internal class MainBlockBuilder(
         }
         if (residue in 1 until SessionConstants.MIN_SEGMENT_SECONDS) {
             // Emitting a sub-20-second segment is worse than one recovery running
-            // slightly over the cap (D-0024).
+            // slightly over the cap (D-0025).
             extensions[extensions.lastIndex] += residue
             residue = 0
         }

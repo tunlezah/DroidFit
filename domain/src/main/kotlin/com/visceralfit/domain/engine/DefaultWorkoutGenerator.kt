@@ -136,7 +136,7 @@ class DefaultWorkoutGenerator(private val catalogue: List<Exercise>) : WorkoutGe
      * explicit: when a machine is available the **final** segment is on it, so the user
      * is already on the machine when the main block starts. That constraint outranks
      * strict MET ordering, and the machine is chosen to match the one the main block uses
-     * rather than at random (D-0021) — a transition onto the wrong machine would defeat
+     * rather than at random (D-0022) — a transition onto the wrong machine would defeat
      * the point of the rule.
      */
     private fun warmUpExercises(

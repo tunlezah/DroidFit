@@ -107,7 +107,7 @@ Pools overlap deliberately — an exercise at 9.0 MET can be in both `steadyPool
 `vigorousPool`, because whether it is steady or hard work depends on how the segment is
 prescribed, not on the exercise.
 
-### 3.1 MET range **and** intensity anchor (added in phase 06, D-0026)
+### 3.1 MET range **and** intensity anchor (added in phase 06, D-0027)
 
 The predicates above are MET-only, and implemented literally they mis-prescribe real
 sessions, because a MET value is the *cost* of work and not a description of it. Three

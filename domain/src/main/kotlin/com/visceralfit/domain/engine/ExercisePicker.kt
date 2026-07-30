@@ -54,7 +54,7 @@ internal class ExercisePicker(private val random: Random, private val recent: Li
      * segments of a Mixed session and the segments of a continuous Zone 2 block are one
      * sustained effort that has been divided so the coach has boundaries to cue on
      * (spec §4.3). Failing those with `InsufficientVariety` would refuse to build a
-     * perfectly good steady ride on a single-machine catalogue (D-0023).
+     * perfectly good steady ride on a single-machine catalogue (D-0024).
      */
     fun pickCycling(pool: List<Exercise>, count: Int): List<Exercise> {
         require(count > 0) { "pickCycling() asked for $count exercises" }
