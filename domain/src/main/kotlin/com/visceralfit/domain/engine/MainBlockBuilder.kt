@@ -67,8 +67,15 @@ internal class MainBlockBuilder(
             onModality,
             if (onModality.size >= ROTATION_THRESHOLD) ROTATION_MAX else 1,
         )
+        // Active recovery between intervals wants the easiest thing available on the same
+        // machine, then the easiest anywhere. Falling straight back to the work pool would
+        // name a vigorous interval as the recovery — which is how a recovery segment ends up
+        // labelled "hard interval" (D-0038).
         val recoveryExercise = picker.pickOrNull(
-            pools.steady.filter { it.modality == workModality }.ifEmpty { onModality },
+            pools.steady.filter { it.modality == workModality }
+                .ifEmpty { pools.steady }
+                .ifEmpty { pools.mobility }
+                .ifEmpty { onModality },
         )
 
         val extensions = recoveryExtensions(template, rounds, mainSeconds)

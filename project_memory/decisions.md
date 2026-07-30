@@ -629,3 +629,25 @@ Append-only log of choices with more than one defensible answer. Template:
 - **Reverses if:** the missing signals become computable, at which point the card gets more to say
   rather than a different design.
 - **Affects:** `ProgressViewModel.restDaySuggestion`, `ProgressScreen`.
+
+### D-0038 — A recovery block draws only from movements anchored at Zone 2 or easier
+- **Date:** 2026-07-30
+- **Phase:** 06 (follow-up)
+- **Decision:** `PoolFallbacks.strength`, which feeds the recovery main block and therefore every
+  Pilates-only session, is restricted to exercises the Compendium anchors no harder than Zone 2.
+  Separately, the active-recovery segments between HIIT intervals now fall back through the steady
+  pool and then the mobility pool before ever reaching the work pool.
+- **Reason:** A recovery block prescribes every segment at RECOVERY intensity, and the unrestricted
+  strength pool contained `floor_pilates_mountain_climber_slow` (7.0 MET, anchored threshold) and
+  `floor_pilates_star_jumps` (7.5, vigorous). A seven-minute recovery session therefore came out
+  containing slow mountain climbers labelled "easy". The HIIT fallback had the same shape: with no
+  steady exercise on the work modality it would name a vigorous interval as the active recovery.
+- **How it was found:** by the anchor-versus-intensity invariant added to close part of KI-0014,
+  **on its first run**. That is the point worth recording — the check was written to catch faults
+  already fixed, and it immediately found a fourth of the same kind that nothing else had.
+- **Consequence:** two authored floor exercises are now unreachable by the generator. Recorded as
+  KI-0020 rather than deleted, because the cause is a modality-model problem, not a content problem.
+- **Reverses if:** the modality model gains a bodyweight-cardio category (KI-0020), after which
+  those movements have a legitimate home as vigorous work.
+- **Affects:** `PoolFallbacks.strength`, `MainBlockBuilder.intervals`,
+  `WorkoutGeneratorInvariantTest`.

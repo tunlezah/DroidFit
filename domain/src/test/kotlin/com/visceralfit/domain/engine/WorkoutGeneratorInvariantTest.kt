@@ -2,6 +2,7 @@ package com.visceralfit.domain.engine
 
 import com.visceralfit.domain.model.BlockKind
 import com.visceralfit.domain.model.ExperienceLevel
+import com.visceralfit.domain.model.IntensityTarget
 import com.visceralfit.domain.model.Modality
 import com.visceralfit.domain.model.Segment
 import com.visceralfit.domain.model.SegmentKind
@@ -153,6 +154,39 @@ class WorkoutGeneratorInvariantTest {
         }
     }
 
+    /**
+     * The check that would have caught two of the three faults in KI-0014.
+     *
+     * Every invariant in engine spec §1 is structural — durations, block presence, set
+     * membership — and none of them asks whether a segment is *sensibly prescribed*. That is
+     * how an 8.8 MET interval anchored vigorous came to be the Zone 2 base of a Mixed
+     * session while every test passed.
+     *
+     * This is the mechanical part of that question: an exercise's Compendium anchor must be
+     * within one band of the intensity the segment prescribes it at. One band of tolerance is
+     * deliberate rather than exact — a Zone-2-anchored spin is a legitimate threshold surge
+     * if you push it, and a threshold-anchored climb is a legitimate vigorous interval. Two
+     * bands is not a prescription, it is a mistake.
+     */
+    @Test
+    fun `no segment prescribes an exercise more than one intensity band from its anchor`() {
+        forEveryRequest { request, result ->
+            result.onSuccess { workout ->
+                workout.segments.forEach { segment ->
+                    val exercise = segment.exercise ?: return@forEach
+                    val anchor = IntensityAnchor.of(exercise.modality, exercise.metValue)
+                    val prescribed = segment.intensity.asAnchor()
+                    val distance = (anchor.ordinal - prescribed.ordinal).absoluteValue
+                    assertTrue(
+                        "${describe(request)}: ${exercise.id} is anchored ${anchor.id} but the " +
+                            "${segment.kind.id} segment prescribes ${prescribed.id}",
+                        distance <= MAX_ANCHOR_DISTANCE,
+                    )
+                }
+            }
+        }
+    }
+
     /** A failure must name a reason the UI can act on, never a bare error. */
     @Test
     fun `every failure is a specific generation failure with usable detail`() {
@@ -213,6 +247,19 @@ class WorkoutGeneratorInvariantTest {
         }
     }
 
+    /**
+     * The anchor a prescribed intensity corresponds to. The two scales describe the same
+     * thing from different ends — `IntensityTarget` is what the app asks of the user,
+     * `IntensityAnchor` is what the Compendium says the movement costs.
+     */
+    private fun IntensityTarget.asAnchor(): IntensityAnchor = when (this) {
+        IntensityTarget.RECOVERY -> IntensityAnchor.RECOVERY
+        IntensityTarget.ZONE_2 -> IntensityAnchor.ZONE_2
+        IntensityTarget.THRESHOLD -> IntensityAnchor.THRESHOLD
+        IntensityTarget.VIGOROUS -> IntensityAnchor.VIGOROUS
+        else -> IntensityAnchor.ZONE_2
+    }
+
     private fun describe(request: WorkoutRequest): String =
         "${request.duration.inWholeMinutes}min ${request.style.id} " +
             "${request.modalities.map { it.id }.sorted()} ${request.level.id} avoid=${request.avoidTags}"
@@ -241,6 +288,9 @@ class WorkoutGeneratorInvariantTest {
         val MAX_DURATION = SessionConstants.MAX_TOTAL_SECONDS.seconds
         const val PRIME = 31
         const val MIN_CASES = 1_000
+
+        /** One band of slack; see the test that uses it. */
+        const val MAX_ANCHOR_DISTANCE = 1
 
         /**
          * Every duration × style × modality set × level × avoid-tag combination, built once

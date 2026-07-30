@@ -194,10 +194,28 @@ internal object PoolFallbacks {
         )
     }
 
-    /** Pilates strength work, used for the recovery main block and Pilates-only sessions. */
-    fun strength(pools: ExercisePools): ResolvedPool = when {
-        pools.strength.isNotEmpty() -> ResolvedPool(pools.strength)
-        else -> mobility(pools)
+    /**
+     * Pilates strength work for a recovery block, and therefore for a Pilates-only session.
+     *
+     * Restricted to movements the Compendium anchors no harder than Zone 2. Without that
+     * restriction the pool includes `floor_pilates_mountain_climber_slow` (7.0 MET,
+     * anchored threshold) and `floor_pilates_star_jumps` (7.5, vigorous), and a recovery
+     * block prescribes every segment at RECOVERY intensity — so a recovery session came out
+     * containing slow mountain climbers labelled "easy" (D-0038).
+     *
+     * Found by the anchor-versus-intensity invariant added after KI-0014, on its first run.
+     * A consequence worth knowing about is recorded as KI-0020: those two movements are now
+     * unreachable by the generator entirely, because the `floor_pilates` modality conflates
+     * Pilates with bodyweight cardio.
+     */
+    fun strength(pools: ExercisePools): ResolvedPool {
+        val easyEnough = pools.strength.filter {
+            IntensityAnchor.of(it.modality, it.metValue).isAtMost(IntensityAnchor.ZONE_2)
+        }
+        return when {
+            easyEnough.isNotEmpty() -> ResolvedPool(easyEnough)
+            else -> mobility(pools)
+        }
     }
 
     /** Spec §3: "then the lowest-MET three exercises in `eligible`". */

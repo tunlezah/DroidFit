@@ -271,11 +271,41 @@ what went wrong survives.
 - **Why it stays open as an issue:** the *gap* is not fixed. There is still no test that would catch
   a fourth fault of the same kind. The golden file helps — it is the one artefact a human reads —
   but it pins one request out of a very large space.
-- **Status:** open. Two things would help, in order: (1) an assertion that no segment's exercise is
-  anchored more than one band away from the segment's prescribed intensity, which is mechanical and
-  would have caught two of the three; (2) the Fitness Science sign-off in phase 06's exit criteria,
-  which is a human reading generated sessions at each style and several durations. **Neither has
-  been done.** The sign-off in particular is an exit criterion this phase has not met.
+- **Update 2026-07-30:** suggestion (1) is **done**. `WorkoutGeneratorInvariantTest` now asserts
+  that no segment prescribes an exercise more than one intensity band from its Compendium anchor,
+  across the full request matrix. It found a fourth fault of the same kind on its first run — a
+  recovery session prescribing slow mountain climbers (7.0 MET, threshold) as easy work — which is
+  fixed in D-0038. That is the strongest possible argument for the check: it was written to cover
+  faults already found, and immediately caught one that nothing else had.
+- **Status:** open, narrowed. What remains is suggestion (2): the Fitness Science sign-off in phase
+  06's exit criteria — a human reading generated sessions at each style and several durations.
+  **That has not been done, and it is an exit criterion this phase has not met.** The mechanical
+  check covers intensity mismatches; it cannot tell whether a session is well *programmed*.
+
+### KI-0020 — Two authored floor exercises are unreachable by the generator
+- **Date:** 2026-07-30
+- **Severity:** minor
+- **Area:** `domain/model/Modality`, `app/src/main/assets/exercises_seed.json`
+- **Symptom:** `floor_pilates_mountain_climber_slow` (7.0 MET) and `floor_pilates_star_jumps` (7.5)
+  can never be selected. They are authored, validated and shipped, and no session will ever use
+  them.
+- **Cause:** They are not machine cardio, so they are outside the cardio, vigorous, threshold and
+  steady pools. They are above the mobility ceiling, so they are outside that pool. And D-0038 now
+  excludes them from the recovery block's strength pool, because a recovery block prescribes
+  everything at RECOVERY intensity and these are threshold and vigorous work.
+- **The real cause underneath:** `Modality.FLOOR_PILATES` conflates two different things — mat
+  Pilates, which is strength and control, and bodyweight cardio, which is aerobic work. Star jumps
+  at 7.5 MET are aerobic exercise that `chen2024nma` supports; calling them Pilates is what makes
+  them unusable, because D-0023 requires Pilates-only sessions to be built as recovery.
+- **Two candidate fixes, and this is an operator question rather than a guess:**
+  1. Add a fifth modality (bodyweight cardio). Then a user with no machine can be given genuine
+     intervals, and the Pilates honesty rule still holds because Pilates stays Pilates.
+  2. Withdraw the two exercises. Cheaper, and loses the only route to vigorous work for a user with
+     no equipment at all.
+- **Recommendation:** option 1, because "no equipment" is a common case and currently gets recovery
+  sessions only. It is not a small change — `Modality` is documented as the single extension point
+  and adding one requires MET values, 12 exercises and a decision entry.
+- **Status:** open. Not urgent: nothing is broken, two pieces of content are simply inert.
 
 ### KI-0015 — The safety notice cannot be read again from Settings
 - **Date:** 2026-07-30
