@@ -1,0 +1,162 @@
+{
+  "$comment": [
+    "MET values from the 2024 Adult Compendium of Physical Activities (pacompendium2024).",
+    "Formula: kcal = MET x body mass in kg x hours.",
+    "RULES: every value must carry its Compendium activity code. If no code exists for an",
+    "activity, set 'approximated_from' and add a matching assumption entry to",
+    "project_memory/assumptions.md. Never invent a MET value.",
+    "This file is the reference the exercise catalogue is authored against; the values that",
+    "ship are the met_value fields in app/src/main/assets/exercises_seed.json."
+  ],
+  "source": "2024 Adult Compendium of Physical Activities",
+  "source_key": "pacompendium2024",
+  "retrieved": "2026-07-30",
+  "formula": "kcal = met * bodyMassKg * hours",
+  "activities": [
+    {
+      "label": "Elliptical trainer, moderate effort",
+      "code": "02048",
+      "met": 5.0,
+      "modality": "elliptical",
+      "intensity": "zone_2"
+    },
+    {
+      "label": "Elliptical trainer, vigorous effort",
+      "code": "02049",
+      "met": 9.0,
+      "modality": "elliptical",
+      "intensity": "vigorous"
+    },
+    {
+      "label": "Bicycling, stationary, RPM/Spin bike class",
+      "code": "01270",
+      "met": 9.0,
+      "modality": "spin_bike",
+      "intensity": "zone_2"
+    },
+    {
+      "label": "Bicycling, stationary, 126-150 watts",
+      "code": "01228",
+      "met": 8.0,
+      "modality": "spin_bike",
+      "intensity": "threshold"
+    },
+    {
+      "label": "Bicycling, stationary, 200-229 watts, vigorous",
+      "code": "01236",
+      "met": 10.8,
+      "modality": "spin_bike",
+      "intensity": "threshold"
+    },
+    {
+      "label": "Bicycling, stationary, 230-250 watts, very vigorous",
+      "code": "01240",
+      "met": 12.5,
+      "modality": "spin_bike",
+      "intensity": "vigorous"
+    },
+    {
+      "label": "Bicycling, high intensity interval training",
+      "code": "01305",
+      "met": 8.8,
+      "modality": "spin_bike",
+      "intensity": "vigorous"
+    },
+    {
+      "label": "Bicycling, stationary, 50 watts, light effort",
+      "code": "01214",
+      "met": 4.0,
+      "modality": "spin_bike",
+      "intensity": "recovery"
+    },
+    {
+      "label": "Bicycling, stationary, 25-30 watts, very light to light effort",
+      "code": "01210",
+      "met": 3.5,
+      "modality": "spin_bike",
+      "intensity": "recovery",
+      "$note": "Also used as the ACTIVE_RECOVERY MET in EstimateEnergyExpenditure."
+    },
+    {
+      "label": "Pilates, traditional, mat",
+      "code": "02103",
+      "met": 1.8,
+      "modality": "floor_pilates",
+      "intensity": "recovery"
+    },
+    {
+      "label": "Pilates, general",
+      "code": "02105",
+      "met": 2.8,
+      "modality": "floor_pilates",
+      "intensity": "recovery"
+    },
+    {
+      "label": "Pilates, general (used for reformer)",
+      "code": "02105",
+      "met": 2.8,
+      "modality": "reformer_pilates",
+      "intensity": "recovery",
+      "approximated_from": "02105",
+      "$note": "The 2024 Compendium has no reformer entry. See assumptions.md A-0004. Likely an underestimate; underestimating expenditure is the safe direction."
+    },
+    {
+      "label": "Calisthenics, light effort (curl ups, crunches, plank)",
+      "code": "02024",
+      "met": 2.8,
+      "modality": "floor_pilates",
+      "intensity": "recovery"
+    },
+    {
+      "label": "Calisthenics, moderate effort (pushups, sit ups, lunges)",
+      "code": "02022",
+      "met": 3.8,
+      "modality": "floor_pilates",
+      "intensity": "zone_2"
+    },
+    {
+      "label": "Calisthenics, vigorous effort (burpees, jumping jacks)",
+      "code": "02020",
+      "met": 7.5,
+      "modality": "floor_pilates",
+      "intensity": "vigorous"
+    },
+    {
+      "label": "High intensity interval exercise, moderate effort",
+      "code": "02210",
+      "met": 7.0,
+      "modality": "floor_pilates",
+      "intensity": "threshold"
+    },
+    {
+      "label": "Stretching, mild",
+      "code": "02101",
+      "met": 2.3,
+      "modality": "floor_pilates",
+      "intensity": "recovery"
+    },
+    {
+      "label": "Aerobic, general",
+      "code": "02000",
+      "met": 7.3,
+      "modality": null,
+      "intensity": "threshold"
+    },
+    {
+      "label": "Walking / marching in place, slow",
+      "code": "01210",
+      "met": 3.5,
+      "modality": "floor_pilates",
+      "intensity": "recovery",
+      "$note": "Used for the march-in-place warm-up; the closest documented very-light continuous entry."
+    },
+    {
+      "label": "Sitting quietly",
+      "code": "07021",
+      "met": 1.3,
+      "modality": null,
+      "intensity": "rest",
+      "$note": "The RESTING_MET in EstimateEnergyExpenditure. Rest segments are charged at this rather than zero (D-0006)."
+    }
+  ]
+}

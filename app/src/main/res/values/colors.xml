@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Matches Palette.Teal40 in core:designsystem. Change both together. -->
+    <color name="splash_background">#00201C</color>
+    <color name="launcher_background">#00201C</color>
+</resources>

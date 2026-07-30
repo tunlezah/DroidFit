@@ -1,0 +1,69 @@
+# VisceralFit detekt configuration.
+# `buildUponDefaultConfig = true` is set in the root build file, so this file only
+# records deliberate deviations. Every deviation needs a one-line reason.
+
+build:
+  maxIssues: 0
+
+formatting:
+  active: true
+  android: true
+  autoCorrect: false
+  # Compose @Composable functions are PascalCase by convention; ktlint's naming
+  # rule would flag every one of them.
+  FunctionNaming:
+    active: false
+  # Compose builders legitimately produce long argument lists.
+  MaximumLineLength:
+    active: true
+    maxLineLength: 120
+
+complexity:
+  LongParameterList:
+    active: true
+    # Compose state hoisting means screen composables take many lambdas.
+    functionThreshold: 9
+    constructorThreshold: 9
+    ignoreAnnotated: ['Composable', 'Inject']
+  TooManyFunctions:
+    active: true
+    ignoreAnnotatedFunctions: ['Composable']
+    thresholdInFiles: 20
+    thresholdInClasses: 20
+  LongMethod:
+    active: true
+    threshold: 80
+    ignoreAnnotated: ['Composable', 'Preview']
+
+naming:
+  FunctionNaming:
+    active: true
+    ignoreAnnotated: ['Composable']
+  TopLevelPropertyNaming:
+    active: true
+    constantPattern: '[A-Z][_A-Za-z0-9]*'
+
+style:
+  MagicNumber:
+    active: true
+    ignoreAnnotated: ['Composable', 'Preview']
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+  MaxLineLength:
+    active: true
+    maxLineLength: 120
+    excludeCommentStatements: true
+  # Explicit `return@` labels in coroutine builders read better than the
+  # alternative; the rule fights the codebase more than it helps.
+  ReturnCount:
+    active: true
+    max: 4
+  UnusedPrivateMember:
+    active: true
+    ignoreAnnotated: ['Preview']
+
+exceptions:
+  TooGenericExceptionCaught:
+    active: true
+    # Android TTS and MediaPlayer both surface failures as bare Exception.
+    excludes: ['**/speech/**']

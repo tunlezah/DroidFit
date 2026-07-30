@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Only the pre-Compose splash theme lives in XML. Everything else is themed in
+      Compose (core:designsystem). Keeping a second, XML-based source of colour
+      truth is how light/dark inconsistencies creep in.
+    -->
+    <style name="Theme.VisceralFit.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
+        <item name="postSplashScreenTheme">@style/Theme.VisceralFit</item>
+    </style>
+
+    <style name="Theme.VisceralFit" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

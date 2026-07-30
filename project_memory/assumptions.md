@@ -1,0 +1,124 @@
+# Assumptions
+
+Things taken as true without confirmation. Every one is a place the project could be
+wrong. Template: `_templates/entry_templates.md`. Numbering: `A-NNNN`.
+
+**Read this file at the start of every phase.** If a phase gives you the information to
+settle an open assumption, settle it and update the status — do not leave a confirmed
+assumption marked open.
+
+---
+
+### A-0001 — The target device is a Motorola Edge 60 running Android 15
+- **Date:** 2026-07-30
+- **Assumption:** The primary device is the Motorola Edge 60 (2025): 6.67" pOLED,
+  2712×1220 (444 ppi), 120 Hz, HDR10+, MediaTek Dimensity 7300, 5200 mAh, shipping
+  Android 15 (API 35).
+- **Why we had to assume:** The operator named the phone but not the exact variant. The
+  Edge 60, Edge 60 Pro, Edge 60 Fusion and Edge 60 Stylus differ in chipset and panel.
+- **Confidence:** high for the base Edge 60; medium that the operator does not actually
+  have a Pro or Fusion.
+- **How to confirm:** Settings → About phone → Model, and Android version.
+- **If wrong:** Minor. The differences that matter to this app are screen size, refresh
+  rate and OS version; nothing in the design depends on the chipset. A Fusion has a flat
+  panel rather than curved, which only affects edge-inset padding.
+- **Status:** open
+
+### A-0002 — The operator has access to an elliptical and a spin bike, but not a reformer
+- **Date:** 2026-07-30
+- **Assumption:** Default `availableEquipment` is elliptical + spin bike; reformer is off.
+- **Why we had to assume:** All four modalities were requested, but a reformer is a
+  £1,500+ machine and its inclusion in a list is not evidence of ownership.
+- **Confidence:** medium.
+- **How to confirm:** Ask, or observe which equipment toggles the operator turns on at
+  first run.
+- **If wrong:** Trivial and self-correcting — the Settings screen fixes it in two taps,
+  and the defaults are only defaults.
+- **Status:** open
+
+### A-0003 — "Custom" workout duration means 3–120 minutes
+- **Date:** 2026-07-30
+- **Assumption:** Custom duration accepts 3 to 120 minutes in 1-minute steps, alongside
+  the eight presets the PRD lists.
+- **Why we had to assume:** The PRD says "Custom" without bounds. Unbounded input allows
+  a 0-minute or 47-hour session, both of which break the generator.
+- **Confidence:** medium-high. 3 minutes is the shortest session that can contain a
+  warm-up, one work interval and a cool-down; 120 minutes is double the longest preset.
+- **How to confirm:** Ask, or ship it and see whether anyone hits the ceiling.
+- **If wrong:** Bounds are one constant in `framework/07_workout_engine_spec.md`.
+- **Status:** open
+
+### A-0004 — Reformer MET value is approximated by "Pilates, general"
+- **Date:** 2026-07-30
+- **Assumption:** Reformer Pilates energy cost is estimated at 2.8 MET, the Compendium's
+  "Pilates, general" value (code 02105).
+- **Why we had to assume:** The 2024 Adult Compendium has no reformer-specific entry. Its
+  Pilates entries are mat-based: 1.8 (traditional mat) and 2.8 (general).
+- **Confidence:** low. Spring-loaded resistance work plausibly costs more than mat work,
+  and the true figure may be meaningfully higher.
+- **How to confirm:** Search for a reformer-specific indirect-calorimetry study; if none
+  exists, keep the approximation and keep it labelled.
+- **If wrong:** The energy estimate for reformer sessions is low. This is the *safe*
+  direction to be wrong in — under-reporting expenditure does not encourage over-eating
+  — and the figure is labelled "estimated" throughout. Recorded as a caveat in
+  `research_summary.md` R-0006.
+- **Status:** open
+
+### A-0005 — Users have, or can install, a text-to-speech engine with voice data
+- **Date:** 2026-07-30
+- **Assumption:** Spoken coaching works because the device has a TTS engine with data
+  for the user's locale. Most Android devices ship Google TTS, but voice data is not
+  always downloaded, and it may be absent on a device that has never been online.
+- **Why we had to assume:** The app cannot bundle a speech engine, and cannot download
+  voice data (no INTERNET permission).
+- **Confidence:** high that it works; certain that it sometimes will not.
+- **How to confirm:** Handled in code rather than by confirmation —
+  `SpeechState.Unavailable` is a first-class state with four distinguished reasons, and
+  the workout runs without speech using tones and haptics.
+- **If wrong:** Degraded, not broken. Phase 08 must include a manual test with TTS
+  disabled at the OS level.
+- **Status:** confirmed by design 2026-07-30 (mitigated rather than removed)
+
+### A-0006 — English (UK) only for v1
+- **Date:** 2026-07-30
+- **Assumption:** `resourceConfigurations` is limited to `en` and `en-rGB`. Exercise
+  content is authored in British English.
+- **Why we had to assume:** No localisation requirement was given, and exercise cue
+  content is the expensive part to translate — roughly 60 exercises × 6 text fields.
+- **Confidence:** high.
+- **How to confirm:** Ask whether any other language is needed.
+- **If wrong:** Significant work. The catalogue would need a per-locale asset and the
+  TTS locale handling would need to follow the content language rather than the system
+  locale. Hooks noted in `future_features.md` FF-0007.
+- **Status:** open
+
+### A-0007 — The operator is a healthy adult without exercise contraindications
+- **Date:** 2026-07-30
+- **Assumption:** The default programme includes vigorous intervals at 85–95% HRmax,
+  which assumes the user is cleared for vigorous exercise.
+- **Why we had to assume:** No health information was provided, and asking for a medical
+  history is out of scope for an offline app with no clinical role.
+- **Confidence:** unknown — this is the assumption with the largest consequence if wrong.
+- **How to confirm:** Cannot be confirmed by the app. Mitigated instead: a safety notice
+  is shown before the first session and must be acknowledged
+  (`safetyNoticeAcknowledged`), advanced content is gated behind an explicit level
+  choice, exercises carry `cautionTags` the user can exclude, and every hard interval
+  carries a stop-if-symptoms safety note.
+- **If wrong:** Potentially serious. This is why the default experience level is
+  BEGINNER and the default style is MIXED rather than HIIT, and why the app never
+  auto-escalates a user to advanced content.
+- **Status:** open — mitigated, not resolved. **Do not weaken these mitigations.**
+
+### A-0008 — Waist circumference is a trend indicator the user measures themselves
+- **Date:** 2026-07-30
+- **Assumption:** Self-measured waist circumference has roughly ±1 cm of error, so
+  changes below 1 cm are not reported as a trend.
+- **Why we had to assume:** Self-measurement reliability varies with tape placement,
+  breathing and time of day; no per-user error estimate is available.
+- **Confidence:** medium.
+- **How to confirm:** Literature on self-measured waist reliability; or have the operator
+  measure three times in one sitting and observe the spread.
+- **If wrong:** The threshold is one constant, `MEANINGFUL_CHANGE_CM`. Being too
+  conservative means a real change is called "roughly unchanged" for a week longer than
+  necessary — preferable to reporting noise as progress.
+- **Status:** open

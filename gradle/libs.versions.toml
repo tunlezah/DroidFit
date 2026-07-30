@@ -1,0 +1,140 @@
+# VisceralFit dependency version catalogue — SINGLE SOURCE OF TRUTH.
+#
+# RULES FOR THE BUILDING AGENT:
+#   1. Never write a version literal in a module build.gradle.kts. Add it here.
+#   2. Never bump a version without recording it in
+#      /project_memory/decisions.md with the reason and the verified build result.
+#   3. The version set below was verified to assemble on JDK 21 / Gradle 8.14.3
+#      with the Android SDK at compileSdk 36. Treat it as a known-good baseline.
+#      If you bump anything and the build breaks, revert to this baseline first
+#      and re-attempt one change at a time.
+
+[versions]
+# --- Build toolchain (see /framework/14_ci_cd_and_release.md) ---
+agp = "8.13.2"
+kotlin = "2.2.21"
+ksp = "2.2.21-2.0.5"
+jvmTarget = "17"
+
+# --- SDK levels (see /framework/15_device_targets_motorola_edge_60.md) ---
+compileSdk = "36"
+targetSdk = "36"
+minSdk = "29"
+
+# --- AndroidX / Compose ---
+androidxCore = "1.17.0"
+androidxActivity = "1.12.4"
+androidxLifecycle = "2.9.4"
+androidxNavigation = "2.9.8"
+androidxSplashscreen = "1.0.1"
+composeBom = "2026.05.01"
+androidxDatastore = "1.1.7"
+androidxRoom = "2.8.4"
+androidxWork = "2.10.5"
+androidxHiltNavCompose = "1.3.0"
+androidxHiltWork = "1.3.0"
+
+# --- DI ---
+hilt = "2.58"
+
+# --- Kotlin ecosystem ---
+coroutines = "1.10.2"
+kotlinxSerialization = "1.9.0"
+kotlinxDatetime = "0.7.1"
+kotlinxCollectionsImmutable = "0.4.0"
+
+# --- Quality ---
+detekt = "1.23.8"
+
+# --- Test ---
+junit4 = "4.13.2"
+androidxTestJunit = "1.3.0"
+androidxTestCore = "1.7.0"
+androidxTestRunner = "1.7.0"
+androidxEspresso = "3.7.0"
+turbine = "1.2.1"
+mockk = "1.14.11"
+robolectric = "4.16"
+kotlinxCoroutinesTest = "1.10.2"
+
+[libraries]
+# --- AndroidX foundation ---
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidxCore" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivity" }
+androidx-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidxSplashscreen" }
+
+# --- Lifecycle ---
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidxLifecycle" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
+androidx-lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "androidxLifecycle" }
+
+# --- Compose (versions come from the BOM, never pin them individually) ---
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+androidx-compose-foundation = { module = "androidx.compose.foundation:foundation" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
+androidx-compose-material3-windowsizeclass = { module = "androidx.compose.material3:material3-window-size-class" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui" }
+androidx-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
+
+# --- Navigation ---
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigation" }
+androidx-navigation-testing = { module = "androidx.navigation:navigation-testing", version.ref = "androidxNavigation" }
+
+# --- Persistence ---
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidxRoom" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "androidxRoom" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidxRoom" }
+androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "androidxRoom" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidxDatastore" }
+
+# --- Background work ---
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "androidxWork" }
+androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "androidxHiltWork" }
+androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "androidxHiltWork" }
+
+# --- DI ---
+hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidxHiltNavCompose" }
+
+# --- Kotlin ecosystem ---
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
+# Lets :domain use @Inject constructors without pulling in the Android-only Hilt runtime.
+javax-inject = { module = "javax.inject:javax.inject", version = "1" }
+
+# --- Quality ---
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+
+# --- Test ---
+junit4 = { module = "junit:junit", version.ref = "junit4" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+androidx-test-core = { module = "androidx.test:core-ktx", version.ref = "androidxTestCore" }
+androidx-test-junit = { module = "androidx.test.ext:junit", version.ref = "androidxTestJunit" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidxEspresso" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }

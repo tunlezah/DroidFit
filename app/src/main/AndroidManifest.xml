@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+      PERMISSION POLICY (see /framework/05_architecture.md §Privacy):
+      This app requests no INTERNET permission. That is the enforcement mechanism
+      behind the offline-first guarantee, not just a promise: any dependency that
+      tries to phone home fails at runtime and is caught in testing. Do not add
+      android.permission.INTERNET without an entry in
+      /project_memory/architecture_decisions.md explaining why the guarantee is
+      being weakened.
+    -->
+
+    <!-- Foreground service so a running workout survives the user switching apps. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <!-- Post the workout-in-progress notification. Runtime-requested on API 33+. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <!-- Lets the app detect whether a text-to-speech engine is installed. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
+
+    <application
+        android:name=".VisceralFitApplication"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.VisceralFit.Starting">
+
+        <!--
+          No android:configChanges here on purpose. Letting the activity recreate on
+          rotation and on theme change is what makes the rotation and dark-mode test
+          suites meaningful; swallowing config changes would hide state-restoration
+          bugs rather than fix them. Workout timer state survives recreation because
+          it lives in the foreground service, not in the activity.
+        -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.VisceralFit.Starting"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

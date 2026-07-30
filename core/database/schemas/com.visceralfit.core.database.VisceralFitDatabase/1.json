@@ -1,0 +1,290 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "d86ffe33b70a9f28f2e758f97a4754f3",
+    "entities": [
+      {
+        "tableName": "exercises",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `modality` TEXT NOT NULL, `difficulty` TEXT NOT NULL, `met_value` REAL NOT NULL, `how_to` TEXT NOT NULL, `spoken_instruction` TEXT NOT NULL, `safety_notes` TEXT NOT NULL, `common_mistakes` TEXT NOT NULL, `muscles_worked` TEXT NOT NULL, `illustration_id` TEXT NOT NULL, `caution_tags` TEXT NOT NULL, `is_per_side` INTEGER NOT NULL, `evidence_keys` TEXT NOT NULL, `seed_version` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modality",
+            "columnName": "modality",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "difficulty",
+            "columnName": "difficulty",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "metValue",
+            "columnName": "met_value",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "howTo",
+            "columnName": "how_to",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "spokenInstruction",
+            "columnName": "spoken_instruction",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "safetyNotes",
+            "columnName": "safety_notes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "commonMistakes",
+            "columnName": "common_mistakes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "musclesWorked",
+            "columnName": "muscles_worked",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "illustrationId",
+            "columnName": "illustration_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cautionTags",
+            "columnName": "caution_tags",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPerSide",
+            "columnName": "is_per_side",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "evidenceKeys",
+            "columnName": "evidence_keys",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "seedVersion",
+            "columnName": "seed_version",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_exercises_modality",
+            "unique": false,
+            "columnNames": [
+              "modality"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_exercises_modality` ON `${TABLE_NAME}` (`modality`)"
+          },
+          {
+            "name": "index_exercises_difficulty",
+            "unique": false,
+            "columnNames": [
+              "difficulty"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_exercises_difficulty` ON `${TABLE_NAME}` (`difficulty`)"
+          }
+        ]
+      },
+      {
+        "tableName": "sessions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `workout_id` TEXT NOT NULL, `title` TEXT NOT NULL, `style` TEXT NOT NULL, `modalities` TEXT NOT NULL, `started_at_epoch_ms` INTEGER NOT NULL, `completed_at_epoch_ms` INTEGER NOT NULL, `active_seconds` INTEGER NOT NULL, `estimated_kcal` INTEGER, `perceived_exertion` INTEGER, `completion_ratio` REAL NOT NULL, `note` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "workoutId",
+            "columnName": "workout_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "style",
+            "columnName": "style",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "modalities",
+            "columnName": "modalities",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startedAtEpochMs",
+            "columnName": "started_at_epoch_ms",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "completedAtEpochMs",
+            "columnName": "completed_at_epoch_ms",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "activeSeconds",
+            "columnName": "active_seconds",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "estimatedKcal",
+            "columnName": "estimated_kcal",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "perceivedExertion",
+            "columnName": "perceived_exertion",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "completionRatio",
+            "columnName": "completion_ratio",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "note",
+            "columnName": "note",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_sessions_started_at_epoch_ms",
+            "unique": false,
+            "columnNames": [
+              "started_at_epoch_ms"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_sessions_started_at_epoch_ms` ON `${TABLE_NAME}` (`started_at_epoch_ms`)"
+          },
+          {
+            "name": "index_sessions_style",
+            "unique": false,
+            "columnNames": [
+              "style"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_sessions_style` ON `${TABLE_NAME}` (`style`)"
+          }
+        ]
+      },
+      {
+        "tableName": "measurements",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `kind` TEXT NOT NULL, `recorded_on_epoch_day` INTEGER NOT NULL, `value` REAL NOT NULL, `unit` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kind",
+            "columnName": "kind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recordedOnEpochDay",
+            "columnName": "recorded_on_epoch_day",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "value",
+            "columnName": "value",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "unit",
+            "columnName": "unit",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_measurements_kind_recorded_on_epoch_day",
+            "unique": true,
+            "columnNames": [
+              "kind",
+              "recorded_on_epoch_day"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_measurements_kind_recorded_on_epoch_day` ON `${TABLE_NAME}` (`kind`, `recorded_on_epoch_day`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd86ffe33b70a9f28f2e758f97a4754f3')"
+    ]
+  }
+}
