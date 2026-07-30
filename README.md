@@ -55,21 +55,29 @@ Every claim the app makes is traced to a citation in
 **Working and verified:**
 
 - Multi-module Gradle build (13 modules), compiling on JDK 21 / Gradle 8.14.3 / AGP 8.13.2
-- Debug APK 32.58 MB; minified release APK **2.38 MB**
-- CI: detekt (with ktlint rules), unit tests, APK build, APK verification and size gate
-- Domain models, Room schema, DataStore preferences, TTS coach, theme and design tokens
-- Settings screen fully functional end to end — the vertical slice proving Compose, Hilt,
-  DataStore and navigation are correctly wired
-- 14 exercises seeded, evidence base researched and cited
+- Minified release APK **2.63 MB**, debug-signed so it sideloads without a keystore
+- CI: framework data checks, architecture compliance, detekt (with ktlint rules), unit tests,
+  APK build, APK verification and size gate
+- **A session runs end to end:** choose a duration and style, generate a plan, run it with a
+  countdown that survives rotation and backgrounding, pause, skip, end early or finish, and have
+  it recorded
+- Workout generator implemented to specification, with a golden-file test that reproduces the
+  spec's worked example segment for segment and invariants asserted across 1,680 requests
+- 65 exercises authored to the content standard, validated in CI
+- Safety notice shown and acknowledged before first use
+- Weekly training load, vigorous minutes and rest-day advice computed from real history
+- Settings screen fully functional end to end
 
-**Not yet built — the release blockers:**
+**All four release blockers are closed** (`KI-0001`, `KI-0002`, `KI-0004`, `KI-0005`). What is
+*not* done is tracked honestly rather than implied complete:
 
-| Blocker | Meaning | Phase |
+| Gap | Meaning | Phase |
 |---|---|---|
-| `KI-0001` | **No workout can be performed.** The generator is specified but unimplemented | 06 |
-| `KI-0002` | Weekly minutes always reads 0 — a *wrong* number, not a missing one | 09 |
-| `KI-0005` | The safety notice is never shown; no onboarding exists | 07 |
-| `KI-0004` | 14 exercises, below what the generator needs for variety | 02 |
+| `KI-0017` | **None of the player has run on a device.** The clock is unit-tested; nothing has been seen | 07 |
+| `KI-0018` | No spoken coaching yet — the player is silent | 08 |
+| `KI-0016` | `POST_NOTIFICATIONS` is never requested, so session controls may not appear on API 33+ | 07 |
+| `KI-0014` | Three engine faults passed every invariant test; the test gap is not closed | 06 |
+| `KI-0003` | Most exercises render the placeholder illustration | 03 |
 
 Full detail in [`project_memory/known_issues.md`](project_memory/known_issues.md).
 
