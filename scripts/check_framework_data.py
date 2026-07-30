@@ -175,6 +175,46 @@ check(
     ", ".join(missing_symptom_note),
 )
 
+# --- catalogue balance requirements (08_exercise_library_spec.md §1, §4) -----------
+# Stated as minimums in prose, which is how the catalogue drifted below them before.
+MODALITY_MINIMUMS = {"floor_pilates": 24, "reformer_pilates": 10, "elliptical": 8, "spin_bike": 12}
+by_modality: dict[str, list[dict]] = {}
+for exercise in catalogue["exercises"]:
+    by_modality.setdefault(exercise["modality"], []).append(exercise)
+
+for modality, minimum in MODALITY_MINIMUMS.items():
+    found = len(by_modality.get(modality, []))
+    check(f"{modality}: at least {minimum} exercises", found >= minimum, f"found {found}")
+
+for modality in MODALITY_MINIMUMS:
+    entries = by_modality.get(modality, [])
+    for level in ("beginner", "intermediate", "advanced"):
+        found = sum(1 for e in entries if e["difficulty"] == level)
+        check(f"{modality}: at least 3 {level} exercises", found >= 3, f"found {found}")
+    untagged = sum(1 for e in entries if not e.get("caution_tags"))
+    check(
+        f"{modality}: at least 4 exercises with no caution tags",
+        untagged >= 4,
+        f"found {untagged} — a user with several exclusions needs a workable session",
+    )
+
+pool_minimums = [
+    ("mobility pool (MET <= 2.5)", 6, lambda e: e["met_value"] <= 2.5),
+    (
+        "warm-up pool (Pilates at MET <= 4.0)",
+        6,
+        lambda e: e["met_value"] <= 4.0 and e["modality"].endswith("pilates"),
+    ),
+    (
+        "vigorous pool (machine at MET >= 8.0)",
+        4,
+        lambda e: e["met_value"] >= 8.0 and e["modality"] in ("elliptical", "spin_bike"),
+    ),
+]
+for label, minimum, predicate in pool_minimums:
+    found = sum(1 for e in catalogue["exercises"] if predicate(e))
+    check(f"{label}: at least {minimum} exercises", found >= minimum, f"found {found}")
+
 # --- documented module count matches settings.gradle.kts --------------------------
 # Counts stated in prose drift. This one was wrong (11 stated, 13 actual) until checked.
 settings_text = (ROOT / "settings.gradle.kts").read_text()

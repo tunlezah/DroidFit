@@ -110,3 +110,32 @@ later reader can check the interpretation against the source.
 - **Still open:** All of these are open assumptions rather than confirmed requirements.
   The building agent should surface them to the operator at the first natural checkpoint —
   phase 00's exit criteria include exactly that.
+
+### UF-0005 — Build the app, with a CI pipeline, and watch it build
+- **Date:** 2026-07-30
+- **Phase:** 02 and 06
+- **Verbatim:**
+  > Follow the guidance in framework/00_START_HERE.md and start building this app. There are
+  > other files that you should look into the context of as you build. Decisions are in these
+  > files, you must build a robust app, a CI pipeline in GitHub and monitor it to ensure it
+  > builds. It will be sideloaded so no signing needed.
+- **Interpretation:**
+  1. Work the phase sequence in `framework/prompts/`, treating the framework's recorded
+     decisions as settled rather than re-litigating them.
+  2. "Robust" is the reason the phases with the most test surface — 02's catalogue validation
+     and 06's engine invariants — were done first and thoroughly, rather than reaching for
+     screens.
+  3. "A CI pipeline in GitHub and monitor it" — the workflow already existed and was green at
+     the framework commit; the instruction is to keep it green as work lands, and to check it
+     rather than assume.
+  4. "Sideloaded so no signing needed" **confirms ADR-0002**: the release variant is
+     debug-signed on purpose, so the APK installs with "install unknown apps" enabled and no
+     keystore or secret is needed. No change was required; this closes the question rather
+     than opening it. Note the distinction the operator's phrasing glosses over: Android will
+     not install a genuinely *unsigned* APK, so "no signing" means "no *release* signing",
+     which is what the pipeline already does.
+- **Action taken:** phases 02 and 06 completed and pushed; CI watched to green on each push.
+- **Still open:** the phase-00 assumption questions (A-0001..A-0008) have **not** been
+  answered. A-0007 in particular — whether the operator is cleared for vigorous exercise —
+  has a safety dimension and gates whether the default programme is appropriate. It is asked
+  again in the summary of this work.

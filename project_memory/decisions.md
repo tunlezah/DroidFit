@@ -9,6 +9,7 @@ Append-only log of choices with more than one defensible answer. Template:
 
 | Phase | Completed | New assumptions? | Notes |
 |---|---|---|---|
+| 02 — Content authoring | 2026-07-30 | Yes — A-0009 | Catalogue grown 14 → 65 exercises; KI-0004 and KI-0006 closed. Balance and pool minimums now checked rather than counted. D-0019 |
 | Framework authoring (phase −1) | 2026-07-30 | Yes — A-0001..A-0008 | Framework, skeleton and CI created. Verified locally: `qualityCheck` green, release APK 2.38 MB, debug APK 32.58 MB. D-0001..D-0016, ADR-0001..ADR-0012, KI-0001..KI-0008, TD-0001..TD-0008, R-0001..R-0008, FF-0001..FF-0009, UF-0001..UF-0004 |
 
 ---
@@ -307,3 +308,23 @@ Append-only log of choices with more than one defensible answer. Template:
   them.
 - **Affects:** `scripts/check_framework_data.py`, CI, phase 06's step 0 and exit criteria, the
   per-phase checklist.
+
+### D-0019 — The exercise catalogue is grown to 65, not the minimum 54
+- **Date:** 2026-07-30
+- **Phase:** 02
+- **Decision:** Author 65 exercises (floor Pilates 28, spin bike 13, reformer 13, elliptical 11)
+  against the minimums in `framework/08_exercise_library_spec.md` §1 (54 total).
+- **Alternatives considered:**
+  - *Hit the minimums exactly.* Rejected: the per-modality, per-level and per-pool minimums are
+    simultaneous constraints, and satisfying them all at exactly the totals leaves a catalogue with
+    no slack. Excluding one caution tag then empties a pool and the generator starts falling back.
+  - *Author many more.* Rejected for now: content depth is the binding constraint, not count, and
+    each exercise is five authored prose fields that are health guidance.
+- **Reason:** "At least 4 exercises with no caution tags per modality" was the hardest constraint to
+  meet, and it is the one that matters most: a user with several exclusions must still get a
+  session. Meeting it needed genuinely untagged movements added on purpose, not trimmed tags.
+- **Reverses if:** the pool minimums change, or a modality is added.
+- **Affects:** `app/src/main/assets/exercises_seed.json` (version 3),
+  `scripts/check_framework_data.py`, `ExerciseCatalogueValidationTest`.
+- **Verification:** 57 framework data checks and 17 catalogue validation tests, both in CI.
+

@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "exercises": [
     {
       "id": "floor_pilates_dead_bug",
@@ -371,6 +371,1355 @@
       "caution_tags": [],
       "is_per_side": false,
       "evidence_keys": ["acsm2021"]
+    },
+    {
+      "id": "floor_pilates_breathing_lateral",
+      "name": "Lateral breathing",
+      "modality": "floor_pilates",
+      "difficulty": "beginner",
+      "met_value": 1.8,
+      "how_to": [
+        "Sit or lie comfortably and rest your hands on the sides of your lower ribs.",
+        "Breathe in through your nose and feel your ribs widen sideways into your hands.",
+        "Breathe out through your mouth and feel the ribs close and soften downward.",
+        "Keep your shoulders still throughout, so the movement happens in the ribs rather than the neck."
+      ],
+      "spoken_instruction": "Lateral breathing. Feel your ribs widen sideways into your hands, then soften them down.",
+      "safety_notes": ["Breathe at a comfortable depth; stop if you feel light-headed."],
+      "common_mistakes": [
+        "Lifting the shoulders on the in-breath instead of widening the ribs.",
+        "Forcing the breath so deep that the neck and jaw tighten."
+      ],
+      "muscles_worked": ["Diaphragm", "Deep abdominals"],
+      "illustration_id": "pilates_breathing",
+      "caution_tags": [],
+      "is_per_side": false,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "floor_pilates_cat_cow",
+      "name": "Cat cow",
+      "modality": "floor_pilates",
+      "difficulty": "beginner",
+      "met_value": 1.8,
+      "how_to": [
+        "Kneel on all fours with your hands under your shoulders and knees under your hips.",
+        "Breathe out and round your spine upward, drawing your navel toward your spine.",
+        "Breathe in and reverse the curve, letting your chest open and your tailbone lift.",
+        "Move at the pace of your breath, taking about three seconds in each direction."
+      ],
+      "spoken_instruction": "Cat cow. Round the spine as you breathe out, open the chest as you breathe in.",
+      "safety_notes": [
+        "Move within a comfortable range; this should feel like articulation, never a pinch.",
+        "Put a folded towel under your knees if kneeling is uncomfortable."
+      ],
+      "common_mistakes": [
+        "Moving only the lower back, so the mid-spine never articulates.",
+        "Locking the elbows and pushing through the wrists."
+      ],
+      "muscles_worked": ["Spinal muscles", "Deep abdominals"],
+      "illustration_id": "pilates_cat_cow",
+      "caution_tags": ["wrist", "knee"],
+      "is_per_side": false,
+      "evidence_keys": ["wang2021pilates", "acsm2021"]
+    },
+    {
+      "id": "floor_pilates_spine_twist_supine",
+      "name": "Supine spine twist",
+      "modality": "floor_pilates",
+      "difficulty": "beginner",
+      "met_value": 2.3,
+      "how_to": [
+        "Lie on your back with your knees bent and feet flat, arms out to the sides.",
+        "Keep your shoulders on the mat and let both knees drop slowly to one side.",
+        "Stop as soon as the opposite shoulder wants to lift, then return through the middle.",
+        "Alternate sides, breathing out as the knees travel."
+      ],
+      "spoken_instruction": "Supine twist. Let both knees drop to one side, keeping both shoulders on the mat.",
+      "safety_notes": [
+        "Stop the rotation before the opposite shoulder lifts; forcing it loads the lower back.",
+        "Keep the movement slow — never let the legs swing."
+      ],
+      "common_mistakes": [
+        "Letting the top shoulder peel off the mat to get more range.",
+        "Using momentum instead of control to change sides."
+      ],
+      "muscles_worked": ["Obliques", "Spinal muscles"],
+      "illustration_id": "pilates_supine_twist",
+      "caution_tags": ["lower_back"],
+      "is_per_side": true,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "floor_pilates_leg_slides",
+      "name": "Heel slides",
+      "modality": "floor_pilates",
+      "difficulty": "beginner",
+      "met_value": 2.8,
+      "how_to": [
+        "Lie on your back with your knees bent and feet flat, hip-width apart.",
+        "Find a neutral pelvis, so your lower back is neither arched nor flattened hard into the mat.",
+        "Slide one heel slowly away along the floor until the leg is nearly straight.",
+        "Stop the moment your pelvis wants to tip, then slide the heel back and change legs."
+      ],
+      "spoken_instruction": "Heel slides. Slide one heel away along the floor while your pelvis stays completely still.",
+      "safety_notes": ["Shorten the slide as soon as your pelvis tips or your back arches."],
+      "common_mistakes": [
+        "Sliding so far that the pelvis tilts, which moves the work off the deep abdominals.",
+        "Holding the breath while the leg travels."
+      ],
+      "muscles_worked": ["Deep abdominals", "Hip flexors"],
+      "illustration_id": "pilates_heel_slides",
+      "caution_tags": [],
+      "is_per_side": true,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "floor_pilates_bird_dog",
+      "name": "Bird dog",
+      "modality": "floor_pilates",
+      "difficulty": "beginner",
+      "met_value": 2.8,
+      "how_to": [
+        "Kneel on all fours with your hands under your shoulders and a long, level spine.",
+        "Reach one arm forward and the opposite leg back until both are level with your torso.",
+        "Hold for two breaths without letting your hips tilt or your back arch.",
+        "Return slowly and change sides."
+      ],
+      "spoken_instruction": "Bird dog. Reach the opposite arm and leg long, keeping your hips level.",
+      "safety_notes": [
+        "Lift the limbs only as high as you can keep the pelvis level.",
+        "Come down if the supporting wrist begins to ache."
+      ],
+      "common_mistakes": [
+        "Lifting the leg higher than the hip, which arches the lower back.",
+        "Letting the hips rotate toward the lifted leg."
+      ],
+      "muscles_worked": ["Deep abdominals", "Glutes", "Spinal muscles"],
+      "illustration_id": "pilates_bird_dog",
+      "caution_tags": ["wrist", "knee"],
+      "is_per_side": true,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "floor_pilates_clam_shell",
+      "name": "Clam",
+      "modality": "floor_pilates",
+      "difficulty": "beginner",
+      "met_value": 2.8,
+      "how_to": [
+        "Lie on your side with your knees bent and stacked, and your heels in line with your spine.",
+        "Rest your head on your lower arm and keep your hips stacked vertically.",
+        "Keep your heels together and open the top knee as far as it goes without the pelvis rolling back.",
+        "Lower the knee slowly and repeat, then change sides."
+      ],
+      "spoken_instruction": "Clam. Heels together, open the top knee without letting your pelvis roll backward.",
+      "safety_notes": ["Reduce the range as soon as the hip you are lying on starts to ache."],
+      "common_mistakes": [
+        "Rolling the top hip backward to open the knee further.",
+        "Letting the heels separate, which turns it into a different movement."
+      ],
+      "muscles_worked": ["Glutes", "Deep abdominals"],
+      "illustration_id": "pilates_clam",
+      "caution_tags": [],
+      "is_per_side": true,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "floor_pilates_plank_hold",
+      "name": "Forearm plank",
+      "modality": "floor_pilates",
+      "difficulty": "intermediate",
+      "met_value": 2.8,
+      "how_to": [
+        "Set your forearms on the mat with your elbows directly under your shoulders.",
+        "Step your feet back until your body forms one line from the crown of your head to your heels.",
+        "Draw your ribs down and your tailbone slightly under so the lower back does not dip.",
+        "Breathe evenly and hold; lower your knees the moment the line breaks."
+      ],
+      "spoken_instruction": "Forearm plank. One straight line from head to heels, ribs drawing down.",
+      "safety_notes": [
+        "Drop to your knees as soon as your hips sag; holding a broken plank loads the lower back.",
+        "Keep your shoulders pressed away from your ears."
+      ],
+      "common_mistakes": [
+        "Letting the hips sag, which shifts the load onto the lower back.",
+        "Lifting the hips high to make the hold easier."
+      ],
+      "muscles_worked": ["Deep abdominals", "Shoulder stabilisers", "Glutes"],
+      "illustration_id": "pilates_plank",
+      "caution_tags": ["shoulder", "lower_back"],
+      "is_per_side": false,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "floor_pilates_swimming_prep",
+      "name": "Swimming, preparation",
+      "modality": "floor_pilates",
+      "difficulty": "intermediate",
+      "met_value": 2.8,
+      "how_to": [
+        "Lie face down with your arms reaching overhead and your forehead resting on the mat.",
+        "Lengthen the back of your neck and draw your navel gently away from the floor.",
+        "Lift one arm and the opposite leg a few centimetres, keeping both long.",
+        "Lower them and change sides, moving smoothly rather than lifting high."
+      ],
+      "spoken_instruction": "Swimming preparation. Lift the opposite arm and leg a little, staying long through the spine.",
+      "safety_notes": [
+        "Keep the lift small; height is not the point and a big lift compresses the lower back.",
+        "Place a folded towel under your hips if your back feels crowded."
+      ],
+      "common_mistakes": [
+        "Lifting the chest and legs high, which shortens the lower back.",
+        "Letting the head drop back so the neck extends."
+      ],
+      "muscles_worked": ["Spinal muscles", "Glutes", "Shoulder stabilisers"],
+      "illustration_id": "pilates_swimming",
+      "caution_tags": ["lower_back"],
+      "is_per_side": true,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "floor_pilates_double_leg_stretch",
+      "name": "Double leg stretch",
+      "modality": "floor_pilates",
+      "difficulty": "intermediate",
+      "met_value": 3.8,
+      "how_to": [
+        "Lie on your back, curl your head and shoulders off the mat and hug both knees in.",
+        "Breathe in and reach your arms overhead while extending both legs away at an angle.",
+        "Stop extending the moment your lower back lifts off the mat.",
+        "Breathe out and circle your arms around to hug the knees back in."
+      ],
+      "spoken_instruction": "Double leg stretch. Reach arms and legs long, then circle the arms round and hug the knees in.",
+      "safety_notes": [
+        "Keep the legs higher than feels natural if your lower back lifts.",
+        "Lower your head to the mat if your neck fatigues, and keep the leg work going."
+      ],
+      "common_mistakes": [
+        "Extending the legs so low that the back arches.",
+        "Letting the shoulders drop back to the mat mid-movement."
+      ],
+      "muscles_worked": ["Deep abdominals", "Hip flexors", "Shoulder stabilisers"],
+      "illustration_id": "pilates_double_leg_stretch",
+      "caution_tags": ["lower_back", "neck"],
+      "is_per_side": false,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "floor_pilates_criss_cross",
+      "name": "Criss cross",
+      "modality": "floor_pilates",
+      "difficulty": "intermediate",
+      "met_value": 3.8,
+      "how_to": [
+        "Lie on your back with your hands lightly behind your head and elbows wide.",
+        "Curl your head and shoulders off the mat and bring one knee in, extending the other leg away.",
+        "Rotate your ribcage toward the bent knee, leading with the shoulder rather than the elbow.",
+        "Switch sides slowly, keeping the curl height constant."
+      ],
+      "spoken_instruction": "Criss cross. Rotate the ribs toward the bent knee, leading with the shoulder.",
+      "safety_notes": [
+        "Never pull on your head with your hands; the hands only support the weight of the skull.",
+        "Reduce the rotation if your neck rather than your waist is doing the work."
+      ],
+      "common_mistakes": [
+        "Yanking the elbow across instead of rotating the ribcage.",
+        "Dropping the curl between sides so the abdominals rest."
+      ],
+      "muscles_worked": ["Obliques", "Deep abdominals", "Hip flexors"],
+      "illustration_id": "pilates_criss_cross",
+      "caution_tags": ["neck", "lower_back"],
+      "is_per_side": true,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "floor_pilates_roll_up",
+      "name": "Roll up",
+      "modality": "floor_pilates",
+      "difficulty": "intermediate",
+      "met_value": 3.8,
+      "how_to": [
+        "Lie on your back with your legs long and your arms reaching overhead.",
+        "Breathe out and curl your head, then your shoulders, then your spine off the mat one section at a time.",
+        "Reach forward over your legs at the top, keeping your spine rounded.",
+        "Roll back down just as slowly, placing each part of the spine on the mat in turn."
+      ],
+      "spoken_instruction": "Roll up. Peel the spine off the mat one section at a time, then lower just as slowly.",
+      "safety_notes": [
+        "Bend your knees slightly if your lower back or hamstrings pull.",
+        "If you cannot roll down with control, stop partway rather than dropping."
+      ],
+      "common_mistakes": [
+        "Throwing the arms to build momentum through the sticky part.",
+        "Losing the rounded spine so the movement becomes a flat-backed sit-up."
+      ],
+      "muscles_worked": ["Deep abdominals", "Hip flexors", "Spinal muscles"],
+      "illustration_id": "pilates_roll_up",
+      "caution_tags": ["lower_back", "neck"],
+      "is_per_side": false,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "floor_pilates_shoulder_bridge_march",
+      "name": "Shoulder bridge with march",
+      "modality": "floor_pilates",
+      "difficulty": "intermediate",
+      "met_value": 3.8,
+      "how_to": [
+        "Lie on your back, knees bent and feet flat, and lift your hips into a shoulder bridge.",
+        "Hold the bridge with your hips, knees and shoulders in one line.",
+        "Lift one foot a few centimetres off the mat without letting the hips drop or tilt.",
+        "Replace it and lift the other, marching slowly while the pelvis stays level."
+      ],
+      "spoken_instruction": "Bridge with march. Hold the hips level and lift one foot at a time, slowly.",
+      "safety_notes": [
+        "Lower the bridge if the hips drop or tilt when a foot lifts.",
+        "Keep the weight in your shoulders and heels, not your neck."
+      ],
+      "common_mistakes": [
+        "Letting one hip drop as the foot lifts.",
+        "Pushing the hips so high that the lower back over-arches."
+      ],
+      "muscles_worked": ["Glutes", "Hamstrings", "Deep abdominals"],
+      "illustration_id": "pilates_bridge_march",
+      "caution_tags": ["neck"],
+      "is_per_side": true,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "floor_pilates_side_kick_series",
+      "name": "Side kick series",
+      "modality": "floor_pilates",
+      "difficulty": "intermediate",
+      "met_value": 3.8,
+      "how_to": [
+        "Lie on your side in one long line, propped on your forearm with your hips stacked.",
+        "Lift the top leg to hip height and keep it long and turned neither in nor out.",
+        "Swing the leg forward as far as your pelvis stays still, then sweep it back behind the line of your body.",
+        "Keep the torso completely quiet, then change sides."
+      ],
+      "spoken_instruction": "Side kick. Swing the top leg forward and back while your torso stays completely still.",
+      "safety_notes": [
+        "Shorten the swing as soon as the pelvis rocks or the back arches.",
+        "Rest your head on your arm if the supporting shoulder aches."
+      ],
+      "common_mistakes": [
+        "Swinging so far that the pelvis rolls with the leg.",
+        "Letting the waist collapse toward the mat."
+      ],
+      "muscles_worked": ["Glutes", "Obliques", "Hip flexors"],
+      "illustration_id": "pilates_side_kick",
+      "caution_tags": ["lower_back", "shoulder"],
+      "is_per_side": true,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "floor_pilates_mountain_climber_slow",
+      "name": "Slow mountain climber",
+      "modality": "floor_pilates",
+      "difficulty": "intermediate",
+      "met_value": 7.0,
+      "how_to": [
+        "Start in a high plank with your hands under your shoulders and one long line from head to heels.",
+        "Draw one knee slowly toward your chest without letting your hips lift or your back round.",
+        "Return the foot to the floor and change legs at a controlled pace.",
+        "Keep your shoulders directly over your wrists throughout."
+      ],
+      "spoken_instruction": "Slow mountain climber. Draw one knee in at a time while your hips stay level.",
+      "safety_notes": [
+        "Drop to your knees if your hips start to pike or sag.",
+        "Come out of the position if your wrists hurt rather than working through it.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Bouncing the hips upward as each knee comes in.",
+        "Letting the shoulders drift behind the wrists."
+      ],
+      "muscles_worked": ["Deep abdominals", "Shoulder stabilisers", "Hip flexors"],
+      "illustration_id": "pilates_mountain_climber",
+      "caution_tags": ["wrist", "shoulder", "lower_back"],
+      "is_per_side": true,
+      "evidence_keys": ["chen2024nma", "acsm2021"]
+    },
+    {
+      "id": "floor_pilates_teaser_prep",
+      "name": "Teaser, preparation",
+      "modality": "floor_pilates",
+      "difficulty": "advanced",
+      "met_value": 3.8,
+      "how_to": [
+        "Lie on your back with your knees bent and your arms reaching toward your feet.",
+        "Curl your head and shoulders up and lift both feet so your shins are parallel to the floor.",
+        "Roll a little further up onto the back of your pelvis, keeping your spine rounded into a shallow V.",
+        "Hold for two breaths, then lower the spine and the legs together with control."
+      ],
+      "spoken_instruction": "Teaser preparation. Balance on the back of your pelvis in a shallow V, spine rounded.",
+      "safety_notes": [
+        "Keep your knees bent until you can lower with full control.",
+        "Stop if the lower back takes over from the abdominals."
+      ],
+      "common_mistakes": [
+        "Straightening the legs before the abdominals can hold the position.",
+        "Dropping out of the shape rather than lowering through it."
+      ],
+      "muscles_worked": ["Deep abdominals", "Hip flexors", "Spinal muscles"],
+      "illustration_id": "pilates_teaser",
+      "caution_tags": ["lower_back", "neck"],
+      "is_per_side": false,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "floor_pilates_side_plank_full",
+      "name": "Full side plank",
+      "modality": "floor_pilates",
+      "difficulty": "advanced",
+      "met_value": 3.8,
+      "how_to": [
+        "Lie on your side with your forearm on the mat and your elbow directly under your shoulder.",
+        "Stack your feet and lift your hips so your body forms one line from head to heels.",
+        "Press the supporting shoulder down and lengthen the top side of your waist.",
+        "Hold, breathing evenly, then lower with control and change sides."
+      ],
+      "spoken_instruction": "Full side plank. Feet stacked, hips lifted into one line, supporting shoulder pressed down.",
+      "safety_notes": [
+        "Return to the knees version the moment your hips sag.",
+        "Come down if the supporting shoulder or wrist starts to ache."
+      ],
+      "common_mistakes": [
+        "Letting the hips drift back so the body folds at the waist.",
+        "Collapsing into the supporting shoulder."
+      ],
+      "muscles_worked": ["Obliques", "Glutes", "Shoulder stabilisers"],
+      "illustration_id": "pilates_side_plank",
+      "caution_tags": ["shoulder", "wrist"],
+      "is_per_side": true,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "floor_pilates_jack_knife",
+      "name": "Jack knife",
+      "modality": "floor_pilates",
+      "difficulty": "advanced",
+      "met_value": 3.8,
+      "how_to": [
+        "Lie on your back with your arms pressing into the mat beside you and your legs extended upward.",
+        "Lower your legs a little, then lift your hips so your legs travel over your head and your weight moves onto your shoulders.",
+        "Extend your legs upward from there, keeping the weight off your neck.",
+        "Roll down through the spine slowly until your hips reach the mat."
+      ],
+      "spoken_instruction": "Jack knife. Lift the hips and extend the legs upward, weight in the shoulders, not the neck.",
+      "safety_notes": [
+        "Never let weight land on your neck; if it does, come down immediately.",
+        "Skip this movement entirely if you have any neck complaint today.",
+        "Keep the roll-down slow — dropping out of it loads the spine sharply."
+      ],
+      "common_mistakes": [
+        "Throwing the legs overhead so the weight lands on the neck.",
+        "Rolling down in one piece instead of one vertebra at a time."
+      ],
+      "muscles_worked": ["Deep abdominals", "Spinal muscles", "Glutes"],
+      "illustration_id": "pilates_jack_knife",
+      "caution_tags": ["neck", "lower_back", "shoulder"],
+      "is_per_side": false,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "floor_pilates_star_jumps",
+      "name": "Star jumps",
+      "modality": "floor_pilates",
+      "difficulty": "advanced",
+      "met_value": 7.5,
+      "how_to": [
+        "Stand tall with your feet together and your arms by your sides.",
+        "Jump your feet wide while sweeping your arms overhead, landing softly through the whole foot.",
+        "Jump back to the start, keeping your knees soft and tracking over your toes.",
+        "Keep the rhythm steady and land quietly rather than heavily."
+      ],
+      "spoken_instruction": "Star jumps. Land softly through the whole foot, knees tracking over your toes.",
+      "safety_notes": [
+        "Step the feet wide instead of jumping if you have knee or ankle pain today.",
+        "Land softly; heavy landings load the knees and ankles.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Landing with locked knees, which sends the impact into the joints.",
+        "Letting the knees fall inward on landing."
+      ],
+      "muscles_worked": ["Calves", "Quadriceps", "Glutes", "Shoulder stabilisers"],
+      "illustration_id": "floor_star_jumps",
+      "caution_tags": ["knee", "ankle", "balance", "cardiac_caution"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma", "acsm2021"]
+    },
+    {
+      "id": "cooldown_seated_forward_fold",
+      "name": "Seated forward fold",
+      "modality": "floor_pilates",
+      "difficulty": "beginner",
+      "met_value": 2.3,
+      "how_to": [
+        "Sit with your legs extended in front of you and your knees softly bent.",
+        "Hinge forward from your hips and let your spine round gently over your legs.",
+        "Rest your hands wherever they reach without straining, and let your head hang heavy.",
+        "Breathe slowly and let the stretch ease deeper on each out-breath."
+      ],
+      "spoken_instruction": "Seated forward fold. Let the spine round gently over your legs and breathe slowly.",
+      "safety_notes": [
+        "Bend the knees as much as you need; reaching your feet is not the point.",
+        "Ease off if you feel anything sharp behind the knees."
+      ],
+      "common_mistakes": [
+        "Pulling on the feet to force more range.",
+        "Bouncing in and out of the stretch."
+      ],
+      "muscles_worked": ["Hamstrings", "Lower back"],
+      "illustration_id": "cooldown_forward_fold",
+      "caution_tags": [],
+      "is_per_side": false,
+      "evidence_keys": ["acsm2021"]
+    },
+    {
+      "id": "cooldown_hip_flexor_kneel",
+      "name": "Kneeling hip flexor stretch",
+      "modality": "floor_pilates",
+      "difficulty": "beginner",
+      "met_value": 2.3,
+      "how_to": [
+        "Kneel on one knee with the other foot flat in front of you, knee above the ankle.",
+        "Draw your tailbone slightly under so your lower back does not arch.",
+        "Shift your weight gently forward until you feel a stretch at the front of the kneeling hip.",
+        "Hold and breathe slowly, then change sides."
+      ],
+      "spoken_instruction": "Kneeling hip flexor stretch. Tuck the tailbone under, then shift gently forward.",
+      "safety_notes": [
+        "Put a cushion under the kneeling knee if it is uncomfortable.",
+        "Keep the front knee over the ankle rather than travelling past the toes."
+      ],
+      "common_mistakes": [
+        "Arching the lower back instead of tucking the pelvis, which hides the stretch.",
+        "Pushing so far forward that the front knee collapses inward."
+      ],
+      "muscles_worked": ["Hip flexors", "Quadriceps"],
+      "illustration_id": "cooldown_hip_flexor",
+      "caution_tags": ["knee"],
+      "is_per_side": true,
+      "evidence_keys": ["acsm2021"]
+    },
+    {
+      "id": "cooldown_thoracic_opener",
+      "name": "Supine chest opener",
+      "modality": "floor_pilates",
+      "difficulty": "beginner",
+      "met_value": 2.3,
+      "how_to": [
+        "Lie on your back with your knees bent and your arms out to the sides at shoulder height.",
+        "Turn your palms upward and let the weight of your arms open your chest toward the floor.",
+        "Breathe slowly into the sides of your ribs and let your shoulders soften downward.",
+        "Stay for the full interval, letting each out-breath release a little more."
+      ],
+      "spoken_instruction": "Chest opener. Arms wide, palms up, and let your shoulders soften toward the floor.",
+      "safety_notes": ["Bring the arms lower than shoulder height if the fronts of the shoulders pinch."],
+      "common_mistakes": [
+        "Forcing the arms flat instead of letting them settle.",
+        "Arching the lower back to get the chest lower."
+      ],
+      "muscles_worked": ["Chest", "Shoulder stabilisers"],
+      "illustration_id": "cooldown_chest_opener",
+      "caution_tags": [],
+      "is_per_side": false,
+      "evidence_keys": ["acsm2021"]
+    },
+    {
+      "id": "reformer_footwork_arches",
+      "name": "Reformer footwork, arches",
+      "modality": "reformer_pilates",
+      "difficulty": "beginner",
+      "met_value": 2.8,
+      "how_to": [
+        "Lie on the carriage with your head on the headrest and the arches of your feet hooked over the footbar.",
+        "Set a moderate spring load, typically two to three springs depending on your reformer.",
+        "Press the carriage away by straightening your legs, stopping just short of locking the knees.",
+        "Return slowly so the springs resist rather than pull you home."
+      ],
+      "spoken_instruction": "Footwork on the arches. Press the carriage away, then return slowly against the springs.",
+      "safety_notes": [
+        "Check the springs are attached before you load the carriage.",
+        "Keep the whole arch in contact with the bar so the ankle does not roll."
+      ],
+      "common_mistakes": [
+        "Letting the heels drop below the bar, which changes the movement.",
+        "Allowing the carriage to close faster than you can control."
+      ],
+      "muscles_worked": ["Quadriceps", "Glutes", "Hamstrings"],
+      "illustration_id": "reformer_footwork",
+      "caution_tags": ["knee", "ankle"],
+      "is_per_side": false,
+      "evidence_keys": ["ozturk2025reformer"]
+    },
+    {
+      "id": "reformer_bridging",
+      "name": "Reformer bridging on the footbar",
+      "modality": "reformer_pilates",
+      "difficulty": "beginner",
+      "met_value": 2.8,
+      "how_to": [
+        "Lie on the carriage with your feet flat on the footbar, knees bent and hip-width apart.",
+        "Use a heavier spring load so the carriage stays still while you work.",
+        "Press through your heels and peel your hips off the carriage one vertebra at a time.",
+        "Lower slowly from the top of the spine downward, keeping the carriage still throughout."
+      ],
+      "spoken_instruction": "Reformer bridging. Peel the hips up one vertebra at a time, keeping the carriage still.",
+      "safety_notes": [
+        "Use enough spring load that the carriage cannot slide under you.",
+        "Stop lifting at a straight line from shoulders to knees rather than pushing higher."
+      ],
+      "common_mistakes": [
+        "Letting the carriage drift as the hips lift.",
+        "Over-arching at the top so the lower back takes the load."
+      ],
+      "muscles_worked": ["Glutes", "Hamstrings", "Deep abdominals"],
+      "illustration_id": "reformer_bridging",
+      "caution_tags": [],
+      "is_per_side": false,
+      "evidence_keys": ["ozturk2025reformer"]
+    },
+    {
+      "id": "reformer_arms_supine_press",
+      "name": "Reformer supine arm press",
+      "modality": "reformer_pilates",
+      "difficulty": "beginner",
+      "met_value": 2.3,
+      "how_to": [
+        "Lie on the carriage with a strap in each hand and your arms reaching toward the ceiling.",
+        "Use a light spring load so your shoulders can stay soft and settled.",
+        "Press your arms down toward your hips, keeping your elbows long but not locked.",
+        "Return slowly to the ceiling, letting the springs resist the whole way."
+      ],
+      "spoken_instruction": "Supine arm press. Press the straps down toward your hips, then return slowly.",
+      "safety_notes": [
+        "Keep the straps under tension so they cannot snap slack.",
+        "Reduce the load if your shoulders lift toward your ears."
+      ],
+      "common_mistakes": [
+        "Letting the ribs flare as the arms travel overhead.",
+        "Using so much spring that the shoulders grip."
+      ],
+      "muscles_worked": ["Chest", "Shoulder stabilisers", "Deep abdominals"],
+      "illustration_id": "reformer_arms_supine",
+      "caution_tags": ["shoulder"],
+      "is_per_side": false,
+      "evidence_keys": ["ozturk2025reformer"]
+    },
+    {
+      "id": "reformer_mermaid_stretch",
+      "name": "Reformer mermaid",
+      "modality": "reformer_pilates",
+      "difficulty": "beginner",
+      "met_value": 2.3,
+      "how_to": [
+        "Sit sideways on the carriage with your shins folded to one side and one hand on the footbar.",
+        "Use a light spring load so the carriage moves easily under your hand.",
+        "Reach the other arm overhead and side-bend away from the bar, letting the carriage glide out.",
+        "Return to upright slowly, then change sides."
+      ],
+      "spoken_instruction": "Mermaid. Reach one arm overhead and side-bend away as the carriage glides out.",
+      "safety_notes": [
+        "Keep both hips on the carriage so the stretch stays in the side of the waist.",
+        "Ease off if you feel anything sharp in the ribs or lower back."
+      ],
+      "common_mistakes": [
+        "Rotating the chest toward the floor instead of side-bending.",
+        "Letting the supporting shoulder collapse."
+      ],
+      "muscles_worked": ["Obliques", "Spinal muscles"],
+      "illustration_id": "reformer_mermaid",
+      "caution_tags": [],
+      "is_per_side": true,
+      "evidence_keys": ["ozturk2025reformer"]
+    },
+    {
+      "id": "reformer_short_box_round",
+      "name": "Reformer short box, round back",
+      "modality": "reformer_pilates",
+      "difficulty": "intermediate",
+      "met_value": 2.8,
+      "how_to": [
+        "Sit on the short box with your feet secured under the strap and your knees softly bent.",
+        "Hold your arms forward at shoulder height and round your lower spine backward.",
+        "Roll back only as far as you can return from without pulling on the strap.",
+        "Curl forward again to upright, leading with the lower abdominals."
+      ],
+      "spoken_instruction": "Short box, round back. Roll back through a rounded spine, then curl forward again.",
+      "safety_notes": [
+        "Check the box is stable and the foot strap is secure before you start.",
+        "Roll back a smaller distance rather than hauling yourself up with the strap."
+      ],
+      "common_mistakes": [
+        "Going back so far that the feet do the returning.",
+        "Losing the rounded spine so the lower back extends."
+      ],
+      "muscles_worked": ["Deep abdominals", "Hip flexors"],
+      "illustration_id": "reformer_short_box",
+      "caution_tags": ["lower_back"],
+      "is_per_side": false,
+      "evidence_keys": ["ozturk2025reformer"]
+    },
+    {
+      "id": "reformer_elephant",
+      "name": "Reformer elephant",
+      "modality": "reformer_pilates",
+      "difficulty": "intermediate",
+      "met_value": 3.8,
+      "how_to": [
+        "Stand on the carriage with your hands on the footbar and your feet flexed against the shoulder rests.",
+        "Use a moderate spring load and fold forward so your spine rounds and your hips stay high.",
+        "Press the carriage back a short way using your abdominals rather than your legs.",
+        "Draw it home slowly, keeping your hips high and your spine rounded throughout."
+      ],
+      "spoken_instruction": "Elephant. Hips high, spine rounded, and move the carriage with your abdominals.",
+      "safety_notes": [
+        "Keep the range short; a long press turns this into a hamstring stretch under load.",
+        "Come off the carriage if your wrists ache."
+      ],
+      "common_mistakes": [
+        "Pushing with the legs so the abdominals do nothing.",
+        "Letting the spine flatten, which shifts the work into the lower back."
+      ],
+      "muscles_worked": ["Deep abdominals", "Hamstrings", "Shoulder stabilisers"],
+      "illustration_id": "reformer_elephant",
+      "caution_tags": ["wrist", "lower_back"],
+      "is_per_side": false,
+      "evidence_keys": ["ozturk2025reformer"]
+    },
+    {
+      "id": "reformer_long_stretch",
+      "name": "Reformer long stretch",
+      "modality": "reformer_pilates",
+      "difficulty": "advanced",
+      "met_value": 3.8,
+      "how_to": [
+        "Take a plank position with your hands on the footbar and your feet against the shoulder rests.",
+        "Use a moderate spring load so the carriage resists rather than runs away.",
+        "Hold one straight line from head to heels and let the carriage travel back a short distance.",
+        "Draw it home with your abdominals, keeping the line unbroken."
+      ],
+      "spoken_instruction": "Long stretch. Hold one straight line and move the carriage a short way, then home.",
+      "safety_notes": [
+        "Come out of the position the moment your hips sag or pike.",
+        "Keep the range short; a long carriage travel makes the plank impossible to hold.",
+        "Check the springs before you take weight on the bar."
+      ],
+      "common_mistakes": [
+        "Letting the hips drop so the lower back takes the load.",
+        "Travelling so far that the shoulders pass in front of the wrists."
+      ],
+      "muscles_worked": ["Deep abdominals", "Shoulder stabilisers", "Glutes"],
+      "illustration_id": "reformer_long_stretch",
+      "caution_tags": ["shoulder", "wrist", "lower_back"],
+      "is_per_side": false,
+      "evidence_keys": ["ozturk2025reformer"]
+    },
+    {
+      "id": "reformer_knee_stretches",
+      "name": "Reformer knee stretches, round back",
+      "modality": "reformer_pilates",
+      "difficulty": "advanced",
+      "met_value": 3.8,
+      "how_to": [
+        "Kneel on the carriage with your hands on the footbar and your feet against the shoulder rests.",
+        "Round your lower spine and draw your knees in toward your hands.",
+        "Press the carriage back a short distance using your abdominals, keeping the rounded shape.",
+        "Return slowly and keep the rhythm even rather than fast."
+      ],
+      "spoken_instruction": "Knee stretches. Keep the spine rounded and move the carriage with your abdominals.",
+      "safety_notes": [
+        "Stop if the rounded shape flattens; the lower back takes over immediately.",
+        "Put a pad under your knees if they are uncomfortable on the carriage."
+      ],
+      "common_mistakes": [
+        "Losing the round back and arching instead.",
+        "Rushing so momentum moves the carriage."
+      ],
+      "muscles_worked": ["Deep abdominals", "Hip flexors", "Shoulder stabilisers"],
+      "illustration_id": "reformer_knee_stretches",
+      "caution_tags": ["knee", "wrist", "lower_back"],
+      "is_per_side": false,
+      "evidence_keys": ["ozturk2025reformer"]
+    },
+    {
+      "id": "reformer_teaser",
+      "name": "Reformer teaser in straps",
+      "modality": "reformer_pilates",
+      "difficulty": "advanced",
+      "met_value": 3.8,
+      "how_to": [
+        "Lie on the carriage with both feet in the straps and a light to moderate spring load.",
+        "Extend your legs to about 45 degrees and reach your arms toward your feet.",
+        "Curl your spine off the carriage into a shallow V, balancing on the back of your pelvis.",
+        "Lower the spine and the legs together with control, keeping the straps under tension."
+      ],
+      "spoken_instruction": "Reformer teaser. Curl into a shallow V, then lower spine and legs together.",
+      "safety_notes": [
+        "Keep the straps under tension the whole time so they cannot snap slack.",
+        "Come down if the lower back takes over from the abdominals.",
+        "Bend the knees if you cannot lower with control."
+      ],
+      "common_mistakes": [
+        "Pulling on the straps to get up rather than curling the spine.",
+        "Dropping out of the shape instead of lowering through it."
+      ],
+      "muscles_worked": ["Deep abdominals", "Hip flexors", "Adductors"],
+      "illustration_id": "reformer_teaser",
+      "caution_tags": ["lower_back", "neck"],
+      "is_per_side": false,
+      "evidence_keys": ["ozturk2025reformer"]
+    },
+    {
+      "id": "elliptical_warm_up_glide",
+      "name": "Elliptical warm-up glide",
+      "modality": "elliptical",
+      "difficulty": "beginner",
+      "met_value": 4.0,
+      "how_to": [
+        "Step on with a light hold on the handles and stand tall over the pedals.",
+        "Set the resistance to the lowest setting that still feels connected rather than free-wheeling.",
+        "Glide at an easy pace where you could talk without noticing your breathing.",
+        "Build the cadence very gradually across the interval."
+      ],
+      "spoken_instruction": "Easy glide. Light resistance, comfortable pace, breathing you barely notice.",
+      "safety_notes": ["Hold the handles until your stride feels settled."],
+      "common_mistakes": [
+        "Starting at working intensity so the warm-up does no warming up.",
+        "Leaning weight onto the handles rather than standing over the pedals."
+      ],
+      "muscles_worked": ["Quadriceps", "Glutes", "Calves"],
+      "illustration_id": "elliptical_steady",
+      "caution_tags": [],
+      "is_per_side": false,
+      "evidence_keys": ["acsm2021"]
+    },
+    {
+      "id": "elliptical_easy_spin_down",
+      "name": "Elliptical spin-down",
+      "modality": "elliptical",
+      "difficulty": "beginner",
+      "met_value": 4.0,
+      "how_to": [
+        "Drop the resistance to its lowest useful setting.",
+        "Keep striding at a slow, easy cadence and let your breathing settle.",
+        "Stand tall rather than sagging onto the handles.",
+        "Continue until your breathing is close to conversational again."
+      ],
+      "spoken_instruction": "Spin down. Drop the resistance and stride easily while your breathing settles.",
+      "safety_notes": ["Do not stop abruptly after hard work; keep moving easily instead."],
+      "common_mistakes": [
+        "Stepping off immediately after a hard interval.",
+        "Keeping the resistance high so the cool-down is still work."
+      ],
+      "muscles_worked": ["Quadriceps", "Glutes", "Calves"],
+      "illustration_id": "elliptical_steady",
+      "caution_tags": [],
+      "is_per_side": false,
+      "evidence_keys": ["acsm2021"]
+    },
+    {
+      "id": "elliptical_cadence_build",
+      "name": "Elliptical cadence build",
+      "modality": "elliptical",
+      "difficulty": "beginner",
+      "met_value": 5.0,
+      "how_to": [
+        "Keep the resistance at your steady-state setting.",
+        "Start at a comfortable stride rate and lift the cadence slightly every half minute or so.",
+        "Keep your torso quiet; the change should come from your legs, not your shoulders.",
+        "Settle back to your usual cadence at the end of the interval."
+      ],
+      "spoken_instruction": "Cadence build. Same resistance, lift the stride rate a little at a time.",
+      "safety_notes": [
+        "Back off the cadence if your feet start slapping the pedals.",
+        "Ease off if you feel light-headed."
+      ],
+      "common_mistakes": [
+        "Raising the resistance instead of the cadence.",
+        "Bouncing the upper body as the stride quickens."
+      ],
+      "muscles_worked": ["Quadriceps", "Hamstrings", "Calves"],
+      "illustration_id": "elliptical_steady",
+      "caution_tags": [],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma", "rogers2025zone2"]
+    },
+    {
+      "id": "elliptical_reverse_stride",
+      "name": "Elliptical reverse stride",
+      "modality": "elliptical",
+      "difficulty": "intermediate",
+      "met_value": 5.0,
+      "how_to": [
+        "Slow to almost a stop, then begin striding backward with a light hold on the handles.",
+        "Keep the same steady-state resistance and a slightly slower cadence than forward.",
+        "Stay tall and keep your knees tracking over your toes.",
+        "Return to forward striding before the interval ends if your balance wavers."
+      ],
+      "spoken_instruction": "Reverse stride. Slow down first, then stride backward, staying tall.",
+      "safety_notes": [
+        "Change direction only from a near-stop; switching at speed is how ankles get twisted.",
+        "Hold the handles until the backward stride feels settled."
+      ],
+      "common_mistakes": [
+        "Reversing at full speed rather than slowing first.",
+        "Sitting back into the hips so the knees fall inward."
+      ],
+      "muscles_worked": ["Glutes", "Hamstrings", "Quadriceps"],
+      "illustration_id": "elliptical_reverse",
+      "caution_tags": ["balance", "knee"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma"]
+    },
+    {
+      "id": "elliptical_arms_and_legs_surge",
+      "name": "Elliptical arms-and-legs surge",
+      "modality": "elliptical",
+      "difficulty": "intermediate",
+      "met_value": 9.0,
+      "how_to": [
+        "Take hold of the moving handles rather than the fixed bars.",
+        "Raise the resistance one step above your steady setting.",
+        "Drive with your arms and legs together at an effort of six to seven out of ten.",
+        "Return to the fixed bars and an easy pace when the interval ends."
+      ],
+      "spoken_instruction": "Drive the moving handles with your arms as well as your legs.",
+      "safety_notes": [
+        "Keep your shoulders down rather than shrugged as you pull.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Yanking with the arms so the shoulders take over from the legs.",
+        "Letting the torso rock side to side."
+      ],
+      "muscles_worked": ["Quadriceps", "Glutes", "Back", "Chest"],
+      "illustration_id": "elliptical_hard",
+      "caution_tags": ["shoulder", "cardiac_caution"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma"]
+    },
+    {
+      "id": "elliptical_strong_effort",
+      "name": "Elliptical strong effort",
+      "modality": "elliptical",
+      "difficulty": "beginner",
+      "met_value": 9.0,
+      "how_to": [
+        "Raise the resistance one step above your steady-state setting.",
+        "Stride briskly at an effort where you can still speak a short sentence.",
+        "Keep standing tall and let your heels stay in contact with the pedals.",
+        "Drop back to your steady setting as soon as the interval ends."
+      ],
+      "spoken_instruction": "Strong effort. One step more resistance, brisk stride, six out of ten.",
+      "safety_notes": [
+        "Choose the effort yourself; there is no target speed to chase.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Going so hard that the interval cannot be finished.",
+        "Leaning on the handles once the effort rises."
+      ],
+      "muscles_worked": ["Quadriceps", "Glutes", "Hamstrings"],
+      "illustration_id": "elliptical_hard",
+      "caution_tags": ["cardiac_caution"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma", "who2020"]
+    },
+    {
+      "id": "elliptical_high_resistance_push",
+      "name": "Elliptical high-resistance push",
+      "modality": "elliptical",
+      "difficulty": "advanced",
+      "met_value": 9.0,
+      "how_to": [
+        "Raise the resistance well above your steady setting, until the cadence drops noticeably.",
+        "Hold the fixed bars lightly and drive down through each pedal.",
+        "Work at an effort of eight to nine out of ten, where speech is a word or two at most.",
+        "Reduce the resistance immediately when the interval ends."
+      ],
+      "spoken_instruction": "High resistance push. Drive down through each pedal, eight to nine out of ten.",
+      "safety_notes": [
+        "Reduce the resistance if your knees ache or your hips rock.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Hauling on the handles to move resistance the legs cannot.",
+        "Holding the effort past the point where the stride becomes uneven."
+      ],
+      "muscles_worked": ["Quadriceps", "Glutes", "Hamstrings", "Calves"],
+      "illustration_id": "elliptical_hard",
+      "caution_tags": ["knee", "cardiac_caution"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma", "helgerud2007"]
+    },
+    {
+      "id": "elliptical_standing_tall_hold",
+      "name": "Elliptical hands-free stride",
+      "modality": "elliptical",
+      "difficulty": "advanced",
+      "met_value": 5.0,
+      "how_to": [
+        "Settle into your steady-state resistance and a comfortable cadence.",
+        "Let go of the handles and hold your arms lightly by your sides.",
+        "Keep your ribs stacked over your hips and your stride even.",
+        "Take hold of the handles again the moment your balance wavers."
+      ],
+      "spoken_instruction": "Hands-free stride. Let go of the handles and keep your ribs stacked over your hips.",
+      "safety_notes": [
+        "Keep one hand near a handle at all times so you can catch yourself.",
+        "Skip this movement if your balance is at all unsteady today."
+      ],
+      "common_mistakes": [
+        "Leaning back to stay upright, which shortens the stride.",
+        "Letting the cadence rise so far that balance goes."
+      ],
+      "muscles_worked": ["Deep abdominals", "Glutes", "Quadriceps"],
+      "illustration_id": "elliptical_steady",
+      "caution_tags": ["balance"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma"]
+    },
+    {
+      "id": "spin_bike_easy_spin",
+      "name": "Easy spin",
+      "modality": "spin_bike",
+      "difficulty": "beginner",
+      "met_value": 3.5,
+      "how_to": [
+        "Set the saddle so your knee stays slightly bent at the bottom of the stroke.",
+        "Add just enough resistance that the flywheel feels connected rather than free.",
+        "Spin at a comfortable cadence where your breathing barely changes.",
+        "Sit tall with your hands resting lightly on the bars."
+      ],
+      "spoken_instruction": "Easy spin. Light resistance, comfortable cadence, breathing you barely notice.",
+      "safety_notes": ["Never pedal with no resistance; the flywheel will drive your legs."],
+      "common_mistakes": [
+        "Removing all resistance so the pedals run away.",
+        "Starting at working intensity during a warm-up."
+      ],
+      "muscles_worked": ["Quadriceps", "Calves"],
+      "illustration_id": "spin_seated",
+      "caution_tags": [],
+      "is_per_side": false,
+      "evidence_keys": ["acsm2021"]
+    },
+    {
+      "id": "spin_bike_warm_up_roll",
+      "name": "Warm-up roll",
+      "modality": "spin_bike",
+      "difficulty": "beginner",
+      "met_value": 4.0,
+      "how_to": [
+        "Sit tall with a light hold on the bars and a low resistance setting.",
+        "Spin at a steady, easy cadence and let your legs find a smooth circle.",
+        "Add a small amount of resistance partway through so the effort rises gently.",
+        "Keep your hips still in the saddle throughout."
+      ],
+      "spoken_instruction": "Warm-up roll. Smooth circles, easy resistance, adding a little partway through.",
+      "safety_notes": ["Keep a little resistance on at all times so the pedals stay under control."],
+      "common_mistakes": [
+        "Rocking the hips at a very high cadence.",
+        "Adding so much resistance that the warm-up becomes the work."
+      ],
+      "muscles_worked": ["Quadriceps", "Hamstrings", "Calves"],
+      "illustration_id": "spin_seated",
+      "caution_tags": [],
+      "is_per_side": false,
+      "evidence_keys": ["acsm2021"]
+    },
+    {
+      "id": "spin_bike_recovery_spin",
+      "name": "Recovery spin",
+      "modality": "spin_bike",
+      "difficulty": "beginner",
+      "met_value": 4.0,
+      "how_to": [
+        "Reduce the resistance to well below your working setting.",
+        "Spin at a light, steady cadence and let your breathing come back down.",
+        "Sit tall and unclench your hands and jaw.",
+        "Keep moving for the whole interval rather than coasting to a stop."
+      ],
+      "spoken_instruction": "Recovery spin. Light resistance, keep the legs turning, let your breathing come down.",
+      "safety_notes": ["Keep pedalling rather than stopping dead after a hard effort."],
+      "common_mistakes": [
+        "Leaving the resistance high so the recovery is not a recovery.",
+        "Stopping entirely between hard intervals."
+      ],
+      "muscles_worked": ["Quadriceps", "Calves"],
+      "illustration_id": "spin_seated",
+      "caution_tags": [],
+      "is_per_side": false,
+      "evidence_keys": ["acsm2021", "helgerud2007"]
+    },
+    {
+      "id": "spin_bike_tempo_seated",
+      "name": "Seated tempo",
+      "modality": "spin_bike",
+      "difficulty": "intermediate",
+      "met_value": 8.0,
+      "how_to": [
+        "Add resistance until holding a cadence around 85 takes real effort.",
+        "Stay seated and tall, with your hands light on the bars.",
+        "Work at an effort of six to seven out of ten, where sentences become short.",
+        "Keep the effort even for the whole interval rather than surging."
+      ],
+      "spoken_instruction": "Seated tempo. Steady and strong, six to seven out of ten.",
+      "safety_notes": [
+        "Drop the resistance if your hips begin rocking in the saddle.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Starting too hard and fading before the interval ends.",
+        "Gripping the bars hard enough to hunch the shoulders."
+      ],
+      "muscles_worked": ["Quadriceps", "Glutes", "Hamstrings"],
+      "illustration_id": "spin_seated",
+      "caution_tags": ["knee"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma", "rogers2025zone2"]
+    },
+    {
+      "id": "spin_bike_standing_climb",
+      "name": "Standing climb",
+      "modality": "spin_bike",
+      "difficulty": "intermediate",
+      "met_value": 10.8,
+      "how_to": [
+        "Add enough resistance to stand against comfortably before you rise.",
+        "Come out of the saddle with your hips back over the saddle nose and hands wide on the bars.",
+        "Press through the whole pedal circle at a cadence around 60 to 70.",
+        "Sit back down before your form breaks rather than at the last moment."
+      ],
+      "spoken_instruction": "Standing climb. Hips back, wide hands, press through the whole pedal circle.",
+      "safety_notes": [
+        "Never stand with light resistance; you will lose control of the pedals.",
+        "Sit down as soon as your knees start to wobble inward.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Standing too far forward so weight lands on the arms.",
+        "Bouncing rather than pressing smoothly."
+      ],
+      "muscles_worked": ["Glutes", "Quadriceps", "Calves", "Core"],
+      "illustration_id": "spin_standing",
+      "caution_tags": ["knee", "hip"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma"]
+    },
+    {
+      "id": "spin_bike_high_cadence_surge",
+      "name": "High-cadence surge",
+      "modality": "spin_bike",
+      "difficulty": "intermediate",
+      "met_value": 8.8,
+      "how_to": [
+        "Keep a moderate resistance — enough to stay connected at speed.",
+        "Stay seated and lift the cadence above 100 while keeping your hips quiet.",
+        "Work at an effort of eight out of ten, breathing hard but in rhythm.",
+        "Drop back to your steady cadence when the interval ends."
+      ],
+      "spoken_instruction": "High cadence surge. Stay seated, lift the cadence, keep the hips quiet.",
+      "safety_notes": [
+        "Reduce the cadence if your hips start bouncing in the saddle.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Dropping the resistance so low that the flywheel drives the legs.",
+        "Bouncing in the saddle rather than spinning smoothly."
+      ],
+      "muscles_worked": ["Quadriceps", "Hamstrings", "Calves"],
+      "illustration_id": "spin_seated",
+      "caution_tags": ["knee", "cardiac_caution"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma", "helgerud2007"]
+    },
+    {
+      "id": "spin_bike_jumps",
+      "name": "Seated to standing jumps",
+      "modality": "spin_bike",
+      "difficulty": "advanced",
+      "met_value": 8.8,
+      "how_to": [
+        "Set a moderate to heavy resistance so you have something to stand against.",
+        "Ride seated at a controlled cadence, then rise smoothly out of the saddle.",
+        "Hold the standing position for a few pedal strokes, then sit back down without dropping.",
+        "Keep the resistance and the cadence steady across both positions."
+      ],
+      "spoken_instruction": "Jumps. Rise smoothly out of the saddle, then sit back down without dropping.",
+      "safety_notes": [
+        "Never make the transition with light resistance; the pedals will run away from you.",
+        "Skip this movement if you have knee or hip pain today.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Dropping heavily back into the saddle.",
+        "Letting the cadence spike on the way up."
+      ],
+      "muscles_worked": ["Glutes", "Quadriceps", "Core"],
+      "illustration_id": "spin_standing",
+      "caution_tags": ["knee", "hip", "cardiac_caution"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma"]
+    },
+    {
+      "id": "spin_bike_standing_sprint",
+      "name": "Standing sprint, heavy gear",
+      "modality": "spin_bike",
+      "difficulty": "advanced",
+      "met_value": 12.5,
+      "how_to": [
+        "Add resistance until standing feels like climbing rather than spinning.",
+        "Rise out of the saddle with your hips over the pedals and hands wide.",
+        "Drive as hard as you can hold for the whole interval, around nine out of ten.",
+        "Sit and spin easy the instant the interval ends."
+      ],
+      "spoken_instruction": "Heavy standing sprint. Hips over the pedals, drive hard, nine out of ten.",
+      "safety_notes": [
+        "Build up to this over several weeks rather than starting here.",
+        "Skip it entirely if you have knee or hip pain today.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Holding the sprint past the point where form collapses.",
+        "Bouncing the hips instead of staying centred over the pedals."
+      ],
+      "muscles_worked": ["Quadriceps", "Glutes", "Calves", "Core"],
+      "illustration_id": "spin_standing",
+      "caution_tags": ["knee", "hip", "cardiac_caution", "balance"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma", "helgerud2007"]
+    },
+    {
+      "id": "spin_bike_single_leg_focus",
+      "name": "Single-leg focus",
+      "modality": "spin_bike",
+      "difficulty": "advanced",
+      "met_value": 8.0,
+      "how_to": [
+        "Set a moderate resistance and settle into a steady seated cadence.",
+        "Shift your attention to one leg and concentrate on pulling through the back of the stroke.",
+        "Keep both feet on the pedals; the other leg keeps turning but does less.",
+        "Change the emphasis to the other leg partway through the interval."
+      ],
+      "spoken_instruction": "Single-leg focus. Concentrate on pulling one leg through the back of the stroke.",
+      "safety_notes": [
+        "Keep both feet on the pedals throughout; unclipping mid-interval is how falls happen.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Letting the cadence collapse while concentrating.",
+        "Rocking the hips toward the working leg."
+      ],
+      "muscles_worked": ["Hamstrings", "Quadriceps", "Glutes"],
+      "illustration_id": "spin_seated",
+      "caution_tags": ["knee"],
+      "is_per_side": true,
+      "evidence_keys": ["chen2024nma"]
+    },
+    {
+      "id": "spin_bike_smooth_circles",
+      "name": "Smooth pedalling drill",
+      "modality": "spin_bike",
+      "difficulty": "beginner",
+      "met_value": 3.5,
+      "how_to": [
+        "Set a light resistance and sit tall with your hands resting on the bars.",
+        "Spin at a comfortable cadence and picture your feet tracing an even circle.",
+        "Concentrate on removing the dead spots at the top and bottom of each stroke.",
+        "Keep your hips completely still in the saddle."
+      ],
+      "spoken_instruction": "Smooth circles. Trace an even circle with each foot and keep your hips still.",
+      "safety_notes": ["Keep some resistance on so the flywheel cannot drive your legs."],
+      "common_mistakes": [
+        "Stamping down on the pedals rather than turning circles.",
+        "Raising the cadence until the hips start to rock."
+      ],
+      "muscles_worked": ["Quadriceps", "Hamstrings", "Calves"],
+      "illustration_id": "spin_seated",
+      "caution_tags": [],
+      "is_per_side": false,
+      "evidence_keys": ["acsm2021"]
+    },
+    {
+      "id": "reformer_pelvic_tilts",
+      "name": "Reformer pelvic tilts",
+      "modality": "reformer_pilates",
+      "difficulty": "beginner",
+      "met_value": 2.8,
+      "how_to": [
+        "Lie on the carriage with your feet flat on the footbar and a heavier spring load so the carriage stays still.",
+        "Find a neutral pelvis, so your lower back is neither arched nor pressed hard down.",
+        "Breathe out and tilt your pelvis so your lower back flattens gently toward the carriage.",
+        "Breathe in and return to neutral, moving only the pelvis."
+      ],
+      "spoken_instruction": "Pelvic tilts. Flatten the lower back gently as you breathe out, then return to neutral.",
+      "safety_notes": ["Use enough spring load that the carriage cannot slide while you work."],
+      "common_mistakes": [
+        "Pushing through the feet so the carriage moves instead of the pelvis.",
+        "Squeezing the glutes to tilt rather than using the abdominals."
+      ],
+      "muscles_worked": ["Deep abdominals", "Glutes"],
+      "illustration_id": "reformer_pelvic_tilts",
+      "caution_tags": [],
+      "is_per_side": false,
+      "evidence_keys": ["ozturk2025reformer", "wang2021pilates"]
+    },
+    {
+      "id": "reformer_spine_stretch_forward",
+      "name": "Reformer spine stretch forward",
+      "modality": "reformer_pilates",
+      "difficulty": "intermediate",
+      "met_value": 2.8,
+      "how_to": [
+        "Sit on the carriage facing the footbar with your legs apart and your hands on the bar.",
+        "Use a light spring load so the carriage moves with your control rather than pulling you.",
+        "Sit tall, then round your spine forward from the top, letting the carriage glide away.",
+        "Restack the spine from the base upward to return to sitting tall."
+      ],
+      "spoken_instruction": "Spine stretch forward. Round from the top, then restack the spine from the base upward.",
+      "safety_notes": ["Bend your knees if your hamstrings limit sitting upright."],
+      "common_mistakes": [
+        "Hinging at the hips instead of articulating the spine.",
+        "Pushing the bar away with the arms rather than moving from the spine."
+      ],
+      "muscles_worked": ["Deep abdominals", "Spinal muscles", "Hamstrings"],
+      "illustration_id": "reformer_spine_stretch",
+      "caution_tags": [],
+      "is_per_side": false,
+      "evidence_keys": ["ozturk2025reformer"]
+    },
+    {
+      "id": "elliptical_long_hard_effort",
+      "name": "Elliptical sustained hard effort",
+      "modality": "elliptical",
+      "difficulty": "advanced",
+      "met_value": 9.0,
+      "how_to": [
+        "Raise the resistance two steps above your steady-state setting.",
+        "Hold a strong, even cadence with a light hold on the fixed bars.",
+        "Work at an effort of eight out of ten and hold it for the whole interval without surging.",
+        "Reduce the resistance and stride easily as soon as the interval ends."
+      ],
+      "spoken_instruction": "Sustained hard effort. Hold eight out of ten evenly, no surging.",
+      "safety_notes": [
+        "Reduce the effort if you cannot hold the cadence steady.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Surging early and fading before the interval ends.",
+        "Leaning weight onto the handles once the effort rises."
+      ],
+      "muscles_worked": ["Quadriceps", "Glutes", "Hamstrings", "Calves"],
+      "illustration_id": "elliptical_hard",
+      "caution_tags": ["cardiac_caution"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma", "helgerud2007"]
     }
   ]
 }

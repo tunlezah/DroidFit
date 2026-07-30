@@ -122,3 +122,29 @@ assumption marked open.
   conservative means a real change is called "roughly unchanged" for a week longer than
   necessary — preferable to reporting noise as progress.
 - **Status:** open
+
+### A-0009 — The elliptical's light-effort MET value is scaled from the moderate entry
+- **Date:** 2026-07-30
+- **Phase:** 02
+- **Assumption:** An easy elliptical stride costs about 4.0 MET.
+- **Why it was needed:** The engine's warm-up pool and its cool-down spin-down both need a
+  machine exercise the Compendium anchors at recovery. The spin bike has two such entries
+  (3.5 and 4.0 MET, codes 01210 and 01214); the elliptical's lowest published entry is
+  moderate effort at 5.0 MET (02048), with no light-effort code. Without a recovery-anchored
+  elliptical exercise, an elliptical-only session cannot warm up on the machine or spin down
+  on it, and falls through to floor work for both.
+- **What was assumed:** that an elliptical and a stationary bike are close enough at an easy
+  pace to share the cycling light-effort value. Both are seated-or-supported, continuous,
+  low-impact and self-paced.
+- **How to confirm it:** indirect calorimetry, or a heart-rate comparison of an easy stride
+  against an easy spin at matched perceived effort. Neither is likely to happen, so this
+  stays open.
+- **If wrong:** the energy estimate for elliptical warm-ups and spin-downs is off by roughly
+  ±1 MET over a few minutes — around 5 kcal for an 80 kg user over five minutes. It also
+  determines pool membership, which matters more than the number: if the true anchor is
+  Zone 2 rather than recovery, the exercise is still a valid warm-up (the pool admits Zone 2)
+  but a slightly brisk spin-down.
+- **Mitigation:** flagged `approximated_from` in `met_values.json` with the reasoning inline,
+  which the data check requires for every approximated value.
+- **Status:** open
+

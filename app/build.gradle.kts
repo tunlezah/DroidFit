@@ -55,7 +55,13 @@ android {
 
     sourceSets {
         named("main") { java.srcDirs("src/main/kotlin") }
-        named("test") { java.srcDirs("src/test/kotlin") }
+        named("test") {
+            java.srcDirs("src/test/kotlin")
+            // Puts the shipped exercise catalogue on the unit-test classpath so
+            // ExerciseCatalogueValidationTest validates the *actual* asset rather than a
+            // copy that can drift from it (KI-0006). A copy would be worse than no test.
+            resources.srcDir("src/main/assets")
+        }
         named("androidTest") { java.srcDirs("src/androidTest/kotlin") }
     }
 
@@ -114,6 +120,7 @@ dependencies {
 
     testImplementation(libs.junit4)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.kotlinx.serialization.json)
     testImplementation(libs.turbine)
     testImplementation(projects.core.testing)
 

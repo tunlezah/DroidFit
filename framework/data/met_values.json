@@ -28,6 +28,15 @@
       "intensity": "vigorous"
     },
     {
+      "label": "Elliptical trainer, light effort",
+      "code": "02048",
+      "met": 4.0,
+      "modality": "elliptical",
+      "intensity": "recovery",
+      "approximated_from": "02048",
+      "$note": "The Compendium's lowest elliptical entry is moderate effort at 5.0 (02048); it has no light-effort elliptical code. Scaled down to the stationary-cycling light-effort value (4.0, code 01214) because the machines are mechanically comparable at an easy pace. Needed so the elliptical has a recovery-anchored exercise for warm-ups and spin-downs. See assumptions.md A-0009."
+    },
+    {
       "label": "Bicycling, stationary, RPM/Spin bike class",
       "code": "01270",
       "met": 9.0,
@@ -99,6 +108,24 @@
       "intensity": "recovery",
       "approximated_from": "02105",
       "$note": "The 2024 Compendium has no reformer entry. See assumptions.md A-0004. Likely an underestimate; underestimating expenditure is the safe direction."
+    },
+    {
+      "label": "Stretching, mild (used for reformer mobility work)",
+      "code": "02101",
+      "met": 2.3,
+      "modality": "reformer_pilates",
+      "intensity": "recovery",
+      "approximated_from": "02101",
+      "$note": "Reformer mobility work — mermaid, supine arm springs — is closer to mild stretching than to a general Pilates class, so the stretching code is the better fit. Same reformer caveat as A-0004."
+    },
+    {
+      "label": "Calisthenics, moderate effort (used for loaded reformer work)",
+      "code": "02022",
+      "met": 3.8,
+      "modality": "reformer_pilates",
+      "intensity": "zone_2",
+      "approximated_from": "02022",
+      "$note": "Long stretch, knee stretches and teaser on the reformer are sustained loaded work, above a general Pilates class. Matched to moderate calisthenics rather than invented. Same reformer caveat as A-0004."
     },
     {
       "label": "Calisthenics, light effort (curl ups, crunches, plank)",
