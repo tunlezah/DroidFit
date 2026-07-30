@@ -114,7 +114,16 @@ what went wrong survives.
   detekt and APK jobs were verified locally; the emulator job was not.
 - **Workaround:** The job is gated to the default branch and manual dispatch, so if it is
   misconfigured it cannot block a PR.
-- **Status:** open — verify on the first `workflow_dispatch` run.
+- **Update 2026-07-30:** the job **did** start on run 30533162151 (this branch is the repository's
+  default, so the gate matched). It got through KVM setup and ran `connectedDebugAndroidTest` for
+  roughly 25 minutes before being **cancelled** by the next push — `cancel-in-progress: true` in the
+  workflow's concurrency group. So the setup steps (checkout, JDK, Gradle, KVM) are confirmed
+  working; whether the emulator boots and `connectedDebugAndroidTest` completes is **still
+  unverified**.
+- **Status:** open. To settle it: trigger the workflow manually (`workflow_dispatch`) and let it run
+  without pushing to the branch. Expect it to pass trivially at present — there are no
+  instrumentation tests yet — which is exactly what makes it a clean check of the emulator setup
+  before phase 06 depends on it.
 
 ### KI-0009 — CI's unit-test step originally skipped the entire :domain test suite
 - **Date:** 2026-07-30
