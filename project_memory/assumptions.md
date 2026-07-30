@@ -148,3 +148,20 @@ assumption marked open.
   which the data check requires for every approximated value.
 - **Status:** open
 
+### A-0010 — 20 rounds is a defensible ceiling on interval extension
+- **Date:** 2026-07-30
+- **Phase:** 06
+- **Assumption:** No user needs more than 20 rounds of an interval template, so capping there
+  is safe.
+- **Why it was needed:** D-0026 extends the round count to fill long sessions. The extension
+  needs a bound, and the specification gives none because it does not contemplate durations
+  much above the template sizes.
+- **What was assumed:** that 20 rounds — 80 minutes of work at `4x4`, or 30 minutes at
+  `6x30s` — is beyond any real prescription, so the cap will never bind in practice for a
+  sensible request.
+- **How to confirm it:** ask the operator whether they would ever request an interval session
+  longer than an hour. A-0007 is the related question and matters more.
+- **If wrong:** requests long enough to hit the cap get a trailing active-recovery segment
+  instead of more rounds, which is the behaviour the specification describes anyway.
+- **Status:** open. See KI-0013: the deeper issue is that the app will build a 20-round
+  interval session at all.

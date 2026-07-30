@@ -130,3 +130,23 @@ This file is not a list of things that are wrong. It is a list of things that we
   how the functions are shaped.
 - **Estimated effort:** 30 minutes, including the round-trip test.
 - **Status:** open
+
+### TD-0009 — The engine's test catalogue is a generated copy of the shipped one
+- **Date:** 2026-07-30
+- **Phase:** 06
+- **Shortcut:** `domain/src/test/.../CatalogueFixture.kt` restates every shipped exercise's id,
+  modality, difficulty, MET value and caution tags as a pipe-delimited table, generated from
+  `app/src/main/assets/exercises_seed.json`.
+- **Why:** `:domain` is a pure Kotlin module with no Android dependency, and therefore no access to
+  the app's assets. That boundary is deliberate and worth keeping — it is why the engine's ~1,700
+  test requests run in under a second with no device and no Robolectric.
+- **Cost of leaving it:** two representations of the same data. A drifted fixture would make the
+  golden-file test a test of a catalogue nobody ships, and it would keep passing while doing it.
+- **Mitigation already in place:** `scripts/check_framework_data.py` asserts the fixture and the
+  asset agree row for row, in both directions, and CI runs it before the tests. So the drift fails
+  the build rather than hiding.
+- **Repay when:** the catalogue moves out of `app/` into a resource a JVM module can read — most
+  likely when a second app module or a shared test-fixtures module appears. At that point the
+  fixture becomes a parser over the real file and the generated table goes away.
+- **Estimated effort:** 1 hour, most of it deciding where the asset should live.
+- **Status:** open

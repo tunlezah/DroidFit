@@ -9,6 +9,7 @@ Append-only log of choices with more than one defensible answer. Template:
 
 | Phase | Completed | New assumptions? | Notes |
 |---|---|---|---|
+| 06 — Workout engine | 2026-07-30 | Yes — A-0010 | Generator implemented; KI-0001 and KI-0006 closed. Golden file reproduces engine spec §9 exactly, including its exercise choices. Invariants asserted across 1,680 requests. Verified: `qualityCheck` green, 57 data checks, 11 compliance checks, release APK 2.5 MB. D-0020..D-0028, KI-0012..KI-0014, TD-0009 |
 | 02 — Content authoring | 2026-07-30 | Yes — A-0009 | Catalogue grown 14 → 65 exercises; KI-0004 and KI-0006 closed. Balance and pool minimums now checked rather than counted. D-0019 |
 | Framework authoring (phase −1) | 2026-07-30 | Yes — A-0001..A-0008 | Framework, skeleton and CI created. Verified locally: `qualityCheck` green, release APK 2.38 MB, debug APK 32.58 MB. D-0001..D-0016, ADR-0001..ADR-0012, KI-0001..KI-0008, TD-0001..TD-0008, R-0001..R-0008, FF-0001..FF-0009, UF-0001..UF-0004 |
 
@@ -328,3 +329,158 @@ Append-only log of choices with more than one defensible answer. Template:
   `scripts/check_framework_data.py`, `ExerciseCatalogueValidationTest`.
 - **Verification:** 57 framework data checks and 17 catalogue validation tests, both in CI.
 
+### D-0020 — Intensity anchors are a lookup table, not a MET threshold
+- **Date:** 2026-07-30
+- **Phase:** 06
+- **Decision:** `domain/engine/IntensityAnchor` maps `(modality, metValue)` to the Compendium's
+  intensity anchor, mirroring `framework/data/met_values.json`.
+- **Alternatives considered:**
+  - *Derive the anchor from MET alone.* **Impossible, not merely worse.** A spin class is 9.0 MET
+    anchored at Zone 2 (code 01270); the elliptical at the same 9.0 MET is anchored vigorous
+    (02049). No threshold separates them, and the worked example in engine spec §9 requires
+    `spin_bike_seated_flat` (9.0 MET) in the warm-up.
+  - *Store the anchor on `Exercise` and persist it.* Rejected: it is a Room schema change plus a
+    migration, and the anchor is not per-exercise content — it is a property of the
+    `(modality, MET)` pair, which is what the Compendium publishes.
+- **Reason:** MET is the energetic cost of work; the anchor is what the work *is*. Conflating them
+  mis-prescribes sessions (see D-0026).
+- **Reverses if:** an exercise ever needs an anchor that differs from other exercises at the same
+  modality and MET. Then it becomes authored content and the field moves onto `Exercise`.
+- **Affects:** `domain/engine/IntensityAnchor.kt`, `ExercisePools`,
+  `scripts/check_framework_data.py`.
+- **Guard:** the data check asserts the Kotlin table and `met_values.json` agree in both
+  directions, and that every catalogue exercise resolves to a tabulated pair. Drift fails CI.
+
+### D-0021 — An untabulated (modality, MET) pair falls back to a MET threshold
+- **Date:** 2026-07-30
+- **Phase:** 06
+- **Decision:** `IntensityAnchor.of` approximates from MET (< 3.6 recovery, < 6.0 Zone 2, < 8.0
+  threshold, else vigorous) when the pair is absent from the table.
+- **Alternatives considered:** throwing. Rejected: a content addition should not crash the app on a
+  user's device. The data check turns the same situation into a CI failure, which is where it
+  belongs.
+- **Reason:** Fail visibly in the build, degrade gracefully at runtime.
+- **Reverses if:** the fallback is ever observed in production, which would mean the data check was
+  bypassed.
+- **Affects:** `IntensityAnchor.approximateFrom`.
+
+### D-0022 — The warm-up's final segment is on the machine the main block uses
+- **Date:** 2026-07-30
+- **Phase:** 06
+- **Decision:** When several machines are eligible, the warm-up's machine segment is chosen to match
+  the modality the main block was built on. The main block is therefore built **first**, and the
+  random draws happen in the order main → warm-up → cool-down.
+- **Reason:** Engine spec §4.1 requires the final warm-up segment to be on a machine "so the user is
+  already on the machine when the main block starts". With an elliptical and a bike both enabled, a
+  random machine choice satisfies the letter of the rule and defeats its purpose — the user warms up
+  on the elliptical and then moves to the bike.
+- **Alternatives considered:** building the warm-up first and forcing the main block to match it.
+  Rejected: the main block is the session; the warm-up serves it.
+- **Reverses if:** never, unless the rule's rationale changes.
+- **Affects:** `DefaultWorkoutGenerator.warmUpExercises`, and the golden file (draw order is part
+  of the reproducible output).
+
+### D-0023 — A Pilates-only session is built and recorded as RECOVERY, whatever was requested
+- **Date:** 2026-07-30
+- **Phase:** 06
+- **Decision:** When no machine-cardio exercise is eligible, the main block uses the RECOVERY
+  construction (alternating mobility and strength at recovery intensity), `Workout.style` is
+  recorded as `RECOVERY`, the title is the honest Pilates name, and a build note tells the user
+  what was substituted.
+- **Alternatives considered:**
+  - *Implement spec §3's fallback chain literally.* The chain ends at `strengthPool`, which would
+    build an interval or surge **structure** out of mat work — a session presented as aerobic
+    interval training that is not aerobic training. That is the one substitution
+    `framework/02_evidence_base.md` §1.5 and REQ-004 forbid.
+  - *Record the requested style and cap the intensity.* Rejected: engine spec §7.2 says the style
+    recorded is what was built, and §7.3 says a Pilates session contributes zero vigorous minutes.
+    `RECOVERY` is defined as work counting toward volume but not intensity, so it is the honest
+    mapping — and it makes the weekly-load accounting correct without a special case.
+- **Reason:** The evidence does not support Pilates as a visceral-fat intervention comparable to
+  aerobic work. A session labelled "Intervals" that is a mat class misrepresents that.
+- **Reverses if:** the catalogue ever gains genuinely vigorous, sustainable Pilates content with
+  evidence behind it at that intensity.
+- **Affects:** `MainBlockBuilder.build`, `SessionTitle`, `WorkoutGeneratorFailureTest`.
+
+### D-0024 — Repetition is allowed where it is the prescription, and fails where it is a gap
+- **Date:** 2026-07-30
+- **Phase:** 06
+- **Decision:** Two selection functions. `pick` fails with `InsufficientVariety` when a pool of
+  fewer than two must fill three or more slots; `pickCycling` never fails and reuses the ordering.
+  Warm-up, cool-down and recovery blocks use `pick`; Zone 2 segments and Mixed base segments use
+  `pickCycling`.
+- **Reason:** Spec §5.5's failure rule is right for a ramp, where three slots means three
+  movements. It is wrong for a continuous steady block, which is *one* effort divided so the coach
+  has boundaries to cue on (§4.3) — refusing to build a steady ride on a single-machine catalogue
+  would be a bug, not a safeguard.
+- **Reverses if:** the segment model gains a way to express "one effort, several cue points"
+  without splitting into segments at all.
+- **Affects:** `ExercisePicker`, `MainBlockBuilder`.
+
+### D-0025 — No segment shorter than 20 seconds is ever emitted
+- **Date:** 2026-07-30
+- **Phase:** 06
+- **Decision:** `MIN_SEGMENT_SECONDS = 20`. Leftover time below that is folded into the neighbouring
+  segment rather than becoming its own, even where that puts one HIIT recovery slightly over the
+  +60 s extension cap. A transition is skipped entirely if paying for it would take the following
+  segment below the floor.
+- **Reason:** Spec §4.2 says leftover becomes "an extra ACTIVE_RECOVERY segment at the end", which
+  for a leftover of 1 s produces a one-second segment. It cannot be cued, the TTS cue is longer
+  than the segment, and it reads on screen as a bug. 20 s is the shortest interval the catalogue's
+  vigorous cues are authored to fit inside (the 14-word limit), so it is the natural floor.
+- **Reverses if:** the cue scheduler gains a way to speak across a segment boundary.
+- **Affects:** `SessionConstants.MIN_SEGMENT_SECONDS`, `SegmentPlanning`,
+  `MainBlockBuilder.recoveryExtensions`. Asserted by an invariant test.
+
+### D-0026 — Interval templates gain rounds to fill a long session
+- **Date:** 2026-07-30
+- **Phase:** 06
+- **Decision:** After choosing the largest template that fits, add whole rounds of it while they
+  still fit, up to 20 rounds. Only then distribute the leftover into the recovery segments.
+- **Alternatives considered:** the specification's fixed round count. Rejected on inspection of the
+  output: a 120-minute HIIT request has a 6,300 s main block against `4x4`'s 1,500 s, so the
+  literal reading produces four intervals followed by **77 minutes** of active recovery. The
+  duration invariant holds and the session is nonsense.
+- **Reason:** The spec was written for durations near the template sizes and is silent above them.
+  Extra rounds of the chosen protocol is the reading that keeps a long interval session an interval
+  session.
+- **Reverses if:** the recovery recommender is extended to refuse implausible requests up front,
+  which would be a better answer than building them well.
+- **Affects:** `IntervalTemplate.MAX_ROUNDS`, `MainBlockBuilder.roundsFor`. Recorded as KI-0013
+  because a 20-round 4×4 is still not a sensible prescription — it is merely a coherent one.
+
+### D-0027 — Exercise pools are filtered by MET range **and** intensity anchor
+- **Date:** 2026-07-30
+- **Phase:** 06
+- **Decision:** Narrow spec §3's MET-only pool predicates with the Compendium anchor: the vigorous
+  and threshold pools require an anchor of THRESHOLD or harder, the steady pool requires ZONE_2 or
+  easier, and the Pilates warm-up band starts above the mobility band (MET > 2.5).
+  `framework/07_workout_engine_spec.md` §3.1 documents it so code and specification stay in step.
+- **Reason:** Three real mis-prescriptions in the very first generated plan, all from MET-only
+  rules:
+  1. `spin_bike_high_cadence_surge` (8.8 MET, anchored vigorous) used as a Mixed session's **Zone 2
+     base** — a hard interval prescribed as conversational work.
+  2. `spin_bike_seated_flat` (9.0 MET, anchored Zone 2) eligible as a **HIIT work interval** — the
+     easy flat road served as a 30-second maximal effort.
+  3. `cooldown_thoracic_opener` (2.3 MET) chosen as the **first warm-up segment**. A static stretch
+     warms nothing up, and the spec's own worked example uses a march.
+- **How they were found:** by reading the first plan the engine produced, not by a failing
+  assertion. Every invariant test passed throughout. Recorded prominently because it is the clearest
+  evidence in this phase that **invariants do not check whether a session is good programming** —
+  the golden file exists precisely so a human reads the output once.
+- **Reverses if:** the anchor data is ever found to disagree with how the catalogue actually
+  prescribes an exercise, in which case the anchor becomes authored per exercise (see D-0020).
+- **Affects:** `ExercisePools.partition`, `framework/07_workout_engine_spec.md` §3.1, the golden
+  file.
+
+### D-0028 — Style availability is computed from the engine's own minimums
+- **Date:** 2026-07-30
+- **Phase:** 06
+- **Decision:** `SessionLimits` exposes each style's minimum total from `StyleBudget`, and the Train
+  screen disables a style the chosen duration cannot support, showing the minimum on the chip.
+  `StyleBudget` itself stays internal.
+- **Reason:** REQ-024. A UI that hard-codes "intervals need 16 minutes" drifts from the generator
+  the moment a budget constant changes, and the failure mode is the one the requirement exists to
+  prevent: the user picks a style and generation fails.
+- **Reverses if:** never.
+- **Affects:** `domain/engine/SessionBudget.kt`, `WorkoutHomeViewModel`, `WorkoutHomeScreen`.

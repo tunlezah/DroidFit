@@ -175,6 +175,101 @@ check(
     ", ".join(missing_symptom_note),
 )
 
+# --- the engine's intensity-anchor table mirrors met_values.json ------------------
+# The anchor is not derivable from the MET value: a spin class is 9.0 MET anchored at
+# Zone 2, the elliptical at the same 9.0 MET is anchored vigorous. So the engine carries
+# a (modality, MET) -> anchor lookup, and that lookup is only trustworthy if it agrees
+# with the Compendium data it was copied from. It decides which exercises may be warmed
+# up on, so drift silently changes generated sessions rather than breaking a build.
+anchor_source = (
+    ROOT / "domain" / "src" / "main" / "kotlin" / "com" / "visceralfit" / "domain" / "engine"
+    / "IntensityAnchor.kt"
+).read_text()
+kotlin_anchors = {
+    (modality.lower(), float(met)): anchor.lower()
+    for modality, met, anchor in re.findall(
+        r"Anchored\(Modality\.([A-Z_0-9]+), ([0-9.]+), ([A-Z_0-9]+)\)", anchor_source
+    )
+}
+check("the engine declares an intensity-anchor table", bool(kotlin_anchors))
+
+table_anchors = {
+    (a["modality"], a["met"]): a["intensity"] for a in mets["activities"] if a["modality"]
+}
+disagreements = sorted(
+    f"{modality} {met}: engine says {anchor}, met_values.json says {table_anchors.get((modality, met))}"
+    for (modality, met), anchor in kotlin_anchors.items()
+    if table_anchors.get((modality, met)) != anchor
+)
+check(
+    "every engine anchor matches met_values.json",
+    not disagreements,
+    "; ".join(disagreements),
+)
+absent = sorted(f"{m} {v}" for (m, v) in table_anchors if (m, v) not in kotlin_anchors)
+check(
+    "the engine's table covers every modality-specific MET entry",
+    not absent,
+    f"missing from IntensityAnchor.kt: {absent}",
+)
+
+# Every catalogue exercise must resolve to a tabulated anchor. Without this the engine
+# falls back to a MET threshold, which is exactly the approximation the lookup exists to
+# avoid, and it would do so silently.
+untabulated = sorted(
+    f"{e['id']} ({e['modality']} {e['met_value']})"
+    for e in catalogue["exercises"]
+    if (e["modality"], e["met_value"]) not in kotlin_anchors
+)
+check(
+    "every catalogue exercise has a tabulated intensity anchor",
+    not untabulated,
+    "; ".join(untabulated),
+)
+
+# --- the engine's test fixture mirrors the shipped catalogue -----------------------
+# :domain is a pure Kotlin module and cannot read app/src/main/assets, so the engine's
+# tests use a fixture. A drifted fixture makes the golden-file test a test of a catalogue
+# nobody ships, and it would keep passing while doing it.
+fixture_source = (
+    ROOT / "domain" / "src" / "test" / "kotlin" / "com" / "visceralfit" / "domain" / "engine"
+    / "CatalogueFixture.kt"
+).read_text()
+fixture_rows = re.findall(
+    r"^\s{8}([a-z0-9_]+)\|([a-z_]+)\|([a-z]+)\|([0-9.]+)\|([a-z_,]*)$",
+    fixture_source,
+    re.MULTILINE,
+)
+fixture = {
+    row[0]: (row[1], row[2], float(row[3]), tuple(t for t in row[4].split(",") if t))
+    for row in fixture_rows
+}
+shipped = {
+    e["id"]: (
+        e["modality"],
+        e["difficulty"],
+        e["met_value"],
+        tuple(sorted(e.get("caution_tags", []))),
+    )
+    for e in catalogue["exercises"]
+}
+check(
+    "the engine fixture has one row per shipped exercise",
+    set(fixture) == set(shipped),
+    f"only in fixture: {sorted(set(fixture) - set(shipped))}; "
+    f"only in catalogue: {sorted(set(shipped) - set(fixture))}",
+)
+mismatched = sorted(
+    f"{exercise_id}: fixture {fixture[exercise_id]} vs catalogue {shipped[exercise_id]}"
+    for exercise_id in set(fixture) & set(shipped)
+    if fixture[exercise_id] != shipped[exercise_id]
+)
+check(
+    "every engine fixture row matches the shipped exercise",
+    not mismatched,
+    "; ".join(mismatched),
+)
+
 # --- catalogue balance requirements (08_exercise_library_spec.md §1, §4) -----------
 # Stated as minimums in prose, which is how the catalogue drifted below them before.
 MODALITY_MINIMUMS = {"floor_pilates": 24, "reformer_pilates": 10, "elliptical": 8, "spin_bike": 12}

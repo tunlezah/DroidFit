@@ -22,7 +22,12 @@ what went wrong survives.
 - **Cause:** By design — `WorkoutGenerator` is an interface with no implementation.
   The algorithm is fully specified in `framework/07_workout_engine_spec.md`.
 - **Workaround:** None. This is the app's core function.
-- **Status:** open — phase 06
+- **Status:** **fixed in phase 06.** `DefaultWorkoutGenerator` implements the specification;
+  `GenerateWorkout` loads the catalogue and delegates to it, and the Start button generates a real
+  session and shows the plan. Verified by a golden-file test that reproduces engine spec §9 row for
+  row *including its exercise choices*, plus determinism, duration-fit, structure and eligibility
+  invariants asserted across 1,680 requests. Three programming faults the invariants did **not**
+  catch were found by reading the output; see D-0027.
 
 ### KI-0002 — Weekly minutes always reads zero on the Progress screen
 - **Date:** 2026-07-30
@@ -111,3 +116,157 @@ what went wrong survives.
 - **Workaround:** None needed until the schema changes.
 - **Status:** open — must be built **before** the first schema change, not after. See
   `framework/06_data_model.md` §Migrations.
+- **Update 2026-07-30 (phase 06):** phase 06's prompt asks for the harness to be built in this
+  phase. It was **not**, and deliberately: the phase turned out to need no schema change at all.
+  The intensity anchor — the one thing that looked like it needed a new column — is a property of
+  the `(modality, MET)` pair rather than of an exercise, so it became a lookup table in `:domain`
+  instead (D-0020). Building an instrumented `MigrationTestHelper` harness here would have been
+  unverifiable in this environment (no emulator; see KI-0008) and would have tested nothing, since
+  there is still no migration. The constraint stands unchanged: the harness must exist before the
+  first schema change, which phase 09's `session_exercises` table (KI-0012) will be.
+
+### KI-0008 — Instrumentation tests have never been executed
+- **Date:** 2026-07-30
+- **Severity:** minor
+- **Area:** CI, `app/src/androidTest`
+- **Symptom:** The emulator job in `android-ci.yml` is written but unverified; there are
+  no instrumentation tests to run yet, and `VisceralFitTestRunner` has never started.
+- **Reproduction:** N/A.
+- **Cause:** No emulator was available in the authoring environment. The unit-test,
+  detekt and APK jobs were verified locally; the emulator job was not.
+- **Workaround:** The job is gated to the default branch and manual dispatch, so if it is
+  misconfigured it cannot block a PR.
+- **Update 2026-07-30:** the job **did** start on run 30533162151 (this branch is the repository's
+  default, so the gate matched). It got through KVM setup and ran `connectedDebugAndroidTest` for
+  roughly 25 minutes before being **cancelled** by the next push — `cancel-in-progress: true` in the
+  workflow's concurrency group. So the setup steps (checkout, JDK, Gradle, KVM) are confirmed
+  working; whether the emulator boots and `connectedDebugAndroidTest` completes is **still
+  unverified**.
+- **Status:** open. To settle it: trigger the workflow manually (`workflow_dispatch`) and let it run
+  without pushing to the branch. Expect it to pass trivially at present — there are no
+  instrumentation tests yet — which is exactly what makes it a clean check of the emulator setup
+  before phase 06 depends on it.
+
+### KI-0009 — CI's unit-test step originally skipped the entire :domain test suite
+- **Date:** 2026-07-30
+- **Severity:** major
+- **Area:** CI, root `build.gradle.kts`
+- **Symptom:** `./gradlew testDebugUnitTest` reported success while running **zero** domain tests.
+- **Reproduction:** was `./gradlew testDebugUnitTest` and inspect which `:test` tasks executed —
+  `:domain:test` was absent.
+- **Cause:** `:domain` is a pure Kotlin/JVM module, so its test task is `test`, not
+  `testDebugUnitTest`. Gradle runs a named task only in projects that have it, and reports success
+  when some projects do — so the gap is completely invisible in the log.
+- **Why this mattered more than it looks:** `:domain` is where the workout engine and all
+  programming rules live, and phase 06's property and golden-file tests are the most important
+  tests in the project. They would have been written, passed locally, and then never run in CI.
+- **Fix:** `qualityCheck` now enumerates the correct test task per module type, and the workflow
+  calls `qualityCheck` rather than `testDebugUnitTest`. Verified by checking `:domain:test` appears
+  in the executed task list.
+- **Status:** fixed in the framework commit. **Recorded rather than silently corrected** because
+  the same trap catches any future pure-JVM module — if you add one, add it to the aggregate.
+
+### KI-0010 — Four of six HIIT interval durations in the engine spec were arithmetically wrong
+- **Date:** 2026-07-30
+- **Severity:** major (in the specification, not the code)
+- **Area:** `framework/07_workout_engine_spec.md` §4.2, `framework/data/workout_templates.json`
+- **Symptom:** The `main_seconds_needed` column stated 1470 / 1080 / 870 / 510 for the `5x3`,
+  `8x1`, `10x30s` and `6x30s` templates; the correct values are 1500 / 1110 / 840 / 480.
+- **Reproduction:** `rounds × work + (rounds − 1) × recovery` for each row.
+- **Cause:** Hand-computed while authoring, with the `(rounds − 1)` on the recovery term applied
+  inconsistently.
+- **Why it mattered:** the spec is written to be implemented literally, and the phase-06 exit
+  criteria tell the implementer to use the numbers given. They would have produced HIIT sessions
+  30–60 s off the requested duration and then failed the ±30 s duration-fit property test, with the
+  failure appearing to be in the implementation rather than in the spec. A `4x4`/`5x3` tie at
+  1500 s also emerged, which the spec now resolves explicitly in favour of the evidence-backed
+  `4x4`.
+- **Fix:** values corrected in both files; the spec now shows the arithmetic inline rather than
+  just the result. `scripts/check_framework_data.py` added, which recomputes every template and
+  also checks template ordering, the style budget sums, MET-table coverage and citation keys —
+  24 checks, run in CI.
+- **Status:** fixed. Recorded because it is the clearest evidence in this project that **a
+  specification needs tests too**: four wrong numbers sat in a document that reads as
+  authoritative, and only recomputing them found it.
+
+### KI-0011 — The seed catalogue violated the authoring standard the same document defines
+- **Date:** 2026-07-30
+- **Severity:** major (specification/content inconsistency)
+- **Area:** `app/src/main/assets/exercises_seed.json`,
+  `framework/08_exercise_library_spec.md`
+- **Symptom:** The 14 worked examples — presented to the building agent as "match their depth" —
+  broke two of the spec's own rules:
+  1. Eleven of fourteen `spoken_instruction` values exceeded the stated 14-word limit (up to 21
+     words).
+  2. Three of the four exercises at `met_value >= 8.0` had **no stop-if-symptoms safety note**,
+     which REQ-006 requires: `spin_bike_seated_flat` (9.0), `spin_bike_seated_climb` (10.8),
+     `spin_bike_sprint` (12.5).
+- **Cause:** The rules and the examples were authored separately and never cross-checked. The
+  14-word limit was also derived loosely: at a typical TTS rate of ~150 wpm it corresponds to
+  ~5.5 s, which is right for a 30 s HIIT interval but needlessly tight for a movement that only
+  ever appears in a multi-minute block.
+- **Why it mattered:** the seed is the *exemplar*. An agent told to match examples that contradict
+  the rules will follow the examples, and would have propagated both faults across ~40 more
+  exercises — including the missing safety notes on vigorous work, which is the one category where
+  the omission has a physical consequence.
+- **Fix:** two-tier word limit, which is what the reasoning actually supports — **≤14 words when
+  `met_value >= 8.0`** (30 s intervals), **≤20 words otherwise**. Over-long cues trimmed, the three
+  missing safety notes added, catalogue version bumped to 2. Both rules are now enforced by
+  `scripts/check_framework_data.py` (26 checks) rather than only stated in prose.
+- **Status:** fixed. Recorded because the general lesson applies to every phase: **an exemplar that
+  contradicts its own rules is followed in preference to the rules.** Phase 02 must run the data
+  check after each authoring batch, not once at the end.
+
+### KI-0012 — Exercise variety is not carried across sessions
+- **Date:** 2026-07-30
+- **Severity:** minor
+- **Area:** `feature-workout`, `core:database`
+- **Symptom:** Two sessions generated back to back can use the same movements. The generator's
+  `recentExerciseIds` parameter works and is tested, but the app always passes an empty list.
+- **Reproduction:** Generate a 20-minute mixed session twice with the same settings; the base and
+  surge exercises are drawn from the same pool with no memory between them.
+- **Cause:** `CompletedSession` records a session's title, style and modalities, but not which
+  exercises it used. There is nothing honest to pass, so `WorkoutHomeViewModel.recentExerciseIds()`
+  returns an empty list rather than approximating from the title.
+- **Workaround:** Variety within a session is unaffected — that is the invariant that matters most,
+  and it is tested.
+- **Status:** open — phase 09. Needs a `session_exercises` join table, which is a schema change and
+  therefore needs KI-0007's migration harness first.
+
+### KI-0013 — The engine will build a 20-round interval session if asked
+- **Date:** 2026-07-30
+- **Severity:** minor
+- **Area:** `domain/engine`
+- **Symptom:** A 120-minute HIIT request produces a structurally valid session of up to 20 four-
+  minute intervals at 85–95% HRmax. Every invariant passes. No competent coach would prescribe it.
+- **Reproduction:** generate 120 minutes, HIIT, any modality set.
+- **Cause:** The PRD accepts 3–120 minutes for every style (A-0003), and nothing rejects a
+  duration that is *possible* but not *advisable*. D-0026 made the output coherent; it did not make
+  it sensible. Before that change the same request produced 77 minutes of active recovery, which
+  was worse.
+- **Workaround:** none needed today — nothing in the UI suggests a two-hour interval session, and
+  the duration presets stop at 90 minutes.
+- **Status:** open. The right fix is in the recovery recommender (engine spec §8), which should warn
+  before generating rather than have the engine silently refuse: an upper bound on *vigorous* minutes
+  per session, surfaced as advice with a reason. Phase 09.
+
+### KI-0014 — Three engine faults passed every invariant test
+- **Date:** 2026-07-30
+- **Severity:** major (process, not code — the faults themselves are fixed)
+- **Area:** `domain/engine`, testing strategy
+- **Symptom:** The first plan the engine generated was structurally perfect and prescriptively
+  wrong in three places: a vigorous 8.8 MET interval used as a Zone 2 base, the easy flat road
+  eligible as a HIIT work interval, and a static chest-opener stretch as the first warm-up segment.
+  Determinism, duration fit, structure and eligibility all passed.
+- **Cause:** Every invariant in engine spec §1 is a *structural* property. None of them asks whether
+  the session is good programming, because that question cannot be phrased as an assertion over
+  durations and set membership.
+- **Fix:** the faults are fixed (D-0027) and the pool rules now use the Compendium intensity anchor.
+- **Why it stays open as an issue:** the *gap* is not fixed. There is still no test that would catch
+  a fourth fault of the same kind. The golden file helps — it is the one artefact a human reads —
+  but it pins one request out of a very large space.
+- **Status:** open. Two things would help, in order: (1) an assertion that no segment's exercise is
+  anchored more than one band away from the segment's prescribed intensity, which is mechanical and
+  would have caught two of the three; (2) the Fitness Science sign-off in phase 06's exit criteria,
+  which is a human reading generated sessions at each style and several durations. **Neither has
+  been done.** The sign-off in particular is an exit criterion this phase has not met.

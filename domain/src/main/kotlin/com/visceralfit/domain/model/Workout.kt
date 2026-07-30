@@ -17,6 +17,16 @@ data class Workout(
     val requestedDuration: Duration,
     /** Seed used to generate this workout, so any session can be reproduced exactly. */
     val generationSeed: Long,
+    /**
+     * What the generator had to do differently from the request, in plain language, so
+     * the UI can say so rather than presenting a substituted session as the one that was
+     * asked for. Empty when the session is exactly what was requested.
+     *
+     * Examples: an intensity cap because no vigorous machine work was available, or a
+     * style downgrade because the duration could not hold any interval template. See
+     * `framework/07_workout_engine_spec.md` §3.
+     */
+    val buildNotes: List<String> = emptyList(),
 ) {
     val actualDuration: Duration get() = blocks.fold(Duration.ZERO) { acc, b -> acc + b.duration }
 

@@ -103,9 +103,35 @@ Then partition by role. Role is derived, not stored:
 | `strengthPool` | modality is Pilates and `metValue > 2.5` |
 | `mobilityPool` | `metValue <= 2.5` |
 
-Pools overlap deliberately — an exercise at 9.0 MET is in both `steadyPool` and
+Pools overlap deliberately — an exercise at 9.0 MET can be in both `steadyPool` and
 `vigorousPool`, because whether it is steady or hard work depends on how the segment is
 prescribed, not on the exercise.
+
+### 3.1 MET range **and** intensity anchor (added in phase 06, D-0026)
+
+The predicates above are MET-only, and implemented literally they mis-prescribe real
+sessions, because a MET value is the *cost* of work and not a description of it. Three
+faults appeared in the first generated plan:
+
+| Fault | Cause |
+|---|---|
+| The easy flat road served as a HIIT work interval | A spin class is 9.0 MET, so it clears `metValue >= 8.0` — but the Compendium anchors it at **Zone 2** (code 01270) |
+| A vigorous 8.8 MET interval used as a Mixed session's Zone 2 base | 8.8 sits inside the 4.0–9.0 steady band, but the Compendium anchors it **vigorous** (code 01305) |
+| A supine chest opener chosen as the first warm-up segment | `metValue <= 4.0` on a Pilates modality also admits static stretches at 1.8–2.3 MET |
+
+So each pool carries its MET range **and** the Compendium anchor from
+`framework/data/met_values.json`, which `IntensityAnchor` exposes:
+
+| Pool | Added condition |
+|---|---|
+| `warmUpPool` (Pilates clause) | `metValue > 2.5` — above the mobility band, so a stretch is not a warm-up |
+| `vigorousPool` | anchor is THRESHOLD or harder |
+| `thresholdPool` | anchor is THRESHOLD or harder |
+| `steadyPool` | anchor is ZONE_2 or easier |
+
+The fallback chain below is unchanged, and still handles a catalogue that cannot fill a
+narrowed pool. `scripts/check_framework_data.py` asserts that the engine's anchor table
+matches `met_values.json`, so the anchors cannot drift away from the Compendium.
 
 **Fallbacks when a pool is empty**, in order — apply the first that yields a non-empty pool
 and record which fallback was used in the returned `Workout`'s title context:
