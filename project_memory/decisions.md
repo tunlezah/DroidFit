@@ -9,6 +9,7 @@ Append-only log of choices with more than one defensible answer. Template:
 
 | Phase | Completed | New assumptions? | Notes |
 |---|---|---|---|
+| Clearance and selection | 2026-07-31 | No new ones | A-0002 and A-0007 answered. Effort ceiling added, defaulting to threshold rather than vigorous. All four modalities enabled by default, and REQ-011's refusal now explained on screen. D-0040, D-0041 |
 | Modality correction | 2026-07-31 | No new ones | `FLOOR_PILATES` renamed to `BODYWEIGHT` and aerobic capability made a property of the modality, on the operator's correction. A user with no equipment can now be given real intervals. Closes KI-0020, supersedes part of D-0023. Catalogue 65 → 72. D-0039 |
 | 09 — Tracking (partial) | 2026-07-30 | No new ones | `observeWeeklyLoad` implemented, closing KI-0002 and TD-0007: the Progress screen shows real minutes, sessions, vigorous minutes and rest-day advice. Two of engine spec §8's four signals; the other two need a schema change. D-0035..D-0037, KI-0019 |
 | 07 — Workout player (partial) | 2026-07-30 | No new ones | Session runs end to end: generate, begin, count down, pause, skip, end, record. Safety notice added, closing KI-0005. Clock in a foreground service per ADR-0008, tested by arithmetic rather than by waiting. **Not done:** TTS cues (phase 08), landscape, device verification — KI-0016..KI-0018. D-0029..D-0034 |
@@ -701,3 +702,64 @@ Append-only log of choices with more than one defensible answer. Template:
   strength work. The golden file changed in exactly three ways, all traceable to the rename:
   the id digest, the modality name, and one cool-down draw that moved because the pool is
   sorted by id.
+
+### D-0040 — The user sets a ceiling on how hard a session may get
+- **Date:** 2026-07-31
+- **Phase:** post-07 (answers A-0007)
+- **Decision:** New `UserPreferences.effortCeiling`, an `EffortCeiling` of STEADY, THRESHOLD or
+  VIGOROUS, **defaulting to THRESHOLD**. The generator honours it, combining it with any cap the
+  pool fallback chain applied, and the title and build notes say when it was the binding
+  constraint.
+- **Why it exists:** A-0007 asked whether the operator is cleared for vigorous exercise. The answer
+  was "I can do moderately vigorous exercise" (UF-0008), which is not the same as yes. The default
+  programme reached 85–95% of maximum heart rate — the intensity `helgerud2007` prescribes — and
+  nothing let the user say otherwise short of avoiding interval sessions entirely.
+- **Why THRESHOLD is the default rather than VIGOROUS:** the app cannot know a user's clearance, so
+  it does not assume the most permissive answer. 76–84% HRmax is hard but sustainable, matches
+  "moderately vigorous", and is still squarely inside what `chen2024nma` supports for visceral fat.
+  Raising it is a deliberate act on a screen that states the trade-off in both directions.
+- **Why it is separate from `ExperienceLevel`:** those answer different questions. Experience is
+  about technique and coordination; this is about cardiovascular clearance. Someone can be an
+  advanced Pilates practitioner and still have a reason not to reach 90% HRmax. Deriving one from
+  the other would silently couple a safety limit to a skill setting.
+- **The asymmetric default, and why:** `WorkoutRequest.effortCeiling` defaults to VIGOROUS while
+  `UserPreferences.effortCeiling` defaults to THRESHOLD. The engine's contract is to build what it
+  was asked for and it has no view on anyone's medical clearance; the cautious default belongs
+  where the user can see and change it. Stated explicitly in both places because a split default
+  is otherwise the kind of thing that looks like a bug.
+- **Honesty:** a ceiling that binds produces "Intervals (threshold)" rather than "Intervals", plus a
+  build note naming the ceiling and where to change it. A ceiling of VIGOROUS produces no cap at
+  all — deliberately, since a cap that is always present would make the word meaningless.
+- **Reverses if:** never as a concept. The default could move if a user's clearance is confirmed,
+  and that is a settings change rather than a code change.
+- **Affects:** `UserPreferences`, `EffortCeiling`, `PreferencesDataSource`, `WorkoutRequest`,
+  `IntensityAnchor.ceilingOf`, `SegmentPlanning.strictest`, `MainBlockBuilder`,
+  `DefaultWorkoutGenerator`, `SettingsScreen`, and the safety notice's opening paragraph, which
+  claimed 85–95% and no longer describes the default.
+- **Verification:** `WorkoutGeneratorCeilingTest` — five cases covering both binding ceilings, the
+  no-op case, and the case where the *pool* was the binding constraint and must not be blamed on
+  the user's ceiling.
+
+### D-0041 — Every modality is enabled and available on a fresh install
+- **Date:** 2026-07-31
+- **Phase:** post-07 (answers A-0002)
+- **Supersedes:** ADR-0004, which excluded the reformer from the defaults on the reasoning that
+  most users will not own one.
+- **Decision:** `Modality.DEFAULT_ENABLED` is all four modalities, and `availableEquipment` defaults
+  to all equipment-requiring ones.
+- **Reason:** The operator has an elliptical, a spin bike and a reformer (UF-0008), and wants to
+  pick any combination day to day — "one day doing spin bike, or tomorrow I do elliptical and
+  floor". More generally the old default solved the wrong problem: whether a modality is *usable* is
+  already answered by `requiresEquipment` plus the equipment the user has marked, so defaulting it
+  off as well hid thirteen reformer exercises behind a second switch with no explanation of why they
+  never appeared. A user who does not own something turns it off in one tap; a user who does own it
+  should not have to discover that they need to turn it on.
+- **What actually enforces the constraint:** REQ-011 — at least one modality must stay enabled — and
+  that is checked when toggling, not by the default. The refusal is now explained on screen instead
+  of the switch springing back silently, which is what REQ-011 asked for and did not get.
+- **Reverses if:** the app is ever distributed beyond this operator, at which point defaulting
+  equipment on becomes an assumption about a stranger's home rather than a fact about this one.
+  Recorded as the reversal condition precisely because it is easy to forget the default was chosen
+  for a known user.
+- **Affects:** `Modality.DEFAULT_ENABLED`, `BodyPreferences.availableEquipment`,
+  `SettingsViewModel.setModalityEnabled`, `SettingsScreen`.

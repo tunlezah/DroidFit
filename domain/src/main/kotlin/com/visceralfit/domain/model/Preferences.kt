@@ -19,6 +19,15 @@ data class UserPreferences(
     val weeklyMinutesGoal: Int = DEFAULT_WEEKLY_MINUTES_GOAL,
     /** True once the user has read and dismissed the medical-safety notice. */
     val safetyNoticeAcknowledged: Boolean = false,
+    /**
+     * The hardest effort any generated session may prescribe.
+     *
+     * Defaults to [EffortCeiling.THRESHOLD] rather than to the hardest available, and that
+     * default is a safety decision rather than a taste one (A-0007, D-0040). The app cannot
+     * know whether a user is cleared for 85–95% of maximum heart rate, so it does not assume
+     * they are. Raising the ceiling is a deliberate act on a screen that says what it means.
+     */
+    val effortCeiling: EffortCeiling = EffortCeiling.THRESHOLD,
 ) {
     /** Modalities that are both enabled and usable given the equipment the user has. */
     fun usableModalities(): Set<Modality> =
@@ -72,6 +81,33 @@ data class DisplayPreferences(
     val machineMode: Boolean = false,
 )
 
+/**
+ * How hard the app is allowed to ask the user to work.
+ *
+ * Expressed as a user setting rather than derived from experience level, because they are
+ * different questions: `ExperienceLevel` is about technique and coordination, this is about
+ * cardiovascular clearance. Someone can be an advanced Pilates practitioner and still have a
+ * reason not to reach 90% of maximum heart rate.
+ *
+ * The stored form is [id]. Percentages are of estimated maximum heart rate, and match the
+ * anchors in `framework/02_evidence_base.md` §Intensity anchors.
+ */
+enum class EffortCeiling(val id: String) {
+    /** Nothing above Zone 2 — conversational pace, 60–70%. */
+    STEADY("steady"),
+
+    /** Up to threshold: 76–84%, hard but sustainable. "Moderately vigorous". */
+    THRESHOLD("threshold"),
+
+    /** Up to vigorous intervals: 85–95%, the intensity `helgerud2007` prescribes. */
+    VIGOROUS("vigorous"),
+    ;
+
+    companion object {
+        fun fromId(id: String): EffortCeiling? = entries.firstOrNull { it.id == id }
+    }
+}
+
 enum class ThemePreference(val id: String) {
     SYSTEM("system"),
     LIGHT("light"),
@@ -79,7 +115,13 @@ enum class ThemePreference(val id: String) {
 }
 
 data class BodyPreferences(
-    val availableEquipment: Set<Modality> = setOf(Modality.ELLIPTICAL, Modality.SPIN_BIKE),
+    /**
+     * Equipment the user has access to. Defaults to everything (D-0041): the operator has an
+     * elliptical, a spin bike and a reformer (UF-0008), and a user who does not can turn one
+     * off in one tap — which is a better first run than a user who owns a reformer having to
+     * discover why none of its thirteen exercises ever appear.
+     */
+    val availableEquipment: Set<Modality> = Modality.entries.filterTo(mutableSetOf()) { it.requiresEquipment },
     /** Used only for the energy estimate; null means the estimate is suppressed. */
     val bodyMassKg: Double? = null,
     val ageYears: Int? = null,

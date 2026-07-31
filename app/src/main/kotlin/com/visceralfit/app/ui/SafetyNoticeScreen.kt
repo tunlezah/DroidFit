@@ -49,8 +49,9 @@ internal fun SafetyNoticeScreen(onAcknowledge: () -> Unit) {
             Text("Before you start", style = MaterialTheme.typography.headlineSmall)
 
             Text(
-                "This app builds interval and steady cardio sessions that can reach a hard " +
-                    "effort — 85 to 95 percent of your maximum heart rate. Please read this once.",
+                "This app builds interval and steady cardio sessions. By default it holds them " +
+                    "at a hard-but-sustainable effort rather than a maximal one, and you can " +
+                    "change that ceiling in Settings whenever you want. Please read this once.",
                 style = MaterialTheme.typography.bodyMedium,
             )
 

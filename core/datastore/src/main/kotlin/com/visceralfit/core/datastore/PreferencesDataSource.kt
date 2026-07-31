@@ -13,6 +13,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.visceralfit.domain.model.BodyPreferences
 import com.visceralfit.domain.model.CoachingPreferences
 import com.visceralfit.domain.model.DisplayPreferences
+import com.visceralfit.domain.model.EffortCeiling
 import com.visceralfit.domain.model.ExperienceLevel
 import com.visceralfit.domain.model.Modality
 import com.visceralfit.domain.model.ThemePreference
@@ -70,6 +71,7 @@ class PreferencesDataSource @Inject constructor(
             defaultStyle = this[Keys.DefaultStyle]?.let(WorkoutStyle::fromId) ?: defaults.defaultStyle,
             defaultDuration = this[Keys.DefaultDurationSeconds]?.seconds ?: defaults.defaultDuration,
             weeklyMinutesGoal = this[Keys.WeeklyMinutesGoal] ?: defaults.weeklyMinutesGoal,
+            effortCeiling = this[Keys.EffortCeiling]?.let(EffortCeiling::fromId) ?: defaults.effortCeiling,
             safetyNoticeAcknowledged = this[Keys.SafetyAcknowledged] ?: defaults.safetyNoticeAcknowledged,
             coaching = toCoachingPreferences(defaults.coaching),
             display = toDisplayPreferences(defaults.display),
@@ -121,6 +123,7 @@ class PreferencesDataSource @Inject constructor(
         this[Keys.DefaultStyle] = prefs.defaultStyle.id
         this[Keys.DefaultDurationSeconds] = prefs.defaultDuration.inWholeSeconds.toInt()
         this[Keys.WeeklyMinutesGoal] = prefs.weeklyMinutesGoal
+        this[Keys.EffortCeiling] = prefs.effortCeiling.id
         this[Keys.SafetyAcknowledged] = prefs.safetyNoticeAcknowledged
 
         this[Keys.SpeechEnabled] = prefs.coaching.speechEnabled
@@ -159,6 +162,7 @@ class PreferencesDataSource @Inject constructor(
     private object Keys {
         val EnabledModalities = stringSetPreferencesKey("enabled_modalities")
         val Level = stringPreferencesKey("level")
+        val EffortCeiling = stringPreferencesKey("effort_ceiling")
         val DefaultStyle = stringPreferencesKey("default_style")
         val DefaultDurationSeconds = intPreferencesKey("default_duration_seconds")
         val WeeklyMinutesGoal = intPreferencesKey("weekly_minutes_goal")

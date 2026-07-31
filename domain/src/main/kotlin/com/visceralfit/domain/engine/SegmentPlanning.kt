@@ -118,4 +118,19 @@ internal object SegmentPlanning {
             IntensityAnchor.ZONE_2 -> IntensityTarget.ZONE_2
             IntensityAnchor.RECOVERY, IntensityAnchor.REST -> IntensityTarget.RECOVERY
         }
+
+    /**
+     * The stricter of two caps, either of which may be absent.
+     *
+     * Two independent things can lower a segment's intensity: the pool fallback chain, when
+     * the catalogue cannot supply hard enough work, and the user's own effort ceiling. They
+     * are combined rather than checked separately so there is exactly one value the title
+     * has to explain (D-0040).
+     */
+    fun strictest(first: IntensityAnchor?, second: IntensityAnchor?): IntensityAnchor? = when {
+        first == null -> second
+        second == null -> first
+        first.isAtMost(second) -> first
+        else -> second
+    }
 }

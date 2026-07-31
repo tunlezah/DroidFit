@@ -1,5 +1,6 @@
 package com.visceralfit.domain.engine
 
+import com.visceralfit.domain.model.EffortCeiling
 import com.visceralfit.domain.model.Modality
 import kotlin.math.roundToLong
 
@@ -41,6 +42,19 @@ enum class IntensityAnchor(val id: String) {
     fun isAtLeast(other: IntensityAnchor): Boolean = ordinal >= other.ordinal
 
     companion object {
+        /**
+         * The anchor a user's effort ceiling corresponds to.
+         *
+         * `VIGOROUS` maps to null rather than to [VIGOROUS] because it is not a cap at all —
+         * it is the absence of one, and a non-null cap would make every session's title claim
+         * it had been limited.
+         */
+        fun ceilingOf(ceiling: EffortCeiling): IntensityAnchor? = when (ceiling) {
+            EffortCeiling.STEADY -> ZONE_2
+            EffortCeiling.THRESHOLD -> THRESHOLD
+            EffortCeiling.VIGOROUS -> null
+        }
+
         /**
          * The anchor for a (modality, MET) pair, or a MET-derived approximation when
          * the pair is absent from the table.

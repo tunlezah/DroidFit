@@ -44,7 +44,8 @@ class DefaultWorkoutGenerator(private val catalogue: List<Exercise>) : WorkoutGe
 
         val pools = ExercisePools.partition(eligible)
         val picker = ExercisePicker(Random(request.seed), request.recentExerciseIds)
-        val main = MainBlockBuilder(pools, picker).build(request.style, blocks.mainSeconds)
+        val ceiling = IntensityAnchor.ceilingOf(request.effortCeiling)
+        val main = MainBlockBuilder(pools, picker, ceiling).build(request.style, blocks.mainSeconds)
         val warmUp = warmUpSegments(pools, picker, blocks.warmUpSeconds, main.machineModality)
         val coolDown = coolDownSegments(pools, picker, blocks.coolDownSeconds, main.machineModality)
 
@@ -203,6 +204,13 @@ class DefaultWorkoutGenerator(private val catalogue: List<Exercise>) : WorkoutGe
     // --- Provenance ---------------------------------------------------------------
 
     private fun buildNotes(request: WorkoutRequest, main: MainBlock): List<String> = buildList {
+        val ceiling = IntensityAnchor.ceilingOf(request.effortCeiling)
+        if (ceiling != null && main.cappedAt == ceiling) {
+            add(
+                "Held at ${ceiling.id.replace('_', ' ')} because that is your effort ceiling. " +
+                    "You can change it in Settings.",
+            )
+        }
         if (main.builtStyle != request.style) {
             val asked = SessionTitle.label(request.style)
             val built = SessionTitle.label(main.builtStyle)

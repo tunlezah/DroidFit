@@ -1,5 +1,6 @@
 package com.visceralfit.domain.engine
 
+import com.visceralfit.domain.model.EffortCeiling
 import com.visceralfit.domain.model.ExperienceLevel
 import com.visceralfit.domain.model.Modality
 import com.visceralfit.domain.model.Workout
@@ -52,6 +53,16 @@ data class WorkoutRequest(
     val seed: Long,
     /** Exercise ids used in recent sessions, de-prioritised to keep variety (REQ-034). */
     val recentExerciseIds: List<String> = emptyList(),
+    /**
+     * The hardest effort this session may prescribe.
+     *
+     * Defaults to [EffortCeiling.VIGOROUS] here and to [EffortCeiling.THRESHOLD] in
+     * `UserPreferences`, and the asymmetry is deliberate (D-0040). The engine's contract is
+     * to build what it was asked for; it has no view on whether a particular person is
+     * cleared for 85–95% of maximum heart rate. The cautious default belongs where the user
+     * can see it and change it, which is the settings screen.
+     */
+    val effortCeiling: EffortCeiling = EffortCeiling.VIGOROUS,
 )
 
 /** Why generation could not produce a plan. Surfaced to the user, never swallowed. */

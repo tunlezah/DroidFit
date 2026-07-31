@@ -32,6 +32,13 @@ internal data class MainBlock(
 internal class MainBlockBuilder(
     private val pools: ExercisePools,
     private val picker: ExercisePicker,
+    /**
+     * The user's effort ceiling as an anchor, or null when they have not set one.
+     *
+     * Combined with each pool's own cap so that one value explains the outcome, whichever
+     * of the two was the binding constraint (D-0040).
+     */
+    private val ceiling: IntensityAnchor? = null,
 ) {
 
     fun build(style: WorkoutStyle, mainSeconds: Int): MainBlock = when {
@@ -64,6 +71,7 @@ internal class MainBlockBuilder(
         val work = PoolFallbacks.vigorous(pools)
         if (work.isEmpty) return steady(mainSeconds, WorkoutStyle.ZONE_2, listOf(NO_MACHINE_NOTE))
 
+        val cap = SegmentPlanning.strictest(work.cappedAt, ceiling)
         val rounds = roundsFor(template, mainSeconds)
         val workModality = dominantModality(work.exercises)
         val onModality = work.exercises.filter { it.modality == workModality }
@@ -71,13 +79,11 @@ internal class MainBlockBuilder(
             onModality,
             if (onModality.size >= ROTATION_THRESHOLD) ROTATION_MAX else 1,
         )
-        // Active recovery between intervals wants the easiest thing available on the same
-        // machine, then the easiest anywhere. Falling straight back to the work pool would
-        // name a vigorous interval as the recovery — which is how a recovery segment ends up
-        // labelled "hard interval" (D-0038).
-        // Easy work on the same modality first — including easy work that is not in the
-        // steady pool, which matters for bodyweight intervals: marching in place between
-        // sets of jumps beats lying down for a stretch and getting back up (D-0039).
+        // Active recovery wants the easiest thing available on the same modality, then the
+        // easiest anywhere. Falling straight back to the work pool would name a vigorous
+        // interval as the recovery (D-0038), and including easy work that is not in the
+        // steady pool matters for bodyweight: marching between sets of jumps beats lying
+        // down for a stretch and getting back up again (D-0039).
         val recoveryExercise = picker.pickOrNull(
             pools.steady.filter { it.modality == workModality }
                 .ifEmpty { easyWorkOn(workModality) }
@@ -94,7 +100,7 @@ internal class MainBlockBuilder(
                         kind = SegmentKind.WORK,
                         seconds = template.workSeconds,
                         exercise = rotation[(round - 1) % rotation.size],
-                        intensity = SegmentPlanning.capped(IntensityTarget.VIGOROUS, work.cappedAt),
+                        intensity = SegmentPlanning.capped(IntensityTarget.VIGOROUS, cap),
                         roundIndex = round,
                         roundTotal = rounds,
                     ),
@@ -127,7 +133,7 @@ internal class MainBlockBuilder(
             work.note?.let(::add)
             if (rounds != template.rounds) add("${template.id} extended to $rounds rounds to fill the session")
         }
-        return MainBlock(segments, WorkoutStyle.HIIT, work.cappedAt, notes)
+        return MainBlock(segments, WorkoutStyle.HIIT, cap, notes)
     }
 
     /**
@@ -184,17 +190,20 @@ internal class MainBlockBuilder(
         if (exercises.isEmpty()) {
             throw GenerationFailure.InsufficientVariety(required = count, available = 0)
         }
+        val cap = SegmentPlanning.strictest(pool.cappedAt, ceiling)
         val planned = SegmentPlanning.evenSplit(mainSeconds, count).mapIndexed { index, seconds ->
             PlannedSegment(
                 kind = SegmentKind.WORK,
                 seconds = seconds,
                 exercise = exercises[index],
-                intensity = SegmentPlanning.capped(IntensityTarget.ZONE_2, pool.cappedAt),
+                intensity = SegmentPlanning.capped(IntensityTarget.ZONE_2, cap),
             )
         }
         return MainBlock(
             segments = SegmentPlanning.withTransitions(planned),
             builtStyle = builtStyle,
+            // A Zone 2 block is already below any ceiling worth naming, so a ceiling alone
+            // must not make the title claim the session was limited.
             cappedAt = pool.cappedAt,
             notes = inheritedNotes + listOfNotNull(pool.note),
         )
@@ -233,7 +242,10 @@ internal class MainBlockBuilder(
                             kind = SegmentKind.WORK,
                             seconds = layout.surgeSeconds,
                             exercise = surgeExercise,
-                            intensity = SegmentPlanning.capped(IntensityTarget.THRESHOLD, surge.cappedAt),
+                            intensity = SegmentPlanning.capped(
+                                IntensityTarget.THRESHOLD,
+                                SegmentPlanning.strictest(surge.cappedAt, ceiling),
+                            ),
                             roundIndex = index + 1,
                             roundTotal = layout.surgeCount,
                         ),

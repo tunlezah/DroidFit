@@ -26,6 +26,9 @@ assumption marked open.
 - **Status:** open
 
 ### A-0002 — The operator has access to an elliptical and a spin bike, but not a reformer
+**CONFIRMED IN PART, CORRECTED IN PART, 2026-07-31 — see UF-0008.** The elliptical and spin
+bike are right; the operator *does* have a reformer, so the "but not" half was wrong. All four
+modalities now default to enabled and available (D-0041). Original text follows unchanged.
 - **Date:** 2026-07-30
 - **Assumption:** Default `availableEquipment` is elliptical + spin bike; reformer is off.
 - **Why we had to assume:** All four modalities were requested, but a reformer is a
@@ -95,6 +98,12 @@ assumption marked open.
 - **Status:** open
 
 ### A-0007 — The operator is a healthy adult without exercise contraindications
+**ANSWERED 2026-07-31, and the answer was not a plain yes — see UF-0008.** Verbatim: "I can do
+moderatley vigourous excercise." That is not clearance for the 85–95% of maximum heart rate the
+default programme was building, so it was read as a limit rather than as permission. Mitigated
+by D-0040: sessions are now held at threshold (76–84%) by default, and the ceiling is a setting
+the operator controls rather than an assumption baked into the engine. Original text follows
+unchanged.
 - **Date:** 2026-07-30
 - **Assumption:** The default programme includes vigorous intervals at 85–95% HRmax,
   which assumes the user is cleared for vigorous exercise.

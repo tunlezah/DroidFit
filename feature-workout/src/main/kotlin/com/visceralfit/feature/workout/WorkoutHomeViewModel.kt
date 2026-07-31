@@ -94,6 +94,9 @@ class WorkoutHomeViewModel @Inject constructor(
                 avoidTags = prefs.body.avoidTags,
                 seed = newSeed(),
                 recentExerciseIds = recentExerciseIds(),
+                // A-0007. The engine defaults to no ceiling; the cautious default lives in
+                // preferences, and this is where the two meet.
+                effortCeiling = prefs.effortCeiling,
             )
             generation.value = generateWorkout(request).fold(
                 onSuccess = { GenerationUiState.Ready(it) },

@@ -198,3 +198,37 @@ later reader can check the interpretation against the source.
   reformer, since its 13 exercises are otherwise inert), A-0006 (locale), and **A-0007
   (cleared for vigorous exercise)**. A-0007 matters more now, not less: a no-equipment day can
   reach 85–95% HRmax through jumping, where before it could not.
+
+### UF-0008 — Moderately vigorous, owns a reformer, wants free choice of any combination
+- **Date:** 2026-07-31
+- **Phase:** post-07
+- **Verbatim:**
+  > I can do moderatley vigourous excercise. I have a reformer. So you must make sure that I
+  > can chop and choose from any combo of "floor" (which is my own body weight excercises
+  > etc... "elliptical", "Spin Bike" and "Pilates Reformer" (If we need to add "Floor
+  > Reformer" as well, do that. I should be able to select a minimum of one of these
+  > categories or all of the, so that I can just opt for one day doing spin bike, or tomorrow
+  > I do elliptical and floor. All I need is a minimum of one selected.
+- **Interpretation:**
+  1. **A-0007 answered, and not with a yes.** "Moderately vigorous" is not clearance for
+     85–95% of maximum heart rate, which is what the default programme was building. Treated
+     as a ceiling at threshold (76–84%) and implemented as a real setting rather than a
+     hard-coded assumption — D-0040. Reading this as "yes to vigorous" would have been the
+     unsafe interpretation of an ambiguous phrase, so it was read the other way.
+  2. **A-0002 answered.** Elliptical, spin bike and reformer all present. All four modalities
+     now default to enabled and available — D-0041.
+  3. **Free choice, minimum one.** This is REQ-011, which already existed and was already
+     enforced — but silently: the toggle sprang back with no explanation, which reads as a
+     broken switch. Now refused with a stated reason.
+- **Action taken:** effort ceiling added and defaulted to threshold; all modalities enabled by
+  default; REQ-011's refusal explained on screen; the safety notice's opening paragraph
+  corrected, since it claimed 85–95% and that is no longer what the app does by default.
+- **"Floor Reformer" — not built, and here is why.** There is no such apparatus; a reformer is
+  a reformer. The four categories the operator listed all exist and are independently
+  selectable, so nothing is missing for the stated goal. The nearby thing that *would* be a
+  real fifth category is **mat Pilates** as distinct from general bodyweight work — the
+  classical repertoire already in the catalogue (the hundred, roll up, teaser, jack knife)
+  versus jumping and burpees. Splitting them would let "an easy Pilates day" and "a hard
+  bodyweight day" be chosen separately. Not done, because it is a guess about what was meant
+  and it costs a re-tag of roughly fifteen exercises. Asked rather than assumed.
+- **Still open:** A-0006 (English only). That is the last one outstanding.

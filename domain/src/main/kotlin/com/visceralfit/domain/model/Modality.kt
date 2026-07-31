@@ -59,9 +59,17 @@ enum class Modality(
         fun fromId(id: String): Modality? = entries.firstOrNull { it.id == id }
 
         /**
-         * Modalities enabled on a fresh install. Reformer is excluded because it
-         * needs a machine most users will not own (ADR-0004).
+         * Modalities enabled on a fresh install: all of them (D-0041, superseding ADR-0004).
+         *
+         * The reformer used to be excluded on the reasoning that most users will not own one.
+         * The operator does (UF-0008), and more to the point the exclusion was solving the
+         * wrong problem: whether a modality is *usable* is already answered by
+         * [requiresEquipment] and the equipment the user has marked, so defaulting it off as
+         * well hid content behind two switches instead of one.
+         *
+         * The rule that actually matters is REQ-011 — at least one modality must stay
+         * enabled — and it is enforced when toggling, not by the default.
          */
-        val DEFAULT_ENABLED: Set<Modality> = setOf(BODYWEIGHT, ELLIPTICAL, SPIN_BIKE)
+        val DEFAULT_ENABLED: Set<Modality> = entries.toSet()
     }
 }
