@@ -162,9 +162,11 @@ jobs:
       - name: Run instrumentation tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          # API 35 is what the Motorola Edge 60 ships with, so the emulator matches
-          # the target device rather than the newest available image.
-          api-level: 35
+          # Matches the target device, which is on Android 16 (API 36) — confirmed by the
+          # operator in UF-0006, correcting the API 35 that A-0001 had assumed. Testing on
+          # 35 would have exercised the wrong platform, and Android 16 is exactly where
+          # foreground-service and notification behaviour changed (A-0011, KI-0016).
+          api-level: 36
           target: google_apis
           arch: x86_64
           disable-animations: true

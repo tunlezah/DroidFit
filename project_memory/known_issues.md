@@ -382,3 +382,22 @@ what went wrong survives.
   machinery for a case that resolves itself the moment the user touches the app.
 - **Status:** open, low priority. Fix with `ACTION_DATE_CHANGED` if it ever matters; do not add a
   polling clock.
+
+### KI-0021 — The waist screen does not say where to measure
+- **Date:** 2026-07-30
+- **Severity:** minor
+- **Area:** `feature-progress`
+- **Symptom:** Nothing on screen tells the user which anatomical site to measure at, so the
+  same person can silently switch sites between measurements and read the difference as a
+  trend.
+- **Why it matters more than it looks:** the app's stated position is that waist is a *trend*
+  indicator with roughly ±1 cm of self-measurement error (A-0008). Switching between the navel
+  and the WHO site (midpoint between lowest rib and iliac crest) moves the reading by several
+  centimetres — far more than the 1 cm threshold the app uses to decide whether to call
+  something a change. So a site switch manufactures a trend that is not there, which is the
+  exact failure the threshold exists to prevent.
+- **What the operator does today (UF-0006):** measures manually at the navel. That is a valid
+  site; consistency matters far more than which one.
+- **Fix:** state the site next to the input, and record it with the measurement so a future
+  change of site is visible rather than invisible. Recording it is the important half.
+- **Status:** open. Phase 10 owns the measurement UI.

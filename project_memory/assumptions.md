@@ -9,7 +9,8 @@ assumption marked open.
 
 ---
 
-### A-0001 — The target device is a Motorola Edge 60 running Android 15
+### A-0001 — The target device is a Motorola Edge 60 running Android 15  
+**CONFIRMED (variant) / CORRECTED (OS version) 2026-07-30 — see UF-0006**
 - **Date:** 2026-07-30
 - **Assumption:** The primary device is the Motorola Edge 60 (2025): 6.67" pOLED,
   2712×1220 (444 ppi), 120 Hz, HDR10+, MediaTek Dimensity 7300, 5200 mAh, shipping
@@ -36,7 +37,8 @@ assumption marked open.
   and the defaults are only defaults.
 - **Status:** open
 
-### A-0003 — "Custom" workout duration means 3–120 minutes
+### A-0003 — "Custom" workout duration means 3–120 minutes  
+**CONFIRMED 2026-07-30 — see UF-0006. Verbatim: "3-120 minutes is perfect."**
 - **Date:** 2026-07-30
 - **Assumption:** Custom duration accepts 3 to 120 minutes in 1-minute steps, alongside
   the eight presets the PRD lists.
@@ -109,7 +111,8 @@ assumption marked open.
   auto-escalates a user to advanced content.
 - **Status:** open — mitigated, not resolved. **Do not weaken these mitigations.**
 
-### A-0008 — Waist circumference is a trend indicator the user measures themselves
+### A-0008 — Waist circumference is a trend indicator the user measures themselves  
+**CONFIRMED 2026-07-30 — see UF-0006. Measured manually at the navel, which is one of the two standard sites.**
 - **Date:** 2026-07-30
 - **Assumption:** Self-measured waist circumference has roughly ±1 cm of error, so
   changes below 1 cm are not reported as a trend.
@@ -165,3 +168,21 @@ assumption marked open.
   instead of more rounds, which is the behaviour the specification describes anyway.
 - **Status:** open. See KI-0013: the deeper issue is that the app will build a 20-round
   interval session at all.
+
+### A-0011 — Android 16 does not change the target API surface
+- **Date:** 2026-07-30
+- **Phase:** post-07
+- **Assumption:** The device running Android 16 (API 36) rather than the assumed Android 15
+  (API 35) requires no code change, because `compileSdk` and `targetSdk` are already 36.
+- **Why it needs stating:** A-0001 assumed API 35, and several framework documents reason
+  from it — `15_device_targets_motorola_edge_60.md` and the CI emulator image in
+  particular. Being *ahead* of the assumed version is the safe direction for a
+  `targetSdk` that already matches, but "safe direction" is not the same as "verified".
+- **What is genuinely uncertain:** Android 16 tightens foreground-service behaviour and
+  notification handling relative to 15. The player's `mediaPlayback` service and the
+  ungranted `POST_NOTIFICATIONS` permission (KI-0016) are exactly the surfaces that
+  changed. Since none of the player has run on a device (KI-0017), this is unverified on
+  the version that matters rather than merely unverified in general.
+- **How to confirm it:** sideload the CI APK onto the device and start a session. That
+  single act settles A-0011, KI-0016 and most of KI-0017 at once.
+- **Status:** open, and now the cheapest open question to close.

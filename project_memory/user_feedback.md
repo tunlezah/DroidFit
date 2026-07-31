@@ -139,3 +139,35 @@ later reader can check the interpretation against the source.
   answered. A-0007 in particular — whether the operator is cleared for vigorous exercise —
   has a safety dimension and gates whether the default programme is appropriate. It is asked
   again in the summary of this work.
+
+### UF-0006 — Device, duration range and waist measurement confirmed
+- **Date:** 2026-07-30
+- **Phase:** post-07
+- **Verbatim:**
+  > So exact phone is Mtorola Edge 60 (australian version). It's currently running Android
+  > 16.  3-120 minutes is perfect. I measure my waist around the belly button manually.I am
+  > a bit baffled by the decision (KI-0020), could you clarify exactly what you want me to
+  > choose between?
+- **Interpretation, assumption by assumption:**
+  1. **A-0001 — partly confirmed, partly corrected.** The variant is the base Edge 60
+     (Australian retail), not the Pro, Fusion or Stylus, which settles the chipset and panel
+     the framework assumed. But the OS is **Android 16 (API 36)**, not the Android 15 the
+     assumption stated. `compileSdk` and `targetSdk` are already 36, so nothing is
+     miscompiled — but the CI emulator was pinned to API 35 *because* of the wrong
+     assumption, so it was testing the wrong platform. Corrected to 36. New assumption
+     A-0011 records what remains genuinely unverified: Android 16 changed foreground-service
+     and notification behaviour, which is precisely where the player is untested.
+  2. **A-0003 — confirmed.** 3–120 minutes stands. No change needed; the bound is already
+     enforced by the generator and by `SessionLimits`.
+  3. **A-0008 — confirmed, with a detail worth keeping.** Measured manually at the navel.
+     That is one of the two standard sites (the other is the midpoint between the lowest rib
+     and the iliac crest, which is the WHO protocol). Navel measurement reads slightly
+     larger and is more sensitive to breathing and posture, which *supports* rather than
+     undermines the existing ±1 cm reporting threshold. The waist screen should say which
+     site to use so the measurement stays consistent over time — recorded as KI-0021,
+     because consistency of site matters far more than which site.
+- **Action taken:** assumption statuses updated; CI emulator moved to API 36; KI-0021
+  opened. KI-0020 answered separately once the operator has chosen.
+- **Still open:** A-0002 (equipment actually available), A-0006 (locale), and **A-0007
+  (cleared for vigorous exercise)** — the last of which has a safety dimension and is the
+  one that determines whether the default programme is appropriate.
