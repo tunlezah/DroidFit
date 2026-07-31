@@ -180,7 +180,7 @@ class SessionCoordinatorTest {
             id = "w_test",
             title = "Test session",
             style = WorkoutStyle.ZONE_2,
-            modalities = setOf(Modality.FLOOR_PILATES),
+            modalities = setOf(Modality.BODYWEIGHT),
             level = ExperienceLevel.BEGINNER,
             blocks = listOf(WorkoutBlock(BlockKind.MAIN, segments)),
             requestedDuration = TOTAL_SECONDS.seconds,
@@ -191,7 +191,7 @@ class SessionCoordinatorTest {
     private fun exercise(id: String) = Exercise(
         id = id,
         name = id,
-        modality = Modality.FLOOR_PILATES,
+        modality = Modality.BODYWEIGHT,
         difficulty = ExperienceLevel.BEGINNER,
         metValue = 2.8,
         howTo = listOf("A test fixture step."),

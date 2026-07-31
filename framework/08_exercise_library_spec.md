@@ -13,7 +13,7 @@ do not thin it out to hit a count.**
 
 | Modality | Minimum | Rationale |
 |---|---|---|
-| Floor Pilates | 24 | Carries warm-up, core, mobility and cool-down for every session |
+| Bodyweight and floor | 24 | Carries warm-up, core, mobility and cool-down for every session |
 | Reformer Pilates | 10 | Fewer users, but a session needs enough for variety |
 | Elliptical | 8 | Continuous modality: variation is intensity and cadence, not movement |
 | Spin bike | 12 | Seated/standing × flat/climb × intensity gives natural variety |
@@ -31,7 +31,7 @@ Verify these with the validation test in §5, not by counting manually.
 ## 2. Field-by-field authoring standard
 
 ### `id`
-Lowercase snake_case, prefixed with the modality: `floor_pilates_dead_bug`. **Never renamed
+Lowercase snake_case, prefixed with the modality: `bodyweight_dead_bug`. **Never renamed
 once shipped** — session history and favourites reference it.
 
 ### `name`

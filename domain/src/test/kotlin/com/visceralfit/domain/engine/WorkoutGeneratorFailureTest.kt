@@ -86,12 +86,12 @@ class WorkoutGeneratorFailureTest {
     @Test
     fun `a catalogue in which every exercise is avoided fails with no eligible exercises`() {
         val everythingTagged = listOf(
-            exercise("floor_pilates_tagged_one", 2.8, cautionTags = setOf("lower_back")),
-            exercise("floor_pilates_tagged_two", 3.8, cautionTags = setOf("lower_back", "knee")),
+            exercise("bodyweight_tagged_one", 2.8, cautionTags = setOf("lower_back")),
+            exercise("bodyweight_tagged_two", 3.8, cautionTags = setOf("lower_back", "knee")),
         )
         val failure = DefaultWorkoutGenerator(everythingTagged).generate(
             request(20.minutes, WorkoutStyle.RECOVERY).copy(
-                modalities = setOf(Modality.FLOOR_PILATES),
+                modalities = setOf(Modality.BODYWEIGHT),
                 avoidTags = setOf("lower_back"),
             ),
         ).failure()
@@ -101,11 +101,11 @@ class WorkoutGeneratorFailureTest {
     @Test
     fun `a level with no content beneath it fails rather than serving harder work`() {
         val advancedOnly = listOf(
-            exercise("floor_pilates_hard", 3.8, difficulty = ExperienceLevel.ADVANCED),
+            exercise("bodyweight_hard", 3.8, difficulty = ExperienceLevel.ADVANCED),
         )
         val failure = DefaultWorkoutGenerator(advancedOnly).generate(
             request(20.minutes, WorkoutStyle.RECOVERY).copy(
-                modalities = setOf(Modality.FLOOR_PILATES),
+                modalities = setOf(Modality.BODYWEIGHT),
                 level = ExperienceLevel.BEGINNER,
             ),
         ).failure()
@@ -122,9 +122,9 @@ class WorkoutGeneratorFailureTest {
      */
     @Test
     fun `a one-exercise catalogue fails when a block needs three distinct movements`() {
-        val single = listOf(exercise("floor_pilates_only_one", 2.8))
+        val single = listOf(exercise("bodyweight_only_one", 2.8))
         val request = request(THREE_SEGMENT_WARM_UP, WorkoutStyle.ZONE_2)
-            .copy(modalities = setOf(Modality.FLOOR_PILATES))
+            .copy(modalities = setOf(Modality.BODYWEIGHT))
         val failure = DefaultWorkoutGenerator(single).generate(request).failure()
         assertTrue("expected InsufficientVariety, got $failure", failure is GenerationFailure.InsufficientVariety)
         failure as GenerationFailure.InsufficientVariety
@@ -134,42 +134,91 @@ class WorkoutGeneratorFailureTest {
     // --- Honesty ------------------------------------------------------------------
 
     /**
-     * Spec §7 and REQ-004. A Pilates session must never be titled as an interval or
-     * fat-loss session, and the style recorded must be what was built.
+     * Spec §7 and REQ-004. Reformer work must never be titled as an interval or fat-loss
+     * session — `wang2021pilates` found no waist-circumference effect — and the style
+     * recorded must be what was built, not what was asked for.
      */
     @Test
-    fun `a Pilates-only HIIT request is titled and recorded as Pilates`() {
-        val workout = DefaultWorkoutGenerator(CatalogueFixture.forModalities(Modality.FLOOR_PILATES))
+    fun `a reformer-only interval request is built and recorded as strength work`() {
+        val workout = generatorFor(Modality.REFORMER_PILATES)
             .generate(
-                request(30.minutes, WorkoutStyle.HIIT).copy(modalities = setOf(Modality.FLOOR_PILATES)),
+                request(30.minutes, WorkoutStyle.HIIT).copy(modalities = setOf(Modality.REFORMER_PILATES)),
             ).getOrThrow()
 
-        assertEquals("Floor Pilates: strength and control — 30 min", workout.title)
+        assertEquals("Reformer Pilates: strength and control — 30 min", workout.title)
         assertEquals(WorkoutStyle.RECOVERY, workout.style)
-        FORBIDDEN_IN_PILATES_TITLES.forEach { forbidden ->
+        FORBIDDEN_IN_STRENGTH_TITLES.forEach { forbidden ->
             assertTrue(
-                "a Pilates session was titled \"${workout.title}\"",
+                "a strength session was titled \"${workout.title}\"",
                 !workout.title.contains(forbidden, ignoreCase = true),
             )
         }
         assertTrue(
             "the substitution was not explained to the user: ${workout.buildNotes}",
-            workout.buildNotes.any { it.contains("Pilates", ignoreCase = true) },
+            workout.buildNotes.any { it.contains("strength and mobility", ignoreCase = true) },
         )
         // §7.3: contributes zero vigorous minutes.
         assertTrue(
-            "a Pilates session prescribed vigorous work",
+            "a reformer session prescribed vigorous work",
             workout.segments.none { it.intensity == IntensityTarget.VIGOROUS },
         )
     }
 
+    /**
+     * The other half of D-0039, and the reason the rename mattered. Bodyweight work is
+     * aerobic-capable, so a user with **no equipment at all** gets a genuine interval
+     * session rather than being told to do an easy mat class.
+     *
+     * Before the rename this same request produced "Floor Pilates: strength and control",
+     * because the category was labelled Pilates and the Pilates constraint caught it.
+     */
     @Test
-    fun `a reformer-only session is named for the reformer`() {
-        val workout = DefaultWorkoutGenerator(CatalogueFixture.forModalities(Modality.REFORMER_PILATES))
+    fun `a bodyweight-only interval request produces genuine intervals`() {
+        val workout = generatorFor(Modality.BODYWEIGHT)
             .generate(
-                request(20.minutes, WorkoutStyle.RECOVERY).copy(modalities = setOf(Modality.REFORMER_PILATES)),
+                request(30.minutes, WorkoutStyle.HIIT).copy(modalities = setOf(Modality.BODYWEIGHT)),
             ).getOrThrow()
-        assertEquals("Reformer Pilates: strength and control — 20 min", workout.title)
+
+        assertEquals("Intervals — 30 min", workout.title)
+        assertEquals(WorkoutStyle.HIIT, workout.style)
+        assertTrue(
+            "a bodyweight interval session prescribed no vigorous work at all",
+            workout.segments.any { it.intensity == IntensityTarget.VIGOROUS },
+        )
+        assertTrue(
+            "the work intervals are not on bodyweight movements",
+            workout.segments
+                .filter { it.intensity == IntensityTarget.VIGOROUS }
+                .all { it.exercise?.modality == Modality.BODYWEIGHT },
+        )
+        // Nothing was *substituted*. A note about extending the template to fill the
+        // duration is a description of the plan, not an apology for it.
+        assertTrue(
+            "an interval session that needed no substitution explained one: ${workout.buildNotes}",
+            workout.buildNotes.none { it.contains("built as") || it.contains("capped") },
+        )
+    }
+
+    /**
+     * Mat work is floor work, not a Pilates method claim (D-0039).
+     *
+     * The catalogue here is mat and mobility content only — everything anchored at recovery —
+     * which is the second way a session becomes strength-only: the modality *could* carry
+     * aerobic work, but nothing available on it does.
+     */
+    @Test
+    fun `a mat-only session is strength work, and is not called Pilates`() {
+        val matOnly = CatalogueFixture.forModalities(Modality.BODYWEIGHT)
+            .filter { it.metValue <= MAT_MAX_MET }
+        val workout = DefaultWorkoutGenerator(matOnly)
+            .generate(
+                request(20.minutes, WorkoutStyle.RECOVERY).copy(modalities = setOf(Modality.BODYWEIGHT)),
+            ).getOrThrow()
+        assertEquals("Floor and bodyweight: strength and control — 20 min", workout.title)
+        assertTrue(
+            "mat work was called Pilates",
+            !workout.title.contains("Pilates", ignoreCase = true),
+        )
     }
 
     /**
@@ -227,6 +276,9 @@ class WorkoutGeneratorFailureTest {
         assertTrue(DefaultWorkoutGenerator(emptyList()).generate(request(20.minutes, WorkoutStyle.MIXED)).isFailure)
     }
 
+    private fun generatorFor(vararg modalities: Modality) =
+        DefaultWorkoutGenerator(CatalogueFixture.forModalities(*modalities))
+
     private fun request(duration: Duration, style: WorkoutStyle) = WorkoutRequest(
         duration = duration,
         style = style,
@@ -243,7 +295,7 @@ class WorkoutGeneratorFailureTest {
     ) = Exercise(
         id = id,
         name = id,
-        modality = Modality.FLOOR_PILATES,
+        modality = Modality.BODYWEIGHT,
         difficulty = difficulty,
         metValue = metValue,
         howTo = listOf("A test fixture step."),
@@ -265,7 +317,14 @@ class WorkoutGeneratorFailureTest {
          */
         val THREE_SEGMENT_WARM_UP = 2_250.seconds
 
-        val FORBIDDEN_IN_PILATES_TITLES = listOf("HIIT", "Intervals", "fat", "burn")
+        val FORBIDDEN_IN_STRENGTH_TITLES = listOf("HIIT", "Intervals", "fat", "burn")
+
+        /**
+         * Mat and mobility work only. Everything at or below this is recovery-anchored, so
+         * nothing in the resulting catalogue can carry aerobic work — which is the condition
+         * `isStrengthOnly` is really about.
+         */
+        const val MAT_MAX_MET = 3.5
 
         val ALL_CAUTION_TAGS = setOf(
             "lower_back", "neck", "shoulder", "wrist", "knee",

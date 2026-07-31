@@ -90,14 +90,14 @@
       "label": "Pilates, traditional, mat",
       "code": "02103",
       "met": 1.8,
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "intensity": "recovery"
     },
     {
       "label": "Pilates, general",
       "code": "02105",
       "met": 2.8,
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "intensity": "recovery"
     },
     {
@@ -131,35 +131,35 @@
       "label": "Calisthenics, light effort (curl ups, crunches, plank)",
       "code": "02024",
       "met": 2.8,
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "intensity": "recovery"
     },
     {
       "label": "Calisthenics, moderate effort (pushups, sit ups, lunges)",
       "code": "02022",
       "met": 3.8,
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "intensity": "zone_2"
     },
     {
       "label": "Calisthenics, vigorous effort (burpees, jumping jacks)",
       "code": "02020",
       "met": 7.5,
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "intensity": "vigorous"
     },
     {
       "label": "High intensity interval exercise, moderate effort",
       "code": "02210",
       "met": 7.0,
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "intensity": "threshold"
     },
     {
       "label": "Stretching, mild",
       "code": "02101",
       "met": 2.3,
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "intensity": "recovery"
     },
     {
@@ -173,7 +173,7 @@
       "label": "Walking / marching in place, slow",
       "code": "01210",
       "met": 3.5,
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "intensity": "recovery",
       "$note": "Used for the march-in-place warm-up; the closest documented very-light continuous entry."
     },

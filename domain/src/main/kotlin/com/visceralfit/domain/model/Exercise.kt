@@ -9,7 +9,7 @@ package com.visceralfit.domain.model
  * a blank [howTo], [safetyNotes], [commonMistakes] or [spokenInstruction].
  */
 data class Exercise(
-    /** Stable slug, e.g. "floor_pilates_dead_bug". Never renamed once shipped. */
+    /** Stable slug, e.g. "bodyweight_dead_bug". Never renamed once shipped. */
     val id: String,
     val name: String,
     val modality: Modality,

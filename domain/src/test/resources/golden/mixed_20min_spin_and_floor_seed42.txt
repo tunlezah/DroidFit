@@ -1,7 +1,7 @@
-id: w_374aadbf
+id: w_c42bd62e
 title: Mixed — 20 min
 style: mixed
-modalities: floor_pilates,spin_bike
+modalities: bodyweight,spin_bike
 requested: 1200s
 actual: 1200s
 warm_up work 90s rpe=2..3 warmup_march_in_place
@@ -16,4 +16,4 @@ main work 60s rpe=6..7 spin_bike_seated_climb round=3/3
 main work 180s rpe=3..4 spin_bike_seated_flat
 cool_down work 60s rpe=2..3 spin_bike_warm_up_roll
 cool_down transition 20s rpe=2..3 -
-cool_down work 40s rpe=2..3 cooldown_thoracic_opener
+cool_down work 40s rpe=2..3 cooldown_hip_flexor_kneel

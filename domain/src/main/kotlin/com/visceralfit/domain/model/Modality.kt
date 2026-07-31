@@ -18,7 +18,17 @@ enum class Modality(
     val id: String,
     val requiresEquipment: Boolean,
 ) {
-    FLOOR_PILATES("floor_pilates", requiresEquipment = false),
+    /**
+     * Floor and bodyweight work: mat core and mobility at one end, calisthenics cardio —
+     * jumping, mountain climbers, burpees — at the other. No equipment.
+     *
+     * WAS `FLOOR_PILATES`, RENAMED IN D-0039. That name was wrong in a way that mattered:
+     * it forced the whole category under the Pilates evidence constraint, so a user with no
+     * machine could only ever be given an easy session, even though jumping at 7.5 MET is
+     * unambiguously aerobic work. What makes a movement aerobic-capable is its intensity
+     * anchor, not the label on its category — see [supportsAerobicWork].
+     */
+    BODYWEIGHT("bodyweight", requiresEquipment = false),
     REFORMER_PILATES("reformer_pilates", requiresEquipment = true),
     ELLIPTICAL("elliptical", requiresEquipment = true),
     SPIN_BIKE("spin_bike", requiresEquipment = true),
@@ -27,6 +37,24 @@ enum class Modality(
     /** True when this modality is a continuous machine-based cardio modality. */
     val isMachineCardio: Boolean get() = this == ELLIPTICAL || this == SPIN_BIKE
 
+    /**
+     * True when a session may prescribe *aerobic* work on this modality — Zone 2, threshold
+     * or vigorous efforts, the kind the evidence base credits with reducing visceral fat.
+     *
+     * This is where the Pilates constraint now lives, and it is structural rather than a
+     * special case in the generator. `wang2021pilates` found real body-composition and
+     * strength benefit from Pilates but **no** significant waist-circumference effect, so a
+     * reformer session must never be presented as equivalent to hard cardio (REQ-004,
+     * `framework/02_evidence_base.md` §1.5). Returning false here is what makes that true
+     * everywhere at once.
+     *
+     * Bodyweight work returns true because the category genuinely contains both: a supine
+     * chest opener is not aerobic and a set of star jumps is. Which of the two a given
+     * exercise is comes from its [com.visceralfit.domain.engine.IntensityAnchor], so the
+     * per-exercise question is answered per exercise and the per-modality question here.
+     */
+    val supportsAerobicWork: Boolean get() = this != REFORMER_PILATES
+
     companion object {
         fun fromId(id: String): Modality? = entries.firstOrNull { it.id == id }
 
@@ -34,6 +62,6 @@ enum class Modality(
          * Modalities enabled on a fresh install. Reformer is excluded because it
          * needs a machine most users will not own (ADR-0004).
          */
-        val DEFAULT_ENABLED: Set<Modality> = setOf(FLOOR_PILATES, ELLIPTICAL, SPIN_BIKE)
+        val DEFAULT_ENABLED: Set<Modality> = setOf(BODYWEIGHT, ELLIPTICAL, SPIN_BIKE)
     }
 }

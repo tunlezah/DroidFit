@@ -171,3 +171,30 @@ later reader can check the interpretation against the source.
 - **Still open:** A-0002 (equipment actually available), A-0006 (locale), and **A-0007
   (cleared for vigorous exercise)** — the last of which has a safety dimension and is the
   one that determines whether the default programme is appropriate.
+
+### UF-0007 — The floor category was never Pilates
+- **Date:** 2026-07-31
+- **Phase:** post-07
+- **Verbatim:**
+  > Yes, it should be bodyweight and excercises. It should not have been "floor pilates" it
+  > was "reformer pilates".
+- **Interpretation:** the answer to KI-0020 is yes — a session with no machine should be able
+  to be hard — but not by adding a fifth category. The existing category was misnamed. The
+  equipment-free category is **bodyweight and floor work**; the Pilates in this app is the
+  **reformer**. Implemented as D-0039.
+- **Why this was a better answer than either option offered:** both options in KI-0020 took
+  the name `floor_pilates` as given and worked around it. Naming the floor category "Pilates"
+  put general bodyweight movement inside an evidence constraint that applies to a specific
+  method, which is what made star jumps unusable. Renaming removes the problem rather than
+  compensating for it.
+- **Action taken:** modality renamed, aerobic capability made a property of the modality,
+  seven bodyweight cardio exercises authored across all three levels, catalogue at 72.
+  KI-0020 closed; KI-0022 opened for the one soft spot the new design has.
+- **One assumption made rather than asked:** the classical mat repertoire already authored —
+  dead bug, the hundred, roll up, teaser, jack knife — stays in the bodyweight category. It is
+  bodyweight floor work, so it fits the new name, and nothing about it is lost. Say so if it
+  should instead move to the reformer category or be split out as mat Pilates.
+- **Still open:** A-0002 (which equipment you actually have — in particular whether there is a
+  reformer, since its 13 exercises are otherwise inert), A-0006 (locale), and **A-0007
+  (cleared for vigorous exercise)**. A-0007 matters more now, not less: a no-equipment day can
+  reach 85–95% HRmax through jumping, where before it could not.

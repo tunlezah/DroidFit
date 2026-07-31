@@ -214,7 +214,7 @@ class ExerciseCatalogueValidationTest {
     }
 
     private companion object {
-        val ID_PATTERN = Regex("^(floor_pilates|reformer|elliptical|spin_bike|warmup|cooldown)_[a-z0-9_]+$")
+        val ID_PATTERN = Regex("^(bodyweight|reformer|elliptical|spin_bike|warmup|cooldown)_[a-z0-9_]+$")
         val SYMPTOM_PATTERN = Regex("chest pain|dizz|breathless|symptom", RegexOption.IGNORE_CASE)
         val REFERENCE_KEY_PATTERN = Regex("^### `([a-z0-9]+)`", RegexOption.MULTILINE)
         val REP_COUNT_PATTERN = Regex(
@@ -239,7 +239,7 @@ class ExerciseCatalogueValidationTest {
         )
 
         val MODALITY_MINIMUMS = mapOf(
-            Modality.FLOOR_PILATES to 24,
+            Modality.BODYWEIGHT to 24,
             Modality.REFORMER_PILATES to 10,
             Modality.ELLIPTICAL to 8,
             Modality.SPIN_BIKE to 12,

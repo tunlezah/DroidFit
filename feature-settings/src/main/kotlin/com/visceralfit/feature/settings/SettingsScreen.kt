@@ -241,7 +241,7 @@ private fun SettingRow(
 
 private val Modality.displayName: String
     get() = when (this) {
-        Modality.FLOOR_PILATES -> "Floor Pilates"
+        Modality.BODYWEIGHT -> "Floor & bodyweight"
         Modality.REFORMER_PILATES -> "Reformer Pilates"
         Modality.ELLIPTICAL -> "Elliptical"
         Modality.SPIN_BIKE -> "Spin bike"

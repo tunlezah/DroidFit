@@ -305,7 +305,16 @@ what went wrong survives.
 - **Recommendation:** option 1, because "no equipment" is a common case and currently gets recovery
   sessions only. It is not a small change — `Modality` is documented as the single extension point
   and adding one requires MET values, 12 exercises and a decision entry.
-- **Status:** open. Not urgent: nothing is broken, two pieces of content are simply inert.
+- **Status:** **fixed 2026-07-31 (D-0039), and by a better route than either option offered.** The
+  operator's answer was that no fifth category was needed: the existing one had simply been named
+  wrongly. `FLOOR_PILATES` is now `BODYWEIGHT`, aerobic capability is a property of the modality
+  (false only for the reformer), and seven bodyweight cardio exercises were added across all three
+  levels. The two stranded movements are reachable, and a user with no equipment at all now gets
+  genuine interval sessions instead of recovery only.
+- **Lesson worth keeping:** the analysis in this entry framed the choice as "add a category or delete
+  the content", and both were worse than the option it did not consider — that the *existing* name
+  was wrong. A category name that encodes an evidence constraint is doing two jobs, and it was the
+  wrong name for one of them.
 
 ### KI-0015 — The safety notice cannot be read again from Settings
 - **Date:** 2026-07-30
@@ -401,3 +410,20 @@ what went wrong survives.
 - **Fix:** state the site next to the input, and record it with the measurement so a future
   change of site is visible rather than invisible. Recording it is the important half.
 - **Status:** open. Phase 10 owns the measurement UI.
+
+### KI-0022 — The reformer's evidence constraint is now enforced in one place, and untested at the boundary
+- **Date:** 2026-07-31
+- **Severity:** minor
+- **Area:** `domain/model/Modality`, `domain/engine`
+- **Symptom:** `Modality.supportsAerobicWork` returning false for `REFORMER_PILATES` is the single
+  thing standing between the app and presenting reformer work as cardio (REQ-004). Nothing asserts
+  that a *newly added* modality gets a deliberate answer for it.
+- **Why it is worth an entry:** the property defaults to true — it is written as
+  `this != REFORMER_PILATES`. A fifth modality added tomorrow is aerobic-capable by default and
+  silently. For a modality like rowing that is correct; for mat Pilates it would be a health-claim
+  regression, and no test would fail.
+- **Fix:** invert the default so the property is an explicit per-entry constructor argument rather
+  than a derived expression, which makes a new modality unable to compile without answering the
+  question. `Modality`'s own documentation already lists what adding one requires; this belongs on
+  that list.
+- **Status:** open, small. Do it the next time `Modality` is touched.

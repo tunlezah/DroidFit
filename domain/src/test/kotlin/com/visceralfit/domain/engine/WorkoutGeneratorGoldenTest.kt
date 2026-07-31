@@ -27,13 +27,13 @@ class WorkoutGeneratorGoldenTest {
     private val request = WorkoutRequest(
         duration = 20.minutes,
         style = WorkoutStyle.MIXED,
-        modalities = setOf(Modality.SPIN_BIKE, Modality.FLOOR_PILATES),
+        modalities = setOf(Modality.SPIN_BIKE, Modality.BODYWEIGHT),
         level = ExperienceLevel.INTERMEDIATE,
         seed = 42L,
     )
 
     private val workout = DefaultWorkoutGenerator(
-        CatalogueFixture.forModalities(Modality.SPIN_BIKE, Modality.FLOOR_PILATES),
+        CatalogueFixture.forModalities(Modality.SPIN_BIKE, Modality.BODYWEIGHT),
     ).generate(request).getOrThrow()
 
     @Test
@@ -99,7 +99,7 @@ class WorkoutGeneratorGoldenTest {
         val coolDown = workout.blocks.first { it.kind == BlockKind.COOL_DOWN }.segments
         assertEquals(Modality.SPIN_BIKE, warmUp.last().exercise?.modality)
         assertEquals(Modality.SPIN_BIKE, coolDown.first().exercise?.modality)
-        assertEquals(Modality.FLOOR_PILATES, coolDown.last().exercise?.modality)
+        assertEquals(Modality.BODYWEIGHT, coolDown.last().exercise?.modality)
     }
 
     @Test

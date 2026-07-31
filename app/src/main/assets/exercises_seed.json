@@ -1,10 +1,10 @@
 {
-  "version": 3,
+  "version": 4,
   "exercises": [
     {
-      "id": "floor_pilates_dead_bug",
+      "id": "bodyweight_dead_bug",
       "name": "Dead bug",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "beginner",
       "met_value": 2.8,
       "how_to": [
@@ -31,9 +31,9 @@
       "evidence_keys": ["who2020", "wang2021pilates"]
     },
     {
-      "id": "floor_pilates_hundred_prep",
+      "id": "bodyweight_hundred_prep",
       "name": "The hundred, preparation",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "beginner",
       "met_value": 2.8,
       "how_to": [
@@ -59,9 +59,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_glute_bridge",
+      "id": "bodyweight_glute_bridge",
       "name": "Shoulder bridge",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "beginner",
       "met_value": 2.8,
       "how_to": [
@@ -86,9 +86,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_side_plank_knees",
+      "id": "bodyweight_side_plank_knees",
       "name": "Side plank from the knees",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "intermediate",
       "met_value": 3.8,
       "how_to": [
@@ -113,9 +113,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_single_leg_stretch",
+      "id": "bodyweight_single_leg_stretch",
       "name": "Single leg stretch",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "intermediate",
       "met_value": 3.8,
       "how_to": [
@@ -334,7 +334,7 @@
     {
       "id": "warmup_march_in_place",
       "name": "March in place",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "beginner",
       "met_value": 3.5,
       "how_to": [
@@ -354,7 +354,7 @@
     {
       "id": "cooldown_supine_knee_hug",
       "name": "Supine knee hug",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "beginner",
       "met_value": 2.3,
       "how_to": [
@@ -373,9 +373,9 @@
       "evidence_keys": ["acsm2021"]
     },
     {
-      "id": "floor_pilates_breathing_lateral",
+      "id": "bodyweight_breathing_lateral",
       "name": "Lateral breathing",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "beginner",
       "met_value": 1.8,
       "how_to": [
@@ -397,9 +397,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_cat_cow",
+      "id": "bodyweight_cat_cow",
       "name": "Cat cow",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "beginner",
       "met_value": 1.8,
       "how_to": [
@@ -424,9 +424,9 @@
       "evidence_keys": ["wang2021pilates", "acsm2021"]
     },
     {
-      "id": "floor_pilates_spine_twist_supine",
+      "id": "bodyweight_spine_twist_supine",
       "name": "Supine spine twist",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "beginner",
       "met_value": 2.3,
       "how_to": [
@@ -451,9 +451,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_leg_slides",
+      "id": "bodyweight_leg_slides",
       "name": "Heel slides",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "beginner",
       "met_value": 2.8,
       "how_to": [
@@ -475,9 +475,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_bird_dog",
+      "id": "bodyweight_bird_dog",
       "name": "Bird dog",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "beginner",
       "met_value": 2.8,
       "how_to": [
@@ -502,9 +502,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_clam_shell",
+      "id": "bodyweight_clam_shell",
       "name": "Clam",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "beginner",
       "met_value": 2.8,
       "how_to": [
@@ -526,9 +526,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_plank_hold",
+      "id": "bodyweight_plank_hold",
       "name": "Forearm plank",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "intermediate",
       "met_value": 2.8,
       "how_to": [
@@ -553,9 +553,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_swimming_prep",
+      "id": "bodyweight_swimming_prep",
       "name": "Swimming, preparation",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "intermediate",
       "met_value": 2.8,
       "how_to": [
@@ -580,9 +580,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_double_leg_stretch",
+      "id": "bodyweight_double_leg_stretch",
       "name": "Double leg stretch",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "intermediate",
       "met_value": 3.8,
       "how_to": [
@@ -607,9 +607,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_criss_cross",
+      "id": "bodyweight_criss_cross",
       "name": "Criss cross",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "intermediate",
       "met_value": 3.8,
       "how_to": [
@@ -634,9 +634,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_roll_up",
+      "id": "bodyweight_roll_up",
       "name": "Roll up",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "intermediate",
       "met_value": 3.8,
       "how_to": [
@@ -661,9 +661,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_shoulder_bridge_march",
+      "id": "bodyweight_shoulder_bridge_march",
       "name": "Shoulder bridge with march",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "intermediate",
       "met_value": 3.8,
       "how_to": [
@@ -688,9 +688,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_side_kick_series",
+      "id": "bodyweight_side_kick_series",
       "name": "Side kick series",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "intermediate",
       "met_value": 3.8,
       "how_to": [
@@ -715,9 +715,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_mountain_climber_slow",
+      "id": "bodyweight_mountain_climber_slow",
       "name": "Slow mountain climber",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "intermediate",
       "met_value": 7.0,
       "how_to": [
@@ -743,9 +743,9 @@
       "evidence_keys": ["chen2024nma", "acsm2021"]
     },
     {
-      "id": "floor_pilates_teaser_prep",
+      "id": "bodyweight_teaser_prep",
       "name": "Teaser, preparation",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "advanced",
       "met_value": 3.8,
       "how_to": [
@@ -770,9 +770,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_side_plank_full",
+      "id": "bodyweight_side_plank_full",
       "name": "Full side plank",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "advanced",
       "met_value": 3.8,
       "how_to": [
@@ -797,9 +797,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_jack_knife",
+      "id": "bodyweight_jack_knife",
       "name": "Jack knife",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "advanced",
       "met_value": 3.8,
       "how_to": [
@@ -825,9 +825,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "floor_pilates_star_jumps",
+      "id": "bodyweight_star_jumps",
       "name": "Star jumps",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "advanced",
       "met_value": 7.5,
       "how_to": [
@@ -855,7 +855,7 @@
     {
       "id": "cooldown_seated_forward_fold",
       "name": "Seated forward fold",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "beginner",
       "met_value": 2.3,
       "how_to": [
@@ -882,7 +882,7 @@
     {
       "id": "cooldown_hip_flexor_kneel",
       "name": "Kneeling hip flexor stretch",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "beginner",
       "met_value": 2.3,
       "how_to": [
@@ -909,7 +909,7 @@
     {
       "id": "cooldown_thoracic_opener",
       "name": "Supine chest opener",
-      "modality": "floor_pilates",
+      "modality": "bodyweight",
       "difficulty": "beginner",
       "met_value": 2.3,
       "how_to": [
@@ -1718,6 +1718,200 @@
       "muscles_worked": ["Quadriceps", "Glutes", "Hamstrings", "Calves"],
       "illustration_id": "elliptical_hard",
       "caution_tags": ["cardiac_caution"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma", "helgerud2007"]
+    },
+    {
+      "id": "bodyweight_jumping_jacks",
+      "name": "Jumping jacks",
+      "modality": "bodyweight",
+      "difficulty": "beginner",
+      "met_value": 7.5,
+      "how_to": [
+        "Stand tall with your feet together and your arms by your sides.",
+        "Jump your feet out to the sides while sweeping your arms up overhead.",
+        "Jump back to the start, landing softly through the whole foot with soft knees.",
+        "Keep a steady rhythm you could hold for the whole interval rather than starting flat out."
+      ],
+      "spoken_instruction": "Jumping jacks. Steady rhythm, soft landings, arms all the way overhead.",
+      "safety_notes": [
+        "Step the feet out instead of jumping if you have knee or ankle pain today.",
+        "Land through the whole foot; heavy heel landings send the impact into the joints.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Landing with locked knees.",
+        "Starting at full speed and fading before the interval ends."
+      ],
+      "muscles_worked": ["Calves", "Quadriceps", "Shoulder stabilisers"],
+      "illustration_id": "bodyweight_jumping_jacks",
+      "caution_tags": ["knee", "ankle", "cardiac_caution"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma", "who2020"]
+    },
+    {
+      "id": "bodyweight_fast_feet",
+      "name": "Fast feet",
+      "modality": "bodyweight",
+      "difficulty": "beginner",
+      "met_value": 7.0,
+      "how_to": [
+        "Stand with your feet hip-width apart and your knees softly bent.",
+        "Shift your weight onto the balls of your feet and lean very slightly forward.",
+        "Move your feet as quickly as you can in small, light taps, staying low.",
+        "Keep your shoulders relaxed and your breathing rhythmic."
+      ],
+      "spoken_instruction": "Fast feet. Stay low on the balls of your feet, small quick taps.",
+      "safety_notes": [
+        "Keep the movement small; large steps at speed are how ankles roll.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Standing upright, which turns it into jogging on the spot.",
+        "Tensing the shoulders as the pace rises."
+      ],
+      "muscles_worked": ["Calves", "Quadriceps", "Core"],
+      "illustration_id": "bodyweight_fast_feet",
+      "caution_tags": ["ankle", "cardiac_caution"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma"]
+    },
+    {
+      "id": "bodyweight_high_knees",
+      "name": "High knees",
+      "modality": "bodyweight",
+      "difficulty": "intermediate",
+      "met_value": 7.5,
+      "how_to": [
+        "Stand tall with your feet hip-width apart.",
+        "Drive one knee up toward hip height, then swap quickly so you are running on the spot.",
+        "Stay on the balls of your feet and keep your chest lifted.",
+        "Drive your arms in opposition to your legs to hold the rhythm."
+      ],
+      "spoken_instruction": "High knees. Drive the knees to hip height and stay tall.",
+      "safety_notes": [
+        "Lower the knee height rather than the pace if your lower back starts to round.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Leaning back to lift the knees higher, which loads the lower back.",
+        "Landing heavily on the heels."
+      ],
+      "muscles_worked": ["Hip flexors", "Calves", "Core"],
+      "illustration_id": "bodyweight_high_knees",
+      "caution_tags": ["knee", "ankle", "cardiac_caution"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma", "helgerud2007"]
+    },
+    {
+      "id": "bodyweight_plank_jacks",
+      "name": "Plank jacks",
+      "modality": "bodyweight",
+      "difficulty": "intermediate",
+      "met_value": 7.0,
+      "how_to": [
+        "Start in a forearm plank with your elbows under your shoulders and one long line from head to heels.",
+        "Jump both feet out wide, keeping your hips level and your ribs drawing down.",
+        "Jump them back together without letting your hips lift or sag.",
+        "Keep the rhythm steady and drop to stepping the feet as soon as the line breaks."
+      ],
+      "spoken_instruction": "Plank jacks. Jump the feet wide and back, keeping your hips completely level.",
+      "safety_notes": [
+        "Step the feet instead of jumping the moment your hips start to sag.",
+        "Come out of the position if your shoulders or wrists ache rather than working through it.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Letting the hips pike up with each jump.",
+        "Holding the breath through the set."
+      ],
+      "muscles_worked": ["Deep abdominals", "Shoulder stabilisers", "Glutes"],
+      "illustration_id": "bodyweight_plank_jacks",
+      "caution_tags": ["shoulder", "wrist", "lower_back", "cardiac_caution"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma"]
+    },
+    {
+      "id": "bodyweight_skater_hops",
+      "name": "Skater hops",
+      "modality": "bodyweight",
+      "difficulty": "intermediate",
+      "met_value": 7.0,
+      "how_to": [
+        "Stand on one leg with the knee softly bent and the other foot lifted behind you.",
+        "Hop sideways onto the other foot, landing softly and letting the knee bend to absorb it.",
+        "Swing your arms across your body to help the transfer.",
+        "Keep the hops small until the landing feels controlled, then widen them."
+      ],
+      "spoken_instruction": "Skater hops. Land softly on one leg, letting the knee bend to absorb it.",
+      "safety_notes": [
+        "Step side to side instead of hopping if your balance is unsteady today.",
+        "Keep the landing knee tracking over the foot rather than falling inward.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Landing on a straight leg, which sends the impact into the knee.",
+        "Hopping wider than the landing can control."
+      ],
+      "muscles_worked": ["Glutes", "Quadriceps", "Calves"],
+      "illustration_id": "bodyweight_skater_hops",
+      "caution_tags": ["knee", "ankle", "balance", "cardiac_caution"],
+      "is_per_side": true,
+      "evidence_keys": ["chen2024nma"]
+    },
+    {
+      "id": "bodyweight_squat_jumps",
+      "name": "Squat jumps",
+      "modality": "bodyweight",
+      "difficulty": "advanced",
+      "met_value": 7.5,
+      "how_to": [
+        "Stand with your feet hip-width apart and lower into a squat, hips back and chest lifted.",
+        "Drive through the whole foot and jump upward, reaching your arms down and back behind you.",
+        "Land softly and absorb the landing by folding straight back into the squat.",
+        "Keep every landing quiet; if it gets loud, the set is over."
+      ],
+      "spoken_instruction": "Squat jumps. Drive up, land soft, fold straight back into the squat.",
+      "safety_notes": [
+        "Stop the set the moment your landings get loud or your knees start falling inward.",
+        "Skip this movement entirely if you have knee pain today.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Landing with straight legs instead of folding into the squat.",
+        "Letting the knees collapse inward on landing."
+      ],
+      "muscles_worked": ["Quadriceps", "Glutes", "Calves", "Hamstrings"],
+      "illustration_id": "bodyweight_squat_jumps",
+      "caution_tags": ["knee", "ankle", "cardiac_caution"],
+      "is_per_side": false,
+      "evidence_keys": ["chen2024nma", "helgerud2007"]
+    },
+    {
+      "id": "bodyweight_burpees",
+      "name": "Burpees",
+      "modality": "bodyweight",
+      "difficulty": "advanced",
+      "met_value": 7.5,
+      "how_to": [
+        "Stand tall, then squat down and place your hands on the floor in front of your feet.",
+        "Step or jump your feet back into a high plank with one long line from head to heels.",
+        "Step or jump the feet back in toward your hands, keeping your back from rounding.",
+        "Stand up tall to finish, and set the pace so the plank position stays honest throughout."
+      ],
+      "spoken_instruction": "Burpees. Hands down, feet back to a straight plank, feet in, stand tall.",
+      "safety_notes": [
+        "Step the feet rather than jumping them if your lower back rounds or your hips sag.",
+        "Skip the movement if your wrists or shoulders are painful today.",
+        "Stop if you feel chest pain, dizziness or unusual breathlessness."
+      ],
+      "common_mistakes": [
+        "Letting the hips sag in the plank as fatigue builds.",
+        "Rushing so the plank position is never actually reached."
+      ],
+      "muscles_worked": ["Quadriceps", "Chest", "Deep abdominals", "Shoulder stabilisers"],
+      "illustration_id": "bodyweight_burpees",
+      "caution_tags": ["wrist", "shoulder", "lower_back", "knee", "cardiac_caution"],
       "is_per_side": false,
       "evidence_keys": ["chen2024nma", "helgerud2007"]
     }

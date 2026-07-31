@@ -138,7 +138,7 @@ class WeeklyLoadTest {
             workoutId = "w_test",
             title = "Test session",
             style = style.id,
-            modalities = listOf("floor_pilates"),
+            modalities = listOf("bodyweight"),
             startedAtEpochMs = startedAt,
             completedAtEpochMs = startedAt + activeSeconds * 1_000,
             activeSeconds = activeSeconds,

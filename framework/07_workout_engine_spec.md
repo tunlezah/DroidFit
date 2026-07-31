@@ -133,6 +133,33 @@ The fallback chain below is unchanged, and still handles a catalogue that cannot
 narrowed pool. `scripts/check_framework_data.py` asserts that the engine's anchor table
 matches `met_values.json`, so the anchors cannot drift away from the Compendium.
 
+### 3.2 Aerobic capability is a property of the modality (added post-phase-07, D-0039)
+
+`cardioPool` above is defined as `modality.isMachineCardio`, which quietly encodes a
+second assumption: that only a machine can carry aerobic work. It cannot.
+
+The original modality list called the equipment-free category `floor_pilates`. The operator
+corrected it — the floor category is **bodyweight and floor work**, and the Pilates they do
+is the reformer. That distinction is not cosmetic. Star jumps at 7.5 MET are aerobic work
+that `chen2024nma` supports; under the old name they fell inside the Pilates constraint and
+the generator could never select them, so a user with no equipment could only ever be
+offered a recovery session.
+
+So the pools key on `Modality.supportsAerobicWork` instead, which is false for
+`REFORMER_PILATES` and true for everything else. That is where the `wang2021pilates`
+constraint now lives — structurally, rather than as a special case in the block builder.
+
+| Then | Now |
+|---|---|
+| `cardioPool` = machine cardio | `aerobicPool` = `modality.supportsAerobicWork` |
+| `vigorousPool` = cardio and `metValue >= 8.0` | aerobic **and** (anchor is VIGOROUS, **or** anchor is THRESHOLD and `metValue >= 8.0`) |
+| "no machine" ⇒ Pilates session | "nothing anchored above recovery" ⇒ strength-and-mobility session |
+
+The second row matters because the MET floor alone excludes bodyweight work the Compendium
+calls vigorous outright: star jumps are 7.5 MET, below the 8.0 machine floor. The anchor
+alone is not sufficient either — a spin class clears 8.0 MET and is anchored Zone 2. Both
+conditions earn their place.
+
 **Fallbacks when a pool is empty**, in order — apply the first that yields a non-empty pool
 and record which fallback was used in the returned `Workout`'s title context:
 
@@ -141,7 +168,7 @@ and record which fallback was used in the returned `Workout`'s title context:
 | `warmUpPool` | use `mobilityPool`; then the lowest-MET three exercises in `eligible` |
 | `vigorousPool` | use `thresholdPool` and cap the segment's intensity at THRESHOLD |
 | `thresholdPool` | use `steadyPool` and cap at ZONE_2 |
-| `steadyPool` | use `strengthPool`; the session becomes a Pilates session (see §7) |
+| `steadyPool` | use `strengthPool` capped at ZONE_2 (preferred over the raw aerobic pool, per D-0038 — a sprint prescribed gently is not a Zone 2 base); then the whole aerobic range |
 | `cooldown`/`mobilityPool` | use the lowest-MET exercise in `eligible` |
 
 If a fallback caps intensity, the style is **downgraded** and the workout title must say so
@@ -303,7 +330,7 @@ disabled the machines — but it changes what the session *is*.
 
 Rules:
 
-1. The workout title must name it honestly: "Floor Pilates — strength and control", never
+1. The workout title must name it honestly: "Floor and bodyweight — strength and control", never
    "HIIT" or "Fat-burning intervals".
 2. The style is recorded as what was actually built, not what was requested.
 3. The session still counts toward weekly minutes. It contributes **zero vigorous

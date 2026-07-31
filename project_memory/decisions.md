@@ -9,6 +9,7 @@ Append-only log of choices with more than one defensible answer. Template:
 
 | Phase | Completed | New assumptions? | Notes |
 |---|---|---|---|
+| Modality correction | 2026-07-31 | No new ones | `FLOOR_PILATES` renamed to `BODYWEIGHT` and aerobic capability made a property of the modality, on the operator's correction. A user with no equipment can now be given real intervals. Closes KI-0020, supersedes part of D-0023. Catalogue 65 → 72. D-0039 |
 | 09 — Tracking (partial) | 2026-07-30 | No new ones | `observeWeeklyLoad` implemented, closing KI-0002 and TD-0007: the Progress screen shows real minutes, sessions, vigorous minutes and rest-day advice. Two of engine spec §8's four signals; the other two need a schema change. D-0035..D-0037, KI-0019 |
 | 07 — Workout player (partial) | 2026-07-30 | No new ones | Session runs end to end: generate, begin, count down, pause, skip, end, record. Safety notice added, closing KI-0005. Clock in a foreground service per ADR-0008, tested by arithmetic rather than by waiting. **Not done:** TTS cues (phase 08), landscape, device verification — KI-0016..KI-0018. D-0029..D-0034 |
 | 06 — Workout engine | 2026-07-30 | Yes — A-0010 | Generator implemented; KI-0001 and KI-0006 closed. Golden file reproduces engine spec §9 exactly, including its exercise choices. Invariants asserted across 1,680 requests. Verified: `qualityCheck` green, 57 data checks, 11 compliance checks, release APK 2.5 MB. D-0020..D-0028, KI-0012..KI-0014, TD-0009 |
@@ -651,3 +652,52 @@ Append-only log of choices with more than one defensible answer. Template:
   those movements have a legitimate home as vigorous work.
 - **Affects:** `PoolFallbacks.strength`, `MainBlockBuilder.intervals`,
   `WorkoutGeneratorInvariantTest`.
+
+### D-0039 — `FLOOR_PILATES` was the wrong name, and the wrong constraint came with it
+- **Date:** 2026-07-31
+- **Phase:** post-07 (operator correction, UF-0007)
+- **Supersedes:** part of D-0023. That entry made *every* machine-free session a recovery
+  session. The rule was right for Pilates and wrong for everything else in the category.
+- **Decision:** Three changes, one idea.
+  1. `Modality.FLOOR_PILATES` → `Modality.BODYWEIGHT`, id `bodyweight`, labelled "Floor &
+     bodyweight". Exercise ids renamed `floor_pilates_*` → `bodyweight_*`.
+  2. New `Modality.supportsAerobicWork`, false only for `REFORMER_PILATES`. The pools key on
+     it instead of on `isMachineCardio`, so `cardioPool` became `aerobicPool`.
+  3. The strength-only branch now triggers when nothing available is anchored above recovery,
+     rather than when no machine is available.
+- **Why the name mattered more than a name should:** the label put the whole equipment-free
+  category inside the Pilates evidence constraint. `wang2021pilates` found no
+  waist-circumference effect from Pilates, so REQ-004 forbids presenting a Pilates session as
+  comparable to aerobic work — correctly. But star jumps at 7.5 MET are aerobic work that
+  `chen2024nma` supports, and they were filed under "floor Pilates", so the constraint caught
+  them too. The consequence was that a user with **no equipment** could only ever be offered
+  a recovery session, and two authored exercises were unreachable (the old KI-0020).
+- **The operator's correction, verbatim:** "it should be bodyweight and floor excercises. It
+  should not have been 'floor pilates' it was 'reformer pilates'." The Pilates they do is the
+  reformer; the floor work was never Pilates.
+- **Why the constraint is now structural:** putting it on the modality as
+  `supportsAerobicWork` means the honesty rule holds everywhere at once, rather than being a
+  branch in `MainBlockBuilder` that a future change could bypass. Reformer work cannot be
+  prescribed as aerobic because the pools it feeds cannot carry aerobic segments.
+- **Why `vigorousPool` needed two admitting conditions:** the 8.0 MET floor excludes star
+  jumps (7.5, anchored **vigorous**, code 02020); the anchor alone admits a spin class (9.0,
+  anchored **Zone 2**, code 01270). An exercise qualifies when the Compendium calls it
+  vigorous outright, or when it is threshold-anchored at 8.0 MET or above.
+- **Was this rename safe?** Yes, and only because nothing has shipped. `Modality.id` is the
+  persisted form and exercise ids are documented as never renamed once shipped. There are no
+  installs, so there is no data to migrate. This was the last moment it was free.
+- **Content added:** seven bodyweight cardio exercises — jumping jacks, fast feet, high knees,
+  plank jacks, skater hops, squat jumps, burpees — spread across all three levels so a
+  beginner with no equipment can be given an interval session. Catalogue is now 72 exercises,
+  version 4.
+- **Reverses if:** never for the naming. If mat Pilates is ever wanted as a distinct
+  modality from general floor work, that is an addition rather than a reversal.
+- **Affects:** `Modality`, `ExercisePools`, `MainBlockBuilder`, `SessionTitle`, the catalogue,
+  `met_values.json`, `IntensityAnchor`, `framework/07_workout_engine_spec.md` §3.2, the
+  golden file, and the modality labels on the Train and Settings screens.
+- **Verification:** a new test asserts a bodyweight-only interval request produces genuine
+  intervals with vigorous segments on bodyweight movements — the case that was impossible
+  before. Two tests assert the reformer and mat-only paths still build and name themselves as
+  strength work. The golden file changed in exactly three ways, all traceable to the rename:
+  the id digest, the modality name, and one cool-down draw that moved because the pool is
+  sorted by id.

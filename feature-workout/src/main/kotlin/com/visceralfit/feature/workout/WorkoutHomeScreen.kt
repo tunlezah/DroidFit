@@ -311,7 +311,7 @@ private fun WorkoutHomePreview() {
                 isLoading = false,
                 selectedMinutes = 10,
                 selectedStyle = WorkoutStyle.MIXED,
-                usableModalities = setOf(Modality.SPIN_BIKE, Modality.FLOOR_PILATES),
+                usableModalities = setOf(Modality.SPIN_BIKE, Modality.BODYWEIGHT),
                 availableStyles = setOf(WorkoutStyle.ZONE_2, WorkoutStyle.MIXED, WorkoutStyle.RECOVERY),
                 minimumMinutesByStyle = mapOf(
                     WorkoutStyle.HIIT to 16,

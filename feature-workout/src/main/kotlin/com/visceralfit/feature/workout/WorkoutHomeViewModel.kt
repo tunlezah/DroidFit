@@ -292,7 +292,7 @@ val WorkoutStyle.displayName: String
 
 val Modality.displayName: String
     get() = when (this) {
-        Modality.FLOOR_PILATES -> "Floor Pilates"
+        Modality.BODYWEIGHT -> "Floor & bodyweight"
         Modality.REFORMER_PILATES -> "Reformer"
         Modality.ELLIPTICAL -> "Elliptical"
         Modality.SPIN_BIKE -> "Spin bike"

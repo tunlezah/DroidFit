@@ -35,15 +35,19 @@ internal class MainBlockBuilder(
 ) {
 
     fun build(style: WorkoutStyle, mainSeconds: Int): MainBlock = when {
-        // A session with no machine available is a Pilates session, and must be built and
-        // recorded as one (spec §7, REQ-004). Building interval or surge structures out of
-        // mat work would produce a session presented as aerobic training that is not
-        // aerobic training — the one substitution the evidence base explicitly forbids
-        // (02_evidence_base.md §1.5). RECOVERY is the honest recording because it is
-        // defined as work that counts toward weekly volume but contributes no vigorous
-        // minutes, which is exactly what spec §7.3 requires of a Pilates session (D-0023).
-        pools.isPilatesOnly -> recovery(mainSeconds).let { block ->
-            if (style == WorkoutStyle.RECOVERY) block else block.copy(notes = block.notes + PILATES_ONLY_NOTE)
+        // When nothing available can carry aerobic work, the session is strength and
+        // mobility and must be built and recorded as such (spec §7, REQ-004). Building
+        // interval or surge structures out of mat work would present a session as aerobic
+        // training when it is not — the one substitution the evidence base explicitly
+        // forbids (02_evidence_base.md §1.5). RECOVERY is the honest recording because it
+        // is defined as work counting toward weekly volume but contributing no vigorous
+        // minutes, which is exactly what spec §7.3 requires (D-0023).
+        //
+        // Note the condition is *aerobic capability*, not *machine availability* (D-0039).
+        // Bodyweight cardio is aerobic work, so a user with no equipment at all still gets
+        // real intervals; this branch is for reformer, mat and stretching content only.
+        pools.isStrengthOnly -> recovery(mainSeconds).let { block ->
+            if (style == WorkoutStyle.RECOVERY) block else block.copy(notes = block.notes + STRENGTH_ONLY_NOTE)
         }
 
         style == WorkoutStyle.HIIT -> intervals(mainSeconds)
@@ -71,8 +75,12 @@ internal class MainBlockBuilder(
         // machine, then the easiest anywhere. Falling straight back to the work pool would
         // name a vigorous interval as the recovery — which is how a recovery segment ends up
         // labelled "hard interval" (D-0038).
+        // Easy work on the same modality first — including easy work that is not in the
+        // steady pool, which matters for bodyweight intervals: marching in place between
+        // sets of jumps beats lying down for a stretch and getting back up (D-0039).
         val recoveryExercise = picker.pickOrNull(
             pools.steady.filter { it.modality == workModality }
+                .ifEmpty { easyWorkOn(workModality) }
                 .ifEmpty { pools.steady }
                 .ifEmpty { pools.mobility }
                 .ifEmpty { onModality },
@@ -309,6 +317,11 @@ internal class MainBlockBuilder(
         }
     }
 
+    /** Aerobic work on [modality] the Compendium anchors no harder than Zone 2. */
+    private fun easyWorkOn(modality: Modality): List<Exercise> = pools.aerobic.filter {
+        it.modality == modality && IntensityAnchor.of(it.modality, it.metValue).isAtMost(IntensityAnchor.ZONE_2)
+    }
+
     /** The machine modality with the most entries, ties broken by id so it never varies. */
     private fun dominantModality(exercises: List<Exercise>): Modality =
         exercises.groupBy { it.modality }
@@ -323,10 +336,11 @@ internal class MainBlockBuilder(
         const val ROTATION_THRESHOLD = 3
         const val ROTATION_MAX = 3
 
-        const val NO_MACHINE_NOTE = "no machine cardio available; built as steady work"
-        const val PILATES_ONLY_NOTE =
-            "No machine was available, so this is a Pilates strength and mobility session. " +
-                "It counts toward your weekly minutes but not toward vigorous minutes."
+        const val NO_MACHINE_NOTE = "no aerobic work available; built as steady work"
+        const val STRENGTH_ONLY_NOTE =
+            "Nothing available today can carry aerobic work, so this is a strength and " +
+                "mobility session. It counts toward your weekly minutes but not toward " +
+                "vigorous minutes."
         const val NO_TEMPLATE_FITS_NOTE = "too short for any interval template; built as steady work"
         const val NOT_ENOUGH_ROOM_FOR_SURGES_NOTE = "too short to place surges safely; built as steady work"
     }

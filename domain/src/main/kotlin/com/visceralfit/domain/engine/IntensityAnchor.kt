@@ -80,13 +80,13 @@ enum class IntensityAnchor(val id: String) {
          * that file (resting, generic aerobic) are omitted: no exercise carries them.
          */
         private val ENTRIES: List<Anchored> = listOf(
-            Anchored(Modality.FLOOR_PILATES, 1.8, RECOVERY),
-            Anchored(Modality.FLOOR_PILATES, 2.3, RECOVERY),
-            Anchored(Modality.FLOOR_PILATES, 2.8, RECOVERY),
-            Anchored(Modality.FLOOR_PILATES, 3.5, RECOVERY),
-            Anchored(Modality.FLOOR_PILATES, 3.8, ZONE_2),
-            Anchored(Modality.FLOOR_PILATES, 7.0, THRESHOLD),
-            Anchored(Modality.FLOOR_PILATES, 7.5, VIGOROUS),
+            Anchored(Modality.BODYWEIGHT, 1.8, RECOVERY),
+            Anchored(Modality.BODYWEIGHT, 2.3, RECOVERY),
+            Anchored(Modality.BODYWEIGHT, 2.8, RECOVERY),
+            Anchored(Modality.BODYWEIGHT, 3.5, RECOVERY),
+            Anchored(Modality.BODYWEIGHT, 3.8, ZONE_2),
+            Anchored(Modality.BODYWEIGHT, 7.0, THRESHOLD),
+            Anchored(Modality.BODYWEIGHT, 7.5, VIGOROUS),
             Anchored(Modality.REFORMER_PILATES, 2.3, RECOVERY),
             Anchored(Modality.REFORMER_PILATES, 2.8, RECOVERY),
             Anchored(Modality.REFORMER_PILATES, 3.8, ZONE_2),

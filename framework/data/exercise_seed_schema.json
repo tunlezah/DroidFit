@@ -30,7 +30,7 @@
       "properties": {
         "id": {
           "type": "string",
-          "pattern": "^(floor_pilates|reformer|elliptical|spin_bike|warmup|cooldown)_[a-z0-9_]+$",
+          "pattern": "^(bodyweight|reformer|elliptical|spin_bike|warmup|cooldown)_[a-z0-9_]+$",
           "description": "Stable slug, modality-prefixed. NEVER renamed once shipped: session history and favourites reference it."
         },
         "name": {
@@ -39,7 +39,7 @@
           "description": "What a competent instructor would call it. Use the established Pilates name where one exists."
         },
         "modality": {
-          "enum": ["floor_pilates", "reformer_pilates", "elliptical", "spin_bike"],
+          "enum": ["bodyweight", "reformer_pilates", "elliptical", "spin_bike"],
           "description": "Must match a Modality.id in domain/model/Modality.kt."
         },
         "difficulty": {

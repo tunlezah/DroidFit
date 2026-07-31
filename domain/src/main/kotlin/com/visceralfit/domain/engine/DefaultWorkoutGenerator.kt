@@ -64,6 +64,7 @@ class DefaultWorkoutGenerator(private val catalogue: List<Exercise>) : WorkoutGe
                 cappedAt = main.cappedAt,
                 modalities = usedModalities,
                 totalSeconds = totalSeconds,
+                isStrengthOnly = pools.isStrengthOnly,
             ),
             style = main.builtStyle,
             modalities = usedModalities,
@@ -193,7 +194,7 @@ class DefaultWorkoutGenerator(private val catalogue: List<Exercise>) : WorkoutGe
 
     /** Easy work on the machine the main block used, for the spin-down. */
     private fun spinDownPool(pools: ExercisePools, modality: Modality): List<Exercise> {
-        val onMachine = pools.cardio.filter { it.modality == modality }
+        val onMachine = pools.aerobic.filter { it.modality == modality }
         return onMachine
             .filter { IntensityAnchor.of(it.modality, it.metValue).isAtMost(IntensityAnchor.ZONE_2) }
             .ifEmpty { onMachine.sortedBy { it.metValue }.take(1) }
@@ -259,10 +260,11 @@ internal object SessionTitle {
         cappedAt: IntensityAnchor?,
         modalities: Set<Modality>,
         totalSeconds: Int,
+        isStrengthOnly: Boolean,
     ): String {
         val minutes = totalSeconds / SECONDS_PER_MINUTE
         val name = when {
-            modalities.none { it.isMachineCardio } -> "${pilatesName(modalities)}: strength and control"
+            isStrengthOnly -> "${strengthName(modalities)}: strength and control"
             cappedAt == null -> label(builtStyle)
             else -> "${label(builtStyle)} (${capLabel(cappedAt)})"
         }
@@ -277,14 +279,20 @@ internal object SessionTitle {
     }
 
     /**
-     * A Pilates-only session is named for what it is. It must never be presented as an
-     * interval or fat-loss session: the evidence base does not support Pilates as a
-     * visceral-fat intervention comparable to aerobic work (spec §7, REQ-004).
+     * A session that carried no aerobic work is named for what it actually was. It must never
+     * be presented as an interval or fat-loss session: the evidence base does not support
+     * reformer or mat work as a visceral-fat intervention comparable to aerobic work
+     * (spec §7, REQ-004, `wang2021pilates`).
+     *
+     * The reformer is named as Pilates because that is what it is. Floor work is named as
+     * floor work rather than as Pilates, because the category holds general bodyweight
+     * movement and calling a set of dead bugs "Pilates" is a claim about a method (D-0039).
      */
-    private fun pilatesName(modalities: Set<Modality>): String = when {
-        modalities.size == 1 && modalities.first() == Modality.FLOOR_PILATES -> "Floor Pilates"
-        modalities.size == 1 && modalities.first() == Modality.REFORMER_PILATES -> "Reformer Pilates"
-        else -> "Pilates"
+    private fun strengthName(modalities: Set<Modality>): String = when {
+        modalities == setOf(Modality.REFORMER_PILATES) -> "Reformer Pilates"
+        modalities == setOf(Modality.BODYWEIGHT) -> "Floor and bodyweight"
+        Modality.REFORMER_PILATES in modalities -> "Pilates and floor work"
+        else -> "Floor and bodyweight"
     }
 
     private fun capLabel(cappedAt: IntensityAnchor): String = when (cappedAt) {

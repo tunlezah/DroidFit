@@ -133,7 +133,7 @@ class WorkoutGeneratorDeterminismTest {
         val GOLDEN_REQUEST = WorkoutRequest(
             duration = 20.minutes,
             style = WorkoutStyle.MIXED,
-            modalities = setOf(Modality.SPIN_BIKE, Modality.FLOOR_PILATES),
+            modalities = setOf(Modality.SPIN_BIKE, Modality.BODYWEIGHT),
             level = ExperienceLevel.INTERMEDIATE,
             seed = 42L,
         )
@@ -144,10 +144,10 @@ class WorkoutGeneratorDeterminismTest {
         const val MINUTE_RANGE = 90
 
         val MODALITY_SETS = listOf(
-            setOf(Modality.SPIN_BIKE, Modality.FLOOR_PILATES),
-            setOf(Modality.ELLIPTICAL, Modality.FLOOR_PILATES),
-            setOf(Modality.FLOOR_PILATES),
-            setOf(Modality.SPIN_BIKE, Modality.ELLIPTICAL, Modality.FLOOR_PILATES),
+            setOf(Modality.SPIN_BIKE, Modality.BODYWEIGHT),
+            setOf(Modality.ELLIPTICAL, Modality.BODYWEIGHT),
+            setOf(Modality.BODYWEIGHT),
+            setOf(Modality.SPIN_BIKE, Modality.ELLIPTICAL, Modality.BODYWEIGHT),
             Modality.entries.toSet(),
         )
     }

@@ -269,12 +269,12 @@ class WorkoutGeneratorInvariantTest {
         val DURATIONS_MINUTES = listOf(3, 4, 5, 7, 9, 10, 15, 16, 20, 30, 45, 60, 90, 119, 120)
 
         val MODALITY_SETS = listOf(
-            setOf(Modality.FLOOR_PILATES),
+            setOf(Modality.BODYWEIGHT),
             setOf(Modality.REFORMER_PILATES),
             setOf(Modality.SPIN_BIKE),
             setOf(Modality.ELLIPTICAL),
-            setOf(Modality.SPIN_BIKE, Modality.FLOOR_PILATES),
-            setOf(Modality.ELLIPTICAL, Modality.FLOOR_PILATES),
+            setOf(Modality.SPIN_BIKE, Modality.BODYWEIGHT),
+            setOf(Modality.ELLIPTICAL, Modality.BODYWEIGHT),
             Modality.entries.toSet(),
         )
 
