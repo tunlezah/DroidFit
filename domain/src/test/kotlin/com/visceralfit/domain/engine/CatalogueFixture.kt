@@ -62,35 +62,21 @@ internal object CatalogueFixture {
 
     private const val TABLE = """
         bodyweight_bird_dog|bodyweight|beginner|2.8|knee,wrist
-        bodyweight_breathing_lateral|bodyweight|beginner|1.8|
         bodyweight_burpees|bodyweight|advanced|7.5|cardiac_caution,knee,lower_back,shoulder,wrist
-        bodyweight_cat_cow|bodyweight|beginner|1.8|knee,wrist
+        bodyweight_cat_cow|bodyweight|beginner|2.3|knee,wrist
         bodyweight_clam_shell|bodyweight|beginner|2.8|
-        bodyweight_criss_cross|bodyweight|intermediate|3.8|lower_back,neck
         bodyweight_dead_bug|bodyweight|beginner|2.8|lower_back
-        bodyweight_double_leg_stretch|bodyweight|intermediate|3.8|lower_back,neck
         bodyweight_fast_feet|bodyweight|beginner|7.0|ankle,cardiac_caution
-        bodyweight_glute_bridge|bodyweight|beginner|2.8|
         bodyweight_high_knees|bodyweight|intermediate|7.5|ankle,cardiac_caution,knee
-        bodyweight_hundred_prep|bodyweight|beginner|2.8|neck
-        bodyweight_jack_knife|bodyweight|advanced|3.8|lower_back,neck,shoulder
         bodyweight_jumping_jacks|bodyweight|beginner|7.5|ankle,cardiac_caution,knee
-        bodyweight_leg_slides|bodyweight|beginner|2.8|
         bodyweight_mountain_climber_slow|bodyweight|intermediate|7.0|lower_back,shoulder,wrist
         bodyweight_plank_hold|bodyweight|intermediate|2.8|lower_back,shoulder
         bodyweight_plank_jacks|bodyweight|intermediate|7.0|cardiac_caution,lower_back,shoulder,wrist
-        bodyweight_roll_up|bodyweight|intermediate|3.8|lower_back,neck
-        bodyweight_shoulder_bridge_march|bodyweight|intermediate|3.8|neck
-        bodyweight_side_kick_series|bodyweight|intermediate|3.8|lower_back,shoulder
         bodyweight_side_plank_full|bodyweight|advanced|3.8|shoulder,wrist
         bodyweight_side_plank_knees|bodyweight|intermediate|3.8|shoulder,wrist
-        bodyweight_single_leg_stretch|bodyweight|intermediate|3.8|lower_back,neck
         bodyweight_skater_hops|bodyweight|intermediate|7.0|ankle,balance,cardiac_caution,knee
-        bodyweight_spine_twist_supine|bodyweight|beginner|2.3|lower_back
         bodyweight_squat_jumps|bodyweight|advanced|7.5|ankle,cardiac_caution,knee
         bodyweight_star_jumps|bodyweight|advanced|7.5|ankle,balance,cardiac_caution,knee
-        bodyweight_swimming_prep|bodyweight|intermediate|2.8|lower_back
-        bodyweight_teaser_prep|bodyweight|advanced|3.8|lower_back,neck
         cooldown_hip_flexor_kneel|bodyweight|beginner|2.3|knee
         cooldown_seated_forward_fold|bodyweight|beginner|2.3|
         cooldown_supine_knee_hug|bodyweight|beginner|2.3|
@@ -106,6 +92,24 @@ internal object CatalogueFixture {
         elliptical_steady_zone2|elliptical|beginner|5.0|
         elliptical_strong_effort|elliptical|beginner|9.0|cardiac_caution
         elliptical_warm_up_glide|elliptical|beginner|4.0|
+        mat_breathing_lateral|mat_pilates|beginner|1.8|
+        mat_criss_cross|mat_pilates|intermediate|3.8|lower_back,neck
+        mat_double_leg_stretch|mat_pilates|intermediate|3.8|lower_back,neck
+        mat_hundred_prep|mat_pilates|beginner|2.8|neck
+        mat_imprint_and_release|mat_pilates|beginner|1.8|
+        mat_jack_knife|mat_pilates|advanced|3.8|lower_back,neck,shoulder
+        mat_leg_slides|mat_pilates|beginner|2.8|
+        mat_neck_pull|mat_pilates|advanced|3.8|lower_back,neck
+        mat_roll_up|mat_pilates|intermediate|3.8|lower_back,neck
+        mat_shoulder_bridge_march|mat_pilates|intermediate|3.8|neck
+        mat_shoulder_bridge|mat_pilates|beginner|2.8|
+        mat_side_kick_series|mat_pilates|intermediate|3.8|lower_back,shoulder
+        mat_single_leg_stretch|mat_pilates|intermediate|3.8|lower_back,neck
+        mat_spine_stretch_forward|mat_pilates|beginner|2.3|lower_back
+        mat_spine_twist_supine|mat_pilates|beginner|2.3|lower_back
+        mat_swan_prep|mat_pilates|intermediate|2.8|lower_back
+        mat_swimming_prep|mat_pilates|intermediate|2.8|lower_back
+        mat_teaser_prep|mat_pilates|advanced|3.8|lower_back,neck
         reformer_arms_supine_press|reformer_pilates|beginner|2.3|shoulder
         reformer_bridging|reformer_pilates|beginner|2.8|
         reformer_elephant|reformer_pilates|intermediate|3.8|lower_back,wrist

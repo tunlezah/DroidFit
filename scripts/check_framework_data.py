@@ -272,7 +272,15 @@ check(
 
 # --- catalogue balance requirements (08_exercise_library_spec.md §1, §4) -----------
 # Stated as minimums in prose, which is how the catalogue drifted below them before.
-MODALITY_MINIMUMS = {"bodyweight": 24, "reformer_pilates": 10, "elliptical": 8, "spin_bike": 12}
+# Bodyweight's minimum dropped from 24 to 20 when D-0042 moved the classical mat repertoire
+# to its own modality; the 24 was set when one category carried both.
+MODALITY_MINIMUMS = {
+    "bodyweight": 20,
+    "mat_pilates": 14,
+    "reformer_pilates": 10,
+    "elliptical": 8,
+    "spin_bike": 12,
+}
 by_modality: dict[str, list[dict]] = {}
 for exercise in catalogue["exercises"]:
     by_modality.setdefault(exercise["modality"], []).append(exercise)

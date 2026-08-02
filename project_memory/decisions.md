@@ -9,6 +9,7 @@ Append-only log of choices with more than one defensible answer. Template:
 
 | Phase | Completed | New assumptions? | Notes |
 |---|---|---|---|
+| Fifth modality | 2026-08-02 | Yes — A-0012 | Mat Pilates split out of `BODYWEIGHT` as its own selectable category, and `supportsAerobicWork` made a constructor argument so a new modality cannot skip the question. Closes KI-0022. Catalogue 72 → 76, version 5. D-0042 |
 | Clearance and selection | 2026-07-31 | No new ones | A-0002 and A-0007 answered. Effort ceiling added, defaulting to threshold rather than vigorous. All four modalities enabled by default, and REQ-011's refusal now explained on screen. D-0040, D-0041 |
 | Modality correction | 2026-07-31 | No new ones | `FLOOR_PILATES` renamed to `BODYWEIGHT` and aerobic capability made a property of the modality, on the operator's correction. A user with no equipment can now be given real intervals. Closes KI-0020, supersedes part of D-0023. Catalogue 65 → 72. D-0039 |
 | 09 — Tracking (partial) | 2026-07-30 | No new ones | `observeWeeklyLoad` implemented, closing KI-0002 and TD-0007: the Progress screen shows real minutes, sessions, vigorous minutes and rest-day advice. Two of engine spec §8's four signals; the other two need a schema change. D-0035..D-0037, KI-0019 |
@@ -763,3 +764,52 @@ Append-only log of choices with more than one defensible answer. Template:
   for a known user.
 - **Affects:** `Modality.DEFAULT_ENABLED`, `BodyPreferences.availableEquipment`,
   `SettingsViewModel.setModalityEnabled`, `SettingsScreen`.
+
+### D-0042 — Mat Pilates is its own modality, and aerobic capability is now an explicit answer
+- **Date:** 2026-08-02
+- **Phase:** post-07 (closes KI-0022)
+- **Decision:** A fifth `Modality`, `MAT_PILATES`, holding the classical Pilates mat repertoire and
+  its named fundamentals — the hundred, roll up, single and double leg stretch, criss cross, side
+  kick series, swimming, teaser, jack knife, neck pull, shoulder bridge, lateral breathing, imprint
+  and release, spine twist, spine stretch forward, swan. Fourteen exercises were re-tagged out of
+  `BODYWEIGHT`, four more were authored, and `supportsAerobicWork` became a constructor argument.
+- **Why the split:** the two categories differ in the only two ways a category matters here. The
+  user picks them separately — "an easy mat day" is a different intention from "a hard bodyweight
+  day", and before the split those were one switch. And the evidence that applies to them is
+  different: `wang2021pilates` governs the mat repertoire, `chen2024nma` governs the jumping work.
+  One modality forced one answer to `supportsAerobicWork` for movements as unlike each other as
+  lateral breathing and burpees, and D-0039 had to resolve that in favour of the burpees.
+- **What the user gets:** five independently selectable categories, any combination, minimum one
+  (UF-0008). A mat-only session is titled "Mat Pilates: strength and control" and is never framed as
+  cardio; a bodyweight-only session can still be genuine intervals.
+- **Why `supportsAerobicWork` moved into the constructor (closes KI-0022):** it was
+  `this != REFORMER_PILATES`, which defaulted every future modality to aerobic-capable. That is the
+  dangerous direction — this very change would have credited the mat repertoire with cardio benefit
+  by omission, and no test would have failed. It is now impossible to add a modality without
+  answering the question.
+- **Where the boundary was drawn, and why it is not arbitrary:** the mat modality is the *method* —
+  movements a Pilates instructor names from the repertoire. General core and mobility drills stay on
+  bodyweight: dead bug, bird dog, clam, cat cow, forearm plank, side plank. Calling a set of dead
+  bugs "Pilates" is a claim about a method (the D-0039 reasoning), and it is the title, not the
+  exercise, that makes the claim.
+- **MET values:** the split let two exact Compendium codes land on the modality they describe —
+  `02103` "Pilates, traditional, mat" (1.8) and `02105` "Pilates, general" (2.8) were previously
+  carried on `bodyweight`. Cat cow was the only bodyweight movement left at 1.8; it is a mobilising
+  stretch rather than Pilates, so it moved to `02101` at 2.3. The classical work at 3.8 MET is
+  approximated from moderate calisthenics (`02022`), the same substitution the reformer makes — see
+  A-0012.
+- **Catalogue counts:** bodyweight's minimum drops from 24 to 20 and mat Pilates gets 14, revised in
+  `framework/08_exercise_library_spec.md` §1 and in both validators. The 24 was set when one
+  category carried both; the number came down with the work the category has to carry.
+- **Reverses if:** never as a concept — a category the user cannot select separately is not a
+  category. The boundary between the two could move if a movement turns out to be misfiled.
+- **Affects:** `Modality`, `IntensityAnchor.ENTRIES`, `SessionTitle.strengthName`,
+  `exercises_seed.json` (version 4 → 5), `met_values.json`, `CatalogueFixture`, the golden file,
+  `SettingsScreen` (display names and per-category descriptions), `WorkoutHomeViewModel.displayName`,
+  `MODALITY_MINIMUMS` in `ExerciseCatalogueValidationTest` and `check_framework_data.py`,
+  `framework/07_workout_engine_spec.md` §3.2 and §7, `framework/08_exercise_library_spec.md` §1.
+- **Verification:** 62 framework-data checks; `WorkoutGeneratorFailureTest` gains a mat-Pilates
+  title test, a both-Pilates-modalities title test, and the renamed bodyweight-core test;
+  `WorkoutGeneratorInvariantTest` and `WorkoutGeneratorDeterminismTest` gained mat-Pilates modality
+  sets, so the anchor-versus-intensity invariant runs over the new modality. Golden file
+  re-baselined: the id changes shift the pool shuffle, and the diff was read before it was accepted.

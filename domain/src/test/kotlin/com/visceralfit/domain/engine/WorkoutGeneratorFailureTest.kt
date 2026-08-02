@@ -200,25 +200,63 @@ class WorkoutGeneratorFailureTest {
     }
 
     /**
-     * Mat work is floor work, not a Pilates method claim (D-0039).
+     * General core work is not a Pilates method claim (D-0039).
      *
-     * The catalogue here is mat and mobility content only — everything anchored at recovery —
-     * which is the second way a session becomes strength-only: the modality *could* carry
-     * aerobic work, but nothing available on it does.
+     * The catalogue here is the bodyweight modality's low-intensity content only —
+     * everything anchored at recovery — which is the second way a session becomes
+     * strength-only: the modality *could* carry aerobic work, but nothing available on it
+     * does. A set of dead bugs and planks is still not Pilates.
      */
     @Test
-    fun `a mat-only session is strength work, and is not called Pilates`() {
-        val matOnly = CatalogueFixture.forModalities(Modality.BODYWEIGHT)
+    fun `a low-intensity bodyweight session is strength work, and is not called Pilates`() {
+        val coreOnly = CatalogueFixture.forModalities(Modality.BODYWEIGHT)
             .filter { it.metValue <= MAT_MAX_MET }
-        val workout = DefaultWorkoutGenerator(matOnly)
+        val workout = DefaultWorkoutGenerator(coreOnly)
             .generate(
                 request(20.minutes, WorkoutStyle.RECOVERY).copy(modalities = setOf(Modality.BODYWEIGHT)),
             ).getOrThrow()
-        assertEquals("Floor and bodyweight: strength and control — 20 min", workout.title)
+        assertEquals("Bodyweight: strength and control — 20 min", workout.title)
         assertTrue(
-            "mat work was called Pilates",
+            "general core work was called Pilates",
             !workout.title.contains("Pilates", ignoreCase = true),
         )
+    }
+
+    /**
+     * The other side of D-0042: a mat session **is** Pilates and is named as such, and being
+     * named Pilates is what puts it under the `wang2021pilates` constraint. Mat Pilates is
+     * not aerobic-capable, so this is strength work however the request was phrased.
+     */
+    @Test
+    fun `a mat Pilates interval request is built and recorded as Pilates strength work`() {
+        val workout = generatorFor(Modality.MAT_PILATES)
+            .generate(
+                request(30.minutes, WorkoutStyle.HIIT).copy(modalities = setOf(Modality.MAT_PILATES)),
+            ).getOrThrow()
+
+        assertEquals("Mat Pilates: strength and control — 30 min", workout.title)
+        assertEquals(WorkoutStyle.RECOVERY, workout.style)
+        FORBIDDEN_IN_STRENGTH_TITLES.forEach { forbidden ->
+            assertTrue(
+                "a strength session was titled \"${workout.title}\"",
+                !workout.title.contains(forbidden, ignoreCase = true),
+            )
+        }
+        assertTrue(
+            "a mat Pilates session prescribed vigorous work",
+            workout.segments.none { it.intensity == IntensityTarget.VIGOROUS },
+        )
+    }
+
+    /** A session spanning both Pilates modalities is named for the method, not for one apparatus. */
+    @Test
+    fun `a session across both Pilates modalities is titled Pilates`() {
+        val bothPilates = setOf(Modality.MAT_PILATES, Modality.REFORMER_PILATES)
+        val workout = DefaultWorkoutGenerator(CatalogueFixture.forModalities(*bothPilates.toTypedArray()))
+            .generate(request(30.minutes, WorkoutStyle.MIXED).copy(modalities = bothPilates))
+            .getOrThrow()
+
+        assertEquals("Pilates: strength and control — 30 min", workout.title)
     }
 
     /**

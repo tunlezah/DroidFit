@@ -195,3 +195,28 @@ unchanged.
 - **How to confirm it:** sideload the CI APK onto the device and start a session. That
   single act settles A-0011, KI-0016 and most of KI-0017 at once.
 - **Status:** open, and now the cheapest open question to close.
+
+### A-0012 — Classical mat Pilates at 3.8 MET is approximated from moderate calisthenics
+- **Date:** 2026-08-02
+- **Phase:** post-07 (D-0042)
+- **Assumption:** Sustained classical mat work — roll up, criss cross, side kick series, teaser
+  preparation, jack knife, neck pull, shoulder bridge with march — costs about 3.8 MET, taken
+  from Compendium code `02022`, "calisthenics, moderate effort".
+- **Why it needs stating:** the Compendium's Pilates codes stop at `02105` "Pilates, general"
+  at 2.8 MET, which is a whole-class average including the setup, the cueing and the rests.
+  The repertoire above is continuous loaded work and 2.8 understates it. There is no
+  Compendium code for it, so the rule in `met_values.json` applies: use the closest, mark it
+  `approximated_from`, and record the assumption here rather than inventing a number.
+- **Why moderate calisthenics is the closest fit:** it is the code the reformer's 3.8 row
+  already uses for the same reason (long stretch, knee stretches, teaser), so the two Pilates
+  modalities are approximated consistently. A roll up and a sit up are mechanically similar
+  work at a similar tempo.
+- **Direction of the error:** unknown, unlike the reformer case. 3.8 may overstate a slow
+  precise roll up and understate a full side kick series. Energy figures are presented as
+  estimates and never as measurements, so the consequence is bounded: it shifts a kcal
+  estimate, and it puts the movement in the Zone 2 anchor band, which for a non-aerobic
+  modality only affects whether it may appear in a recovery block.
+- **How to confirm it:** it cannot be confirmed from the Compendium. It would take indirect
+  calorimetry on mat work, which is outside what this app can do. If a future Compendium
+  revision adds a mat-repertoire code, use it.
+- **Status:** open, and expected to stay open.

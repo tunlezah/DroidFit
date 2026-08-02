@@ -147,6 +147,8 @@ class WorkoutGeneratorDeterminismTest {
             setOf(Modality.SPIN_BIKE, Modality.BODYWEIGHT),
             setOf(Modality.ELLIPTICAL, Modality.BODYWEIGHT),
             setOf(Modality.BODYWEIGHT),
+            setOf(Modality.MAT_PILATES),
+            setOf(Modality.MAT_PILATES, Modality.ELLIPTICAL),
             setOf(Modality.SPIN_BIKE, Modality.ELLIPTICAL, Modality.BODYWEIGHT),
             Modality.entries.toSet(),
         )

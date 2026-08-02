@@ -13,15 +13,21 @@ do not thin it out to hit a count.**
 
 | Modality | Minimum | Rationale |
 |---|---|---|
-| Bodyweight and floor | 24 | Carries warm-up, core, mobility and cool-down for every session |
+| Bodyweight | 20 | Carries warm-up, mobility and cool-down for every session, plus its own cardio |
+| Mat Pilates | 14 | The classical repertoire is deep; a mat-only session must not repeat itself |
 | Reformer Pilates | 10 | Fewer users, but a session needs enough for variety |
 | Elliptical | 8 | Continuous modality: variation is intensity and cadence, not movement |
 | Spin bike | 12 | Seated/standing × flat/climb × intensity gives natural variety |
-| **Total** | **~54** | |
+| **Total** | **~64** | |
+
+Bodyweight's minimum was 24 while it also held the mat repertoire; D-0042 split that out and
+the number came down with the work the category has to carry.
 
 Also required for the generator's pools to be non-empty at every level:
 
 - At least **3 exercises per modality per experience level**.
+- At least **4 per modality with no caution tags** — a user with several exclusions still
+  needs a workable session.
 - At least **6** with `met_value <= 2.5` (mobility pool, for cool-downs).
 - At least **6** with `met_value <= 4.0` on a Pilates modality (warm-up pool).
 - At least **4** with `met_value >= 8.0` on a machine modality (vigorous pool).

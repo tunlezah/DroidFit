@@ -426,4 +426,7 @@ what went wrong survives.
   than a derived expression, which makes a new modality unable to compile without answering the
   question. `Modality`'s own documentation already lists what adding one requires; this belongs on
   that list.
-- **Status:** open, small. Do it the next time `Modality` is touched.
+- **Status:** **fixed 2026-08-02 (D-0042).** `supportsAerobicWork` is a constructor argument, so a
+  new modality cannot compile without answering it. The fifth modality added in the same change
+  is mat Pilates, which is exactly the case this entry predicted would regress silently — it now
+  answers false, and a mat-only session is titled "Mat Pilates: strength and control".

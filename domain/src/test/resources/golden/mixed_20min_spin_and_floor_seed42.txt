@@ -4,9 +4,9 @@ style: mixed
 modalities: bodyweight,spin_bike
 requested: 1200s
 actual: 1200s
-warm_up work 90s rpe=2..3 warmup_march_in_place
+warm_up work 90s rpe=2..3 bodyweight_dead_bug
 warm_up transition 20s rpe=2..3 -
-warm_up work 70s rpe=3..4 spin_bike_smooth_circles
+warm_up work 70s rpe=3..4 spin_bike_easy_spin
 main work 180s rpe=3..4 spin_bike_seated_flat
 main work 60s rpe=6..7 spin_bike_seated_climb round=1/3
 main work 180s rpe=3..4 spin_bike_seated_flat
@@ -14,6 +14,6 @@ main work 60s rpe=6..7 spin_bike_seated_climb round=2/3
 main work 180s rpe=3..4 spin_bike_seated_flat
 main work 60s rpe=6..7 spin_bike_seated_climb round=3/3
 main work 180s rpe=3..4 spin_bike_seated_flat
-cool_down work 60s rpe=2..3 spin_bike_warm_up_roll
+cool_down work 60s rpe=2..3 spin_bike_recovery_spin
 cool_down transition 20s rpe=2..3 -
-cool_down work 40s rpe=2..3 cooldown_hip_flexor_kneel
+cool_down work 40s rpe=2..3 cooldown_thoracic_opener

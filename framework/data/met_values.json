@@ -90,15 +90,33 @@
       "label": "Pilates, traditional, mat",
       "code": "02103",
       "met": 1.8,
-      "modality": "bodyweight",
-      "intensity": "recovery"
+      "modality": "mat_pilates",
+      "intensity": "recovery",
+      "$note": "Was carried on the bodyweight modality until D-0042 split the mat repertoire out. The only bodyweight movement left at this value was cat cow, which is a mobilising stretch rather than Pilates, so it moved to code 02101 and this row moved with the repertoire it describes."
     },
     {
       "label": "Pilates, general",
       "code": "02105",
       "met": 2.8,
-      "modality": "bodyweight",
+      "modality": "mat_pilates",
       "intensity": "recovery"
+    },
+    {
+      "label": "Stretching, mild (used for mat Pilates spinal mobility)",
+      "code": "02101",
+      "met": 2.3,
+      "modality": "mat_pilates",
+      "intensity": "recovery",
+      "$note": "Supine spine twist and spine stretch forward are mobilising movements rather than a general Pilates class, so the stretching code is the closer fit. Not an approximation: 02101 documents exactly this kind of work."
+    },
+    {
+      "label": "Calisthenics, moderate effort (used for the classical mat repertoire)",
+      "code": "02022",
+      "met": 3.8,
+      "modality": "mat_pilates",
+      "intensity": "zone_2",
+      "approximated_from": "02022",
+      "$note": "The Compendium's Pilates codes stop at 2.8 (02105), which understates sustained classical work — roll up, criss cross, side kick series, teaser, neck pull. Matched to moderate calisthenics rather than invented, the same substitution the reformer 3.8 row makes. See assumptions.md A-0012."
     },
     {
       "label": "Pilates, general (used for reformer)",

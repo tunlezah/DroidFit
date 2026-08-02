@@ -292,15 +292,21 @@ internal object SessionTitle {
      * reformer or mat work as a visceral-fat intervention comparable to aerobic work
      * (spec §7, REQ-004, `wang2021pilates`).
      *
-     * The reformer is named as Pilates because that is what it is. Floor work is named as
-     * floor work rather than as Pilates, because the category holds general bodyweight
-     * movement and calling a set of dead bugs "Pilates" is a claim about a method (D-0039).
+     * Pilates is named as Pilates because that is what it is, and only when the session
+     * really was Pilates. Bodyweight work is named as bodyweight work, because that category
+     * holds general movement and calling a set of dead bugs "Pilates" is a claim about a
+     * method (D-0039). Since the mat repertoire became its own modality the two claims can
+     * finally be made separately (D-0042).
      */
-    private fun strengthName(modalities: Set<Modality>): String = when {
-        modalities == setOf(Modality.REFORMER_PILATES) -> "Reformer Pilates"
-        modalities == setOf(Modality.BODYWEIGHT) -> "Floor and bodyweight"
-        Modality.REFORMER_PILATES in modalities -> "Pilates and floor work"
-        else -> "Floor and bodyweight"
+    private fun strengthName(modalities: Set<Modality>): String {
+        val pilates = modalities.filter { it.isPilates }
+        return when {
+            pilates.isEmpty() -> "Bodyweight"
+            modalities == setOf(Modality.MAT_PILATES) -> "Mat Pilates"
+            modalities == setOf(Modality.REFORMER_PILATES) -> "Reformer Pilates"
+            modalities.all { it.isPilates } -> "Pilates"
+            else -> "Pilates and bodyweight"
+        }
     }
 
     private fun capLabel(cappedAt: IntensityAnchor): String = when (cappedAt) {

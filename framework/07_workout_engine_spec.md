@@ -145,9 +145,15 @@ that `chen2024nma` supports; under the old name they fell inside the Pilates con
 the generator could never select them, so a user with no equipment could only ever be
 offered a recovery session.
 
-So the pools key on `Modality.supportsAerobicWork` instead, which is false for
-`REFORMER_PILATES` and true for everything else. That is where the `wang2021pilates`
-constraint now lives — structurally, rather than as a special case in the block builder.
+So the pools key on `Modality.supportsAerobicWork` instead, which is false for the Pilates
+modalities and true for everything else. That is where the `wang2021pilates` constraint now
+lives — structurally, rather than as a special case in the block builder.
+
+D-0042 made `supportsAerobicWork` a per-entry constructor argument rather than a derived
+`this != REFORMER_PILATES`, because the derived form defaulted every future modality to
+aerobic-capable. That is the wrong direction to default in: a new Pilates or stretching
+category would have been credited with cardio benefit by omission. It is now a compile error
+to add a modality without answering the question.
 
 | Then | Now |
 |---|---|
@@ -330,8 +336,9 @@ disabled the machines — but it changes what the session *is*.
 
 Rules:
 
-1. The workout title must name it honestly: "Floor and bodyweight — strength and control", never
-   "HIIT" or "Fat-burning intervals".
+1. The workout title must name it honestly: "Mat Pilates: strength and control", "Bodyweight:
+   strength and control" — never "HIIT" or "Fat-burning intervals". The title names Pilates
+   only when the session really was Pilates, and says "Pilates and bodyweight" for a mix.
 2. The style is recorded as what was actually built, not what was requested.
 3. The session still counts toward weekly minutes. It contributes **zero vigorous
    minutes** for the purposes of the vigorous-session cap in §8.

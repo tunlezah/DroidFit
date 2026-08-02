@@ -214,7 +214,7 @@ class ExerciseCatalogueValidationTest {
     }
 
     private companion object {
-        val ID_PATTERN = Regex("^(bodyweight|reformer|elliptical|spin_bike|warmup|cooldown)_[a-z0-9_]+$")
+        val ID_PATTERN = Regex("^(bodyweight|mat|reformer|elliptical|spin_bike|warmup|cooldown)_[a-z0-9_]+$")
         val SYMPTOM_PATTERN = Regex("chest pain|dizz|breathless|symptom", RegexOption.IGNORE_CASE)
         val REFERENCE_KEY_PATTERN = Regex("^### `([a-z0-9]+)`", RegexOption.MULTILINE)
         val REP_COUNT_PATTERN = Regex(
@@ -238,8 +238,14 @@ class ExerciseCatalogueValidationTest {
             "hip", "ankle", "pregnancy", "cardiac_caution", "balance",
         )
 
+        /**
+         * `framework/08_exercise_library_spec.md` §1. Bodyweight's minimum dropped from 24 to
+         * 20 when D-0042 moved the mat repertoire to its own modality: the count was set when
+         * one category carried both, and the work it has to carry is now smaller.
+         */
         val MODALITY_MINIMUMS = mapOf(
-            Modality.BODYWEIGHT to 24,
+            Modality.BODYWEIGHT to 20,
+            Modality.MAT_PILATES to 14,
             Modality.REFORMER_PILATES to 10,
             Modality.ELLIPTICAL to 8,
             Modality.SPIN_BIKE to 12,

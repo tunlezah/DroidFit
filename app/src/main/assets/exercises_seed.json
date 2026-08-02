@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "exercises": [
     {
       "id": "bodyweight_dead_bug",
@@ -31,9 +31,9 @@
       "evidence_keys": ["who2020", "wang2021pilates"]
     },
     {
-      "id": "bodyweight_hundred_prep",
+      "id": "mat_hundred_prep",
       "name": "The hundred, preparation",
-      "modality": "bodyweight",
+      "modality": "mat_pilates",
       "difficulty": "beginner",
       "met_value": 2.8,
       "how_to": [
@@ -59,9 +59,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "bodyweight_glute_bridge",
+      "id": "mat_shoulder_bridge",
       "name": "Shoulder bridge",
-      "modality": "bodyweight",
+      "modality": "mat_pilates",
       "difficulty": "beginner",
       "met_value": 2.8,
       "how_to": [
@@ -113,9 +113,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "bodyweight_single_leg_stretch",
+      "id": "mat_single_leg_stretch",
       "name": "Single leg stretch",
-      "modality": "bodyweight",
+      "modality": "mat_pilates",
       "difficulty": "intermediate",
       "met_value": 3.8,
       "how_to": [
@@ -373,9 +373,9 @@
       "evidence_keys": ["acsm2021"]
     },
     {
-      "id": "bodyweight_breathing_lateral",
+      "id": "mat_breathing_lateral",
       "name": "Lateral breathing",
-      "modality": "bodyweight",
+      "modality": "mat_pilates",
       "difficulty": "beginner",
       "met_value": 1.8,
       "how_to": [
@@ -401,7 +401,7 @@
       "name": "Cat cow",
       "modality": "bodyweight",
       "difficulty": "beginner",
-      "met_value": 1.8,
+      "met_value": 2.3,
       "how_to": [
         "Kneel on all fours with your hands under your shoulders and knees under your hips.",
         "Breathe out and round your spine upward, drawing your navel toward your spine.",
@@ -424,9 +424,9 @@
       "evidence_keys": ["wang2021pilates", "acsm2021"]
     },
     {
-      "id": "bodyweight_spine_twist_supine",
+      "id": "mat_spine_twist_supine",
       "name": "Supine spine twist",
-      "modality": "bodyweight",
+      "modality": "mat_pilates",
       "difficulty": "beginner",
       "met_value": 2.3,
       "how_to": [
@@ -451,9 +451,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "bodyweight_leg_slides",
+      "id": "mat_leg_slides",
       "name": "Heel slides",
-      "modality": "bodyweight",
+      "modality": "mat_pilates",
       "difficulty": "beginner",
       "met_value": 2.8,
       "how_to": [
@@ -553,9 +553,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "bodyweight_swimming_prep",
+      "id": "mat_swimming_prep",
       "name": "Swimming, preparation",
-      "modality": "bodyweight",
+      "modality": "mat_pilates",
       "difficulty": "intermediate",
       "met_value": 2.8,
       "how_to": [
@@ -580,9 +580,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "bodyweight_double_leg_stretch",
+      "id": "mat_double_leg_stretch",
       "name": "Double leg stretch",
-      "modality": "bodyweight",
+      "modality": "mat_pilates",
       "difficulty": "intermediate",
       "met_value": 3.8,
       "how_to": [
@@ -607,9 +607,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "bodyweight_criss_cross",
+      "id": "mat_criss_cross",
       "name": "Criss cross",
-      "modality": "bodyweight",
+      "modality": "mat_pilates",
       "difficulty": "intermediate",
       "met_value": 3.8,
       "how_to": [
@@ -634,9 +634,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "bodyweight_roll_up",
+      "id": "mat_roll_up",
       "name": "Roll up",
-      "modality": "bodyweight",
+      "modality": "mat_pilates",
       "difficulty": "intermediate",
       "met_value": 3.8,
       "how_to": [
@@ -661,9 +661,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "bodyweight_shoulder_bridge_march",
+      "id": "mat_shoulder_bridge_march",
       "name": "Shoulder bridge with march",
-      "modality": "bodyweight",
+      "modality": "mat_pilates",
       "difficulty": "intermediate",
       "met_value": 3.8,
       "how_to": [
@@ -688,9 +688,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "bodyweight_side_kick_series",
+      "id": "mat_side_kick_series",
       "name": "Side kick series",
-      "modality": "bodyweight",
+      "modality": "mat_pilates",
       "difficulty": "intermediate",
       "met_value": 3.8,
       "how_to": [
@@ -743,9 +743,9 @@
       "evidence_keys": ["chen2024nma", "acsm2021"]
     },
     {
-      "id": "bodyweight_teaser_prep",
+      "id": "mat_teaser_prep",
       "name": "Teaser, preparation",
-      "modality": "bodyweight",
+      "modality": "mat_pilates",
       "difficulty": "advanced",
       "met_value": 3.8,
       "how_to": [
@@ -797,9 +797,9 @@
       "evidence_keys": ["wang2021pilates"]
     },
     {
-      "id": "bodyweight_jack_knife",
+      "id": "mat_jack_knife",
       "name": "Jack knife",
-      "modality": "bodyweight",
+      "modality": "mat_pilates",
       "difficulty": "advanced",
       "met_value": 3.8,
       "how_to": [
@@ -821,6 +821,118 @@
       "muscles_worked": ["Deep abdominals", "Spinal muscles", "Glutes"],
       "illustration_id": "pilates_jack_knife",
       "caution_tags": ["neck", "lower_back", "shoulder"],
+      "is_per_side": false,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "mat_imprint_and_release",
+      "name": "Imprint and release",
+      "modality": "mat_pilates",
+      "difficulty": "beginner",
+      "met_value": 1.8,
+      "how_to": [
+        "Lie on your back with your knees bent, feet flat and hip width apart.",
+        "Breathe out and draw your lower back gently toward the mat, tilting your pelvis so the tailbone lifts a fraction.",
+        "Breathe in and release the pelvis back to neutral, where the front of your hips and your lower back are level.",
+        "Move only as far as your breath takes you, letting the ribs soften down each time you exhale.",
+        "Keep your feet, shoulders and jaw completely relaxed throughout."
+      ],
+      "spoken_instruction": "Imprint and release. Exhale to tilt the pelvis toward the mat, inhale to return to neutral.",
+      "safety_notes": [
+        "This is a small movement; if your hips or thighs start working, you are pushing through the legs rather than the pelvis.",
+        "Stop and rest flat if your lower back begins to ache."
+      ],
+      "common_mistakes": [
+        "Pressing through the feet to force the pelvis over.",
+        "Gripping the buttocks instead of letting the abdominals do the tilting."
+      ],
+      "muscles_worked": ["Deep abdominals", "Pelvic floor"],
+      "illustration_id": "pilates_imprint",
+      "caution_tags": [],
+      "is_per_side": false,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "mat_spine_stretch_forward",
+      "name": "Spine stretch forward",
+      "modality": "mat_pilates",
+      "difficulty": "beginner",
+      "met_value": 2.3,
+      "how_to": [
+        "Sit tall with your legs extended a little wider than your hips, knees softly bent if your hamstrings are tight.",
+        "Reach your arms forward at shoulder height and lengthen upward through the crown of your head.",
+        "Breathe out and roll forward from the top of your spine, dropping your chin and curving one vertebra at a time.",
+        "Stop when your pelvis wants to tip backward — that is the end of the movement, not your hands reaching your feet.",
+        "Breathe in and restack the spine from the bottom upward until you are tall again."
+      ],
+      "spoken_instruction": "Spine stretch forward. Roll down from the top of the spine, then restack from the bottom up.",
+      "safety_notes": [
+        "Bend the knees as much as you need; forcing straight legs pulls the movement into the lower back.",
+        "Stop rolling forward the moment your pelvis rocks backward off its sitting bones."
+      ],
+      "common_mistakes": [
+        "Hinging at the hips instead of curving the spine.",
+        "Reaching for the toes and losing the sequential roll."
+      ],
+      "muscles_worked": ["Abdominals", "Spinal extensors", "Hamstrings"],
+      "illustration_id": "pilates_spine_stretch",
+      "caution_tags": ["lower_back"],
+      "is_per_side": false,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "mat_swan_prep",
+      "name": "Swan, preparation",
+      "modality": "mat_pilates",
+      "difficulty": "intermediate",
+      "met_value": 2.8,
+      "how_to": [
+        "Lie face down with your legs together, hands under your shoulders and elbows close to your ribs.",
+        "Lengthen the back of your neck and slide your shoulder blades down your back.",
+        "Breathe in and lift your head and chest away from the mat, pressing lightly through the hands and reaching forward rather than up.",
+        "Keep your pubic bone and the fronts of your hips heavy on the mat.",
+        "Breathe out and lower through the same path, letting the chest arrive last."
+      ],
+      "spoken_instruction": "Swan preparation. Lift the chest forward and long, keeping the hips heavy on the mat.",
+      "safety_notes": [
+        "Stop lifting the moment you feel a pinch in the lower back; height is not the aim.",
+        "Keep the elbows bent and close in — locking them out throws the arch into the lumbar spine."
+      ],
+      "common_mistakes": [
+        "Throwing the head back and compressing the neck.",
+        "Pushing the hips off the mat to gain height."
+      ],
+      "muscles_worked": ["Spinal extensors", "Upper back", "Shoulder stabilisers"],
+      "illustration_id": "pilates_swan",
+      "caution_tags": ["lower_back"],
+      "is_per_side": false,
+      "evidence_keys": ["wang2021pilates"]
+    },
+    {
+      "id": "mat_neck_pull",
+      "name": "Neck pull",
+      "modality": "mat_pilates",
+      "difficulty": "advanced",
+      "met_value": 3.8,
+      "how_to": [
+        "Lie on your back with your legs extended hip width apart and your hands laced lightly behind your head.",
+        "Breathe out and curl your head and chest up, then roll the whole spine up until you are sitting over your legs.",
+        "Keep your elbows wide and your hands resting — never pulling — on the back of the head.",
+        "Breathe in and lengthen tall, then breathe out and roll the spine back down one vertebra at a time.",
+        "Press the backs of your legs into the mat throughout so the abdominals do the work."
+      ],
+      "spoken_instruction": "Neck pull. Roll up over your legs with wide elbows, then roll down one vertebra at a time.",
+      "safety_notes": [
+        "If you cannot roll down with control, bend your knees or hold your arms forward instead of behind the head.",
+        "Stop if you feel any strain in the neck; the hands rest there, they do not pull."
+      ],
+      "common_mistakes": [
+        "Yanking the head forward with the hands to get up.",
+        "Dropping the last part of the roll down instead of lowering through it."
+      ],
+      "muscles_worked": ["Deep abdominals", "Hip flexors", "Spinal muscles"],
+      "illustration_id": "pilates_neck_pull",
+      "caution_tags": ["neck", "lower_back"],
       "is_per_side": false,
       "evidence_keys": ["wang2021pilates"]
     },

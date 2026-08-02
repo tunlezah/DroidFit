@@ -82,7 +82,7 @@ internal fun SettingsScreen(
                 item {
                     Text(
                         "Turn on whichever you feel like using. Any combination works — one, " +
-                            "all four, or anything between.",
+                            "all of them, or anything between.",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
@@ -330,17 +330,36 @@ private fun SettingRow(
 
 private val Modality.displayName: String
     get() = when (this) {
-        Modality.BODYWEIGHT -> "Floor & bodyweight"
+        Modality.BODYWEIGHT -> "Bodyweight"
+        Modality.MAT_PILATES -> "Mat Pilates"
         Modality.REFORMER_PILATES -> "Reformer Pilates"
         Modality.ELLIPTICAL -> "Elliptical"
         Modality.SPIN_BIKE -> "Spin bike"
     }
 
-private fun Modality.settingSubtitle(prefs: UserPreferences): String? = when {
+/**
+ * What each category actually contains.
+ *
+ * Present on every row rather than only where something is wrong: "Bodyweight" and "Mat
+ * Pilates" are both floor work with no equipment, so which is which is a fair question, and
+ * the answer belongs next to the switch (D-0042). The equipment warning wins when it applies,
+ * because that one is about the session the user is about to be denied.
+ */
+private fun Modality.settingSubtitle(prefs: UserPreferences): String = when {
     requiresEquipment && this !in prefs.body.availableEquipment ->
         "Enabled, but marked as equipment you do not have — no workouts will use it yet."
-    else -> null
+
+    else -> description
 }
+
+private val Modality.description: String
+    get() = when (this) {
+        Modality.BODYWEIGHT -> "Core, mobility and calisthenics cardio. Can carry hard intervals."
+        Modality.MAT_PILATES -> "The classical mat repertoire. Strength and control, never cardio."
+        Modality.REFORMER_PILATES -> "Spring-loaded reformer work. Strength and control, never cardio."
+        Modality.ELLIPTICAL -> "Continuous machine cardio, from easy spins to vigorous intervals."
+        Modality.SPIN_BIKE -> "Seated and standing, flat and climbing, easy through to sprints."
+    }
 
 @Preview(showBackground = true)
 @Composable
