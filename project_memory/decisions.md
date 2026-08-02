@@ -9,6 +9,7 @@ Append-only log of choices with more than one defensible answer. Template:
 
 | Phase | Completed | New assumptions? | Notes |
 |---|---|---|---|
+| Permission audit | 2026-08-02 | No new ones | Every manifest permission audited against every permission-gated API in use: `POST_NOTIFICATIONS` is the only runtime permission the app has or needs, and nothing is missing. Request moved from session start to onboarding on the operator's instruction, and a defect fixed where a declined permission was re-asked on every session start. A fabricated framework citation in D-0044 corrected. D-0046 |
 | 08 — Coaching | 2026-08-02 | No new ones | The player speaks. `CueScheduler` drives every cue type in spec §1 from the service's tick, as a pure function of session state with per-cue freshness windows; tones and haptics substitute when speech is unavailable. `POST_NOTIFICATIONS` is requested at session start, closing KI-0016. Closes the cue half of KI-0018; A-0005 mitigated in code. **Both manual audio tests outstanding — KI-0023.** Six coaching switches that existed but did nothing are now reachable. D-0043, D-0044, D-0045, KI-0024 |
 | Fifth modality | 2026-08-02 | Yes — A-0012 | Mat Pilates split out of `BODYWEIGHT` as its own selectable category, and `supportsAerobicWork` made a constructor argument so a new modality cannot skip the question. Closes KI-0022. Catalogue 72 → 76, version 5. D-0042 |
 | Clearance and selection | 2026-07-31 | No new ones | A-0002 and A-0007 answered. Effort ceiling added, defaulting to threshold rather than vigorous. All four modalities enabled by default, and REQ-011's refusal now explained on screen. D-0040, D-0041 |
@@ -900,8 +901,17 @@ Append-only log of choices with more than one defensible answer. Template:
 - **Why at session start rather than at launch:** a prompt on first launch, before the user has seen
   what the app does, is the pattern that trains people to tap Deny. Asked as they start their first
   session, the rationale is about something happening now: the pause, skip and end controls on the
-  lock screen. That concrete benefit is what `framework/11_permissions_and_privacy.md` asks the
-  rationale to name, and session start is the only point at which one exists to name.
+  lock screen. Naming that concrete benefit is what
+  `framework/15_device_targets_motorola_edge_60.md` §Notification permission asks for.
+- **CORRECTION 2026-08-02:** this entry originally cited `framework/11_permissions_and_privacy.md`,
+  **which does not exist** — the reference was fabricated, and the same wrong path was in the
+  implementation's own KDoc. The real source is
+  `framework/15_device_targets_motorola_edge_60.md` §Notification permission. Recorded rather
+  than quietly corrected because a plausible-looking citation to a file nobody can open is worse
+  than no citation: a reviewer who cannot find it assumes they are looking in the wrong place.
+- **SUPERSEDED IN PART BY D-0046:** the *timing* decided here — ask at session start — was
+  reversed on the operator's instruction. Everything else in this entry still holds, and the
+  "never blocks" rule holds more strongly than before.
 - **Why it must never gate the session, stated as a rule:** the permission buys the lock-screen
   controls and nothing else. The clock is in a foreground service that starts without it. A flow that
   could leave a user who tapped Deny unable to train would be a worse defect than the missing
@@ -941,3 +951,64 @@ Append-only log of choices with more than one defensible answer. Template:
   rather than a switch and the service already applies them; left for the phase-10 settings work.
 - **Reverses if:** never; the table is strictly cheaper than what it replaced.
 - **Affects:** `CoachingToggle`, `SettingsScreen`, `SettingsViewModel`.
+
+### D-0046 — The notification permission is asked during onboarding, and only ever once
+- **Date:** 2026-08-02
+- **Phase:** post-08 (supersedes the timing half of D-0044)
+- **Decision:** `POST_NOTIFICATIONS` is requested as the second and final step of onboarding,
+  immediately after the safety notice and before the app proper. The session-start request added
+  in D-0044 is removed. A new `UserPreferences.notificationPermissionRequested` records that the
+  question has been asked, so it is asked exactly once per install, and Settings grows a row —
+  shown only when notifications are off — that opens Android's own notification settings.
+- **Why the change:** the operator asked for permissions to be requested on first launch. This
+  **departs from `framework/15_device_targets_motorola_edge_60.md` §Notification permission**,
+  which says to ask "when the user starts their first workout ... not at launch". The departure is
+  deliberate and the spec's concern does not survive contact with this app's actual onboarding:
+  the worry behind "not at launch" is a permission prompt arriving before the user knows what the
+  app is, and by this point they have read the medical-safety notice and know exactly what it
+  does. The spec also does not weigh the cost on the other side - a dialog between "start my
+  workout" and the workout starting.
+- **The defect this also fixes, which is the more important half:** D-0044's flow had no record
+  of having asked, and `isGranted` stays false after a refusal, so a user who tapped Deny got the
+  rationale dialog **on every single session start**. That is the app becoming the thing that
+  nags, and it would have been found on the first day of real use. The flag fixes it, and it is
+  needed for the onboarding step too - without it the step reappears on every launch.
+- **Why the flag records only *that* we asked, never the answer:** whether the permission is held
+  is a live platform question. The user can grant or revoke it in Android settings while the app
+  is backgrounded, so a cached answer is an answer that goes stale.
+  `NotificationPermission.isGranted` is read at the point of use, every time.
+- **Why a screen rather than the bare system dialog:** "Allow VisceralFit to send you
+  notifications?" is a question about a channel, and the honest answer depends on what the
+  notifications are for. The screen answers that first - one notification, only while a session
+  runs, never makes a sound, and what it buys is lock-screen pause, skip and end - and states
+  plainly that workouts run either way.
+- **Why Settings needs the row:** a runtime permission can only be requested a limited number of
+  times. Once Android stops showing its dialog, an in-app request is a silent no-op, so system
+  settings is the only route left. Without the row, "Not now" during onboarding would be
+  permanent with no way back, which is not a choice anyone knowingly makes.
+- **`NotificationPermission` lives in `core:common`** because three places need the same answer
+  and must not disagree: onboarding decides whether to ask, the workout feature relies on the
+  notification, Settings offers the way back. Two copies of an API-level check is how one of them
+  ends up wrong on one API level.
+- **`OnboardingStep` extracted and tested:** the ordering *is* the requirement - safety notice
+  before any intensity decision (REQ-005), notification step after it and skipped when there is
+  nothing to ask, neither reachable once passed. Four rules about sequence cannot be asserted
+  inside a composable's `when`, so the decision is a pure function and each rule is a test.
+- **What the audit found besides:** nothing missing. `POST_NOTIFICATIONS` is the only
+  dangerous-level permission in the merged manifest and therefore the only one that can be
+  requested at all; `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_MEDIA_PLAYBACK` and `VIBRATE` are
+  normal-level and granted at install. Every permission-gated API in the codebase was checked
+  against the manifest and none needs a permission the app lacks. `WAKE_LOCK`,
+  `ACTIVITY_RECOGNITION`, `BODY_SENSORS`, `BLUETOOTH_CONNECT`, the exact-alarm permissions and
+  battery-optimisation exemption were each considered and are each correctly absent - the sensor
+  permissions in particular are exactly what ADR-0008 chose `mediaPlayback` to avoid.
+- **Reverses if:** the operator finds the onboarding prompt intrusive, in which case the spec's
+  original timing is one line of code away - but the "asked once" flag stays either way, because
+  that part was a bug fix rather than a preference.
+- **Affects:** `NotificationPermission` (new, `core:common`), `NotificationPermissionScreen`
+  (new), `OnboardingStep` (new), `MainActivity`, `MainViewModel`, `UserPreferences`,
+  `PreferencesDataSource`, `SettingsScreen`, `WorkoutHomeScreen`; deletes
+  `SessionNotificationPermission` and its test.
+- **Verification:** `OnboardingStepTest` - seven cases including the exhaustive check that no
+  combination of the other flags gets past the safety notice, and the specific regression that a
+  declined permission is never asked for twice.

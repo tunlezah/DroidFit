@@ -73,6 +73,8 @@ class PreferencesDataSource @Inject constructor(
             weeklyMinutesGoal = this[Keys.WeeklyMinutesGoal] ?: defaults.weeklyMinutesGoal,
             effortCeiling = this[Keys.EffortCeiling]?.let(EffortCeiling::fromId) ?: defaults.effortCeiling,
             safetyNoticeAcknowledged = this[Keys.SafetyAcknowledged] ?: defaults.safetyNoticeAcknowledged,
+            notificationPermissionRequested = this[Keys.NotificationAsked]
+                ?: defaults.notificationPermissionRequested,
             coaching = toCoachingPreferences(defaults.coaching),
             display = toDisplayPreferences(defaults.display),
             body = toBodyPreferences(defaults.body),
@@ -125,6 +127,7 @@ class PreferencesDataSource @Inject constructor(
         this[Keys.WeeklyMinutesGoal] = prefs.weeklyMinutesGoal
         this[Keys.EffortCeiling] = prefs.effortCeiling.id
         this[Keys.SafetyAcknowledged] = prefs.safetyNoticeAcknowledged
+        this[Keys.NotificationAsked] = prefs.notificationPermissionRequested
 
         this[Keys.SpeechEnabled] = prefs.coaching.speechEnabled
         this[Keys.AnnounceNext] = prefs.coaching.announceNextExercise
@@ -167,6 +170,7 @@ class PreferencesDataSource @Inject constructor(
         val DefaultDurationSeconds = intPreferencesKey("default_duration_seconds")
         val WeeklyMinutesGoal = intPreferencesKey("weekly_minutes_goal")
         val SafetyAcknowledged = booleanPreferencesKey("safety_notice_acknowledged")
+        val NotificationAsked = booleanPreferencesKey("notification_permission_requested")
 
         val SpeechEnabled = booleanPreferencesKey("speech_enabled")
         val AnnounceNext = booleanPreferencesKey("announce_next_exercise")

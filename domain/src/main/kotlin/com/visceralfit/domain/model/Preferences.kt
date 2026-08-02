@@ -20,6 +20,19 @@ data class UserPreferences(
     /** True once the user has read and dismissed the medical-safety notice. */
     val safetyNoticeAcknowledged: Boolean = false,
     /**
+     * True once the app has asked for the notification permission, whatever the answer was.
+     *
+     * NOT the same as "granted" (that is a live platform question, see
+     * `NotificationPermission.isGranted`) and it deliberately does not record *which* answer
+     * was given. All it prevents is asking twice. Without it the onboarding step reappears on
+     * every launch for anyone who declined, and the app becomes the thing that nags — which is
+     * a worse outcome than a missing notification.
+     *
+     * A user who changes their mind goes through Settings, which is the only route left once
+     * Android stops showing the system dialog anyway.
+     */
+    val notificationPermissionRequested: Boolean = false,
+    /**
      * The hardest effort any generated session may prescribe.
      *
      * Defaults to [EffortCeiling.THRESHOLD] rather than to the hardest available, and that

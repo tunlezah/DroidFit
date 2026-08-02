@@ -13,12 +13,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
- * Owns only what the app shell needs: the theme, and whether the safety notice has been
- * acknowledged. Deliberately narrow — putting the whole preferences object here would
- * recompose the entire app whenever an unrelated setting like the speech rate changed.
+ * Owns only what the app shell needs: the theme, and the two onboarding flags that gate it.
+ * Deliberately narrow — putting the whole preferences object here would recompose the entire
+ * app whenever an unrelated setting like the speech rate changed.
  *
- * The acknowledgement flag earns its place because it gates the whole shell (REQ-005) and
- * changes exactly once in the life of an install, so it costs one recomposition ever.
+ * Both flags earn their place because each gates the whole shell and each changes exactly once
+ * in the life of an install, so together they cost two recompositions ever.
  */
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -32,6 +32,7 @@ class MainViewModel @Inject constructor(
                 amoled = prefs.display.amoledDarkMode,
                 dynamicColour = prefs.display.dynamicColour,
                 safetyNoticeAcknowledged = prefs.safetyNoticeAcknowledged,
+                notificationPermissionRequested = prefs.notificationPermissionRequested,
             )
         }
         .stateIn(
@@ -52,6 +53,20 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Records that the notification permission has been asked for, whatever the answer was.
+     *
+     * Persisted for the same reason the safety acknowledgement is: a question that reappears on
+     * every launch stops being a question and becomes nagging. It records only *that* we asked,
+     * never the answer — whether the permission is held is a live platform question and
+     * caching it would go stale the moment the user changed it in Android settings.
+     */
+    fun markNotificationPermissionRequested() {
+        viewModelScope.launch {
+            preferencesRepository.update { it.copy(notificationPermissionRequested = true) }
+        }
+    }
+
     private companion object {
         const val STOP_TIMEOUT_MS = 5_000L
     }
@@ -65,5 +80,6 @@ sealed interface MainUiState {
         val amoled: Boolean,
         val dynamicColour: Boolean,
         val safetyNoticeAcknowledged: Boolean,
+        val notificationPermissionRequested: Boolean,
     ) : MainUiState
 }

@@ -19,15 +19,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.visceralfit.core.common.NotificationPermission
 import com.visceralfit.core.designsystem.theme.VisceralFitTheme
 import com.visceralfit.domain.model.CoachingPreferences
 import com.visceralfit.domain.model.EffortCeiling
@@ -37,8 +40,15 @@ import com.visceralfit.domain.model.UserPreferences
 @Composable
 fun SettingsRoute(viewModel: SettingsViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     SettingsScreen(
         state = state,
+        // Read on every composition rather than held in state: the user may have changed it in
+        // Android settings since this screen was last shown, which is the whole point of the row.
+        notificationsAllowed = NotificationPermission.isGranted(context),
+        onOpenNotificationSettings = {
+            context.startActivity(NotificationPermission.settingsIntent(context))
+        },
         onModalityToggled = viewModel::setModalityEnabled,
         onEquipmentToggled = viewModel::setEquipmentAvailable,
         onKeepScreenOnToggled = viewModel::setKeepScreenOn,
@@ -56,6 +66,8 @@ fun SettingsRoute(viewModel: SettingsViewModel = hiltViewModel()) {
 @Composable
 internal fun SettingsScreen(
     state: SettingsUiState,
+    notificationsAllowed: Boolean,
+    onOpenNotificationSettings: () -> Unit,
     onModalityToggled: (Modality, Boolean) -> Unit,
     onEquipmentToggled: (Modality, Boolean) -> Unit,
     onKeepScreenOnToggled: (Boolean) -> Unit,
@@ -127,6 +139,14 @@ internal fun SettingsScreen(
                     )
                 }
 
+                // Only shown when it is actionable. A row saying "notifications: on" is noise;
+                // a row explaining what is missing and offering the fix is not (D-0046). This is
+                // the only route back once Android has stopped showing the system dialog.
+                if (!notificationsAllowed) {
+                    item { SectionHeader("Session controls") }
+                    item { NotificationSettingsRow(onOpenNotificationSettings) }
+                }
+
                 item { SectionHeader("Display") }
                 item {
                     SettingRow(
@@ -145,6 +165,32 @@ internal fun SettingsScreen(
                     )
                 }
             }
+        }
+    }
+}
+
+/**
+ * The way back for a user who declined the notification permission during onboarding.
+ *
+ * A button into Android settings rather than a second in-app request, because a runtime
+ * permission can only be asked for a limited number of times — once the system stops showing
+ * its dialog, an in-app request is a silent no-op, and a button that appears to do nothing is
+ * worse than no button.
+ */
+@Composable
+private fun NotificationSettingsRow(onOpen: () -> Unit) {
+    Column(
+        modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            "Notifications are off, so a running session has no lock-screen controls. Your " +
+                "workouts are unaffected — you just have to reopen the app to pause or skip.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        TextButton(onClick = onOpen, modifier = Modifier.align(Alignment.Start)) {
+            Text("Open notification settings")
         }
     }
 }
@@ -328,6 +374,8 @@ private fun SettingsPreview() {
     VisceralFitTheme {
         SettingsScreen(
             state = SettingsUiState.Ready(UserPreferences()),
+            notificationsAllowed = false,
+            onOpenNotificationSettings = {},
             onModalityToggled = { _, _ -> },
             onEquipmentToggled = { _, _ -> },
             onKeepScreenOnToggled = {},

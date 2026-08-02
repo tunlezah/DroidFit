@@ -344,12 +344,19 @@ what went wrong survives.
   services still start without it; only the notification is suppressed.
 - **Impact:** the session itself is unaffected — this is the one saving grace. The clock, the
   service and the recording all work; the user simply has to reopen the app to control the session.
-- **Status:** **fixed 2026-08-02 (D-0044).** `rememberSessionNotificationPermission` asks at the
-  moment a generated plan is started, with a rationale naming the concrete benefit — the
-  lock-screen pause, skip and end controls. Every path through it starts the session, including
-  Deny and dismissal, and `SessionNotificationPermissionTest` asserts there is no permission state
-  in which tapping Start does nothing. **Not yet verified on a device** — that it *asks* is tested,
-  that the notification then appears on Android 16 is part of KI-0017.
+- **Status:** **fixed 2026-08-02 (D-0044, revised same day by D-0046).** The permission is
+  requested as the second step of onboarding, immediately after the safety notice, on a screen that
+  explains what the notification is for — one notification, only while a session runs, never makes
+  a sound, and it buys the lock-screen pause, skip and end controls. Both buttons leave onboarding;
+  nothing gates the app on the answer, and `OnboardingStepTest` asserts the sequence.
+  **Not yet verified on a device** — that it *asks* is tested, that the notification then appears
+  on Android 16 is part of KI-0017.
+- **First fix was wrong in a way worth recording:** D-0044 asked at session start with no record of
+  having asked, and `isGranted` stays false after a refusal — so a user who tapped Deny would have
+  been shown the rationale dialog **on every single session start**. It was found by re-reading the
+  flow during the permission audit rather than by a failing test, which is the same way the phase-06
+  prescription faults were found (KI-0014). The lesson repeats: a flow whose states are only
+  reachable by hand is a flow whose bad states are only findable by hand.
 
 ### KI-0017 — The player has never run on a device or emulator
 - **Date:** 2026-07-30
@@ -473,3 +480,25 @@ what went wrong survives.
   whether they land.
 - **Status:** open, awaiting the operator's opinion. They are off by default
   (`motivationalPrompts = false`), so nobody hears them until someone chooses to.
+
+### KI-0025 — Unclear whether a denied notification permission stops a backgrounded session
+- **Date:** 2026-08-02
+- **Severity:** minor
+- **Area:** `feature-workout/player`, onboarding copy
+- **Symptom:** Two sources disagree about what is actually lost when `POST_NOTIFICATIONS` is
+  denied. `framework/15_device_targets_motorola_edge_60.md` §Notification permission says "the
+  workout still runs; only the persistent notification is absent, which means backgrounding the
+  app will eventually stop the session". KI-0016 asserted the opposite — that the session is
+  unaffected — on the reasoning that `startForeground` succeeds either way and the platform
+  suppresses the notification rather than killing the service.
+- **Why it matters:** it decides what the onboarding screen may promise. Saying "your workouts run
+  either way" is a claim about platform behaviour, and if the framework is right it is a claim that
+  is false in the one case that matters.
+- **How it is handled meanwhile:** the copy is worded to be true under both readings — it says
+  workouts run either way and that without the notification you must reopen the app to pause or
+  skip, which is accurate whether or not a backgrounded session eventually stops. Neither reading
+  is asserted as fact anywhere the user can see.
+- **How to settle it:** on the device, deny the permission, start a session, background the app for
+  ten minutes, and see whether the clock survived. Ten minutes of work, and it is the same trip as
+  KI-0023 and KI-0017.
+- **Status:** open. Do not tighten the onboarding copy in either direction until it is settled.

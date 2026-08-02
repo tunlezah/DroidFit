@@ -48,6 +48,9 @@ fun WorkoutHomeRoute(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
+    // No permission check here. The notification permission is asked for once during
+    // onboarding (D-0046) and never again from inside the app, so starting a session is just
+    // starting a session — there is nothing between the tap and the workout.
     val beginSession: () -> Unit = {
         // Starting the service is the caller's job because it needs a Context. The
         // coordinator is loaded first so the service finds a session to run.
@@ -57,10 +60,6 @@ fun WorkoutHomeRoute(
         }
     }
 
-    // The notification permission is asked for here, at the one moment its rationale is about
-    // something the user is actually doing (KI-0016). It never gates the session.
-    val notificationPermission = rememberSessionNotificationPermission(onProceed = beginSession)
-
     WorkoutHomeScreen(
         state = state,
         onDurationSelected = viewModel::selectDuration,
@@ -68,7 +67,7 @@ fun WorkoutHomeRoute(
         onStart = viewModel::start,
         onDismissFailure = viewModel::dismissFailure,
         onDiscardPlan = viewModel::consumeGeneratedWorkout,
-        onBeginSession = notificationPermission::launch,
+        onBeginSession = beginSession,
     )
 }
 

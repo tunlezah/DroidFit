@@ -6,11 +6,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.visceralfit.app.ui.NotificationPermissionScreen
 import com.visceralfit.app.ui.SafetyNoticeScreen
 import com.visceralfit.app.ui.VisceralFitApp
+import com.visceralfit.core.common.NotificationPermission
 import com.visceralfit.core.designsystem.theme.VisceralFitTheme
 import com.visceralfit.domain.model.ThemePreference
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,19 +42,30 @@ class MainActivity : ComponentActivity() {
 
             val ready = state as? MainUiState.Ready
             val systemDark = isSystemInDarkTheme()
+            val context = LocalContext.current
             VisceralFitTheme(
                 darkTheme = ready?.theme?.resolvesToDark(systemDark) ?: systemDark,
                 amoled = ready?.amoled == true,
                 dynamicColour = ready?.dynamicColour != false,
             ) {
-                // The safety notice gates the shell rather than the player: REQ-005 says
-                // "before the first session", and a user who has already chosen an
-                // experience level in Settings has made an intensity decision before being
-                // told to stop on chest pain. See SafetyNoticeScreen.
-                when {
-                    ready == null -> Unit
-                    ready.safetyNoticeAcknowledged -> VisceralFitApp()
-                    else -> SafetyNoticeScreen(onAcknowledge = viewModel::acknowledgeSafetyNotice)
+                // Onboarding is two steps and both gate the shell rather than the player. The
+                // ordering rules live in `OnboardingStep`, where they are tested; this is only
+                // the mapping from step to screen.
+                //
+                // `isGranted` is read here rather than held in state on purpose: the user can
+                // change it in Android settings while the app is backgrounded, so a cached copy
+                // would be a copy that goes stale.
+                when (OnboardingStep.of(state, NotificationPermission.isGranted(context))) {
+                    OnboardingStep.WAITING -> Unit
+                    OnboardingStep.SAFETY_NOTICE ->
+                        SafetyNoticeScreen(onAcknowledge = viewModel::acknowledgeSafetyNotice)
+
+                    OnboardingStep.NOTIFICATION_PERMISSION ->
+                        NotificationPermissionScreen(
+                            onDecided = viewModel::markNotificationPermissionRequested,
+                        )
+
+                    OnboardingStep.APP -> VisceralFitApp()
                 }
             }
         }
