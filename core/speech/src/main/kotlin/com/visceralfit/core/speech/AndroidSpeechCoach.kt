@@ -1,6 +1,9 @@
 package com.visceralfit.core.speech
 
 import android.content.Context
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
@@ -42,6 +45,11 @@ import javax.inject.Singleton
  *    never created in `init`, because constructing a TextToSpeech instance spins up
  *    an IPC binding that costs ~200 ms and would show up in cold-start time for
  *    users who have speech switched off.
+ *
+ *  - Audio focus is requested per utterance as `AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK` and
+ *    abandoned the moment the utterance ends (spec §7). Never `AUDIOFOCUS_GAIN`, and never
+ *    held between cues: holding focus pauses the user's music for the whole session, which is
+ *    the single most annoying thing an app of this kind can do.
  */
 @Singleton
 class AndroidSpeechCoach @Inject constructor(
@@ -62,6 +70,40 @@ class AndroidSpeechCoach @Inject constructor(
     @Volatile
     private var pendingInitStatus: Int? = null
 
+    private val audioManager: AudioManager
+        get() = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+    /**
+     * Cues route as navigation guidance, not as media.
+     *
+     * `USAGE_ASSISTANCE_NAVIGATION_GUIDANCE` is what makes a cue behave the way a satnav
+     * instruction does: it follows the user to whatever they are actually listening on,
+     * including Bluetooth headphones, and it ducks music rather than replacing it (spec §7).
+     */
+    private val cueAttributes: AudioAttributes = AudioAttributes.Builder()
+        .setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)
+        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+        .build()
+
+    /**
+     * Stops mid-utterance when focus is lost, and does not resume.
+     *
+     * A phone call is the case that matters (spec §7). Resuming afterwards would speak a cue
+     * about a segment that has since ended, which is precisely the stale cue this design drops
+     * everywhere else.
+     */
+    private val focusListener = AudioManager.OnAudioFocusChangeListener { change ->
+        if (change == AudioManager.AUDIOFOCUS_LOSS || change == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+            stop()
+        }
+    }
+
+    private val focusRequest: AudioFocusRequest = AudioFocusRequest
+        .Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+        .setAudioAttributes(cueAttributes)
+        .setOnAudioFocusChangeListener(focusListener)
+        .build()
+
     override fun speak(cue: SpeechCue) {
         val tts = ensureEngine() ?: return
         if (_state.value !is SpeechState.Ready) return
@@ -77,16 +119,15 @@ class AndroidSpeechCoach @Inject constructor(
 
         val queueMode = if (shouldFlush) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
         val id = "cue-${utteranceCounter++}"
-        val params = Bundle().apply {
-            putInt(TextToSpeech.Engine.KEY_PARAM_STREAM, android.media.AudioManager.STREAM_MUSIC)
-        }
         isSpeaking = true
-        tts.speak(cue.text, queueMode, params, id)
+        requestFocus()
+        tts.speak(cue.text, queueMode, EMPTY_PARAMS, id)
     }
 
     override fun stop() {
         engine?.stop()
         isSpeaking = false
+        abandonFocus()
     }
 
     override suspend fun setRate(rate: Float) {
@@ -98,18 +139,35 @@ class AndroidSpeechCoach @Inject constructor(
     }
 
     /** Releases the engine. Call from the owning service's `onDestroy`. */
-    fun shutdown() {
+    override fun shutdown() {
         engine?.stop()
         engine?.shutdown()
         engine = null
         isSpeaking = false
+        abandonFocus()
         _state.value = SpeechState.Initialising
+    }
+
+    private fun requestFocus() {
+        audioManager.requestAudioFocus(focusRequest)
+    }
+
+    /**
+     * Hands focus straight back so the user's music unducks immediately.
+     *
+     * Called from every terminal path of an utterance — done, error, stop, shutdown — because
+     * a single missed path leaves the music quiet for the rest of the session, and that is a
+     * failure the user notices long before they work out which app caused it.
+     */
+    private fun abandonFocus() {
+        audioManager.abandonAudioFocusRequest(focusRequest)
     }
 
     private fun ensureEngine(): TextToSpeech? {
         engine?.let { return it }
 
         val created = TextToSpeech(context) { status -> onEngineInit(status) }
+        created.setAudioAttributes(cueAttributes)
         created.setOnUtteranceProgressListener(
             object : UtteranceProgressListener() {
                 override fun onStart(utteranceId: String?) {
@@ -118,15 +176,18 @@ class AndroidSpeechCoach @Inject constructor(
 
                 override fun onDone(utteranceId: String?) {
                     isSpeaking = false
+                    abandonFocus()
                 }
 
                 @Deprecated("Required override; the int-arg overload is called instead.")
                 override fun onError(utteranceId: String?) {
                     isSpeaking = false
+                    abandonFocus()
                 }
 
                 override fun onError(utteranceId: String?, errorCode: Int) {
                     isSpeaking = false
+                    abandonFocus()
                 }
             },
         )
@@ -157,6 +218,15 @@ class AndroidSpeechCoach @Inject constructor(
                 SpeechState.Unavailable(SpeechState.Unavailable.Reason.NO_VOICE_DATA_FOR_LOCALE)
             else -> SpeechState.Ready
         }
+    }
+
+    private companion object {
+        /**
+         * Stream routing comes from the engine's [AudioAttributes], not from a per-utterance
+         * parameter, so this stays empty rather than carrying the deprecated
+         * `KEY_PARAM_STREAM`.
+         */
+        val EMPTY_PARAMS = Bundle()
     }
 }
 

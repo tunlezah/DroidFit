@@ -21,6 +21,17 @@ interface SpeechCoach {
     /** Drops anything queued and stops mid-utterance. Used on pause and on exit. */
     fun stop()
 
+    /**
+     * Releases the underlying engine.
+     *
+     * On the interface rather than only on the Android implementation because the caller that
+     * has to do it is the workout service, which knows only this port. Constructing a platform
+     * `TextToSpeech` binds an IPC service; leaking the instance leaks the binding
+     * (`framework/09_coaching_and_tts_spec.md` §8), and a caller that has to downcast to find
+     * `shutdown()` is a caller that will forget.
+     */
+    fun shutdown()
+
     suspend fun setRate(rate: Float)
 
     suspend fun setPitch(pitch: Float)

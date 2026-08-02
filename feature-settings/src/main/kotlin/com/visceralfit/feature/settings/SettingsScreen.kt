@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.visceralfit.core.designsystem.theme.VisceralFitTheme
+import com.visceralfit.domain.model.CoachingPreferences
 import com.visceralfit.domain.model.EffortCeiling
 import com.visceralfit.domain.model.Modality
 import com.visceralfit.domain.model.UserPreferences
@@ -42,11 +43,7 @@ fun SettingsRoute(viewModel: SettingsViewModel = hiltViewModel()) {
         onEquipmentToggled = viewModel::setEquipmentAvailable,
         onKeepScreenOnToggled = viewModel::setKeepScreenOn,
         onAmoledToggled = viewModel::setAmoledDarkMode,
-        onSpeechToggled = viewModel::setSpeechEnabled,
-        onAnnounceNextToggled = viewModel::setAnnounceNextExercise,
-        onSpeakInstructionsToggled = viewModel::setSpeakFullInstructions,
-        onAnnounceHalfwayToggled = viewModel::setAnnounceHalfway,
-        onAnnounceCountdownToggled = viewModel::setAnnounceCountdown,
+        onCoachingChanged = viewModel::setCoaching,
         onEffortCeilingSelected = viewModel::setEffortCeiling,
     )
 }
@@ -63,11 +60,7 @@ internal fun SettingsScreen(
     onEquipmentToggled: (Modality, Boolean) -> Unit,
     onKeepScreenOnToggled: (Boolean) -> Unit,
     onAmoledToggled: (Boolean) -> Unit,
-    onSpeechToggled: (Boolean) -> Unit,
-    onAnnounceNextToggled: (Boolean) -> Unit,
-    onSpeakInstructionsToggled: (Boolean) -> Unit,
-    onAnnounceHalfwayToggled: (Boolean) -> Unit,
-    onAnnounceCountdownToggled: (Boolean) -> Unit,
+    onCoachingChanged: (CoachingPreferences) -> Unit,
     onEffortCeilingSelected: (EffortCeiling) -> Unit,
 ) {
     when (state) {
@@ -122,47 +115,15 @@ internal fun SettingsScreen(
                 }
 
                 item { SectionHeader("Spoken coaching") }
-                item {
+                items(CoachingToggle.entries) { toggle ->
                     SettingRow(
-                        title = "Speak cues aloud",
-                        subtitle = "Uses your device's text-to-speech voice. Works offline once " +
-                            "voice data is installed.",
-                        checked = prefs.coaching.speechEnabled,
-                        onCheckedChange = onSpeechToggled,
-                    )
-                }
-                item {
-                    SettingRow(
-                        title = "Announce the next exercise",
-                        subtitle = "Names the upcoming movement before it starts.",
-                        checked = prefs.coaching.announceNextExercise,
-                        enabled = prefs.coaching.speechEnabled,
-                        onCheckedChange = onAnnounceNextToggled,
-                    )
-                }
-                item {
-                    SettingRow(
-                        title = "Read technique cues aloud",
-                        subtitle = "Reads the full how-to, not just the exercise name.",
-                        checked = prefs.coaching.speakFullInstructions,
-                        enabled = prefs.coaching.speechEnabled,
-                        onCheckedChange = onSpeakInstructionsToggled,
-                    )
-                }
-                item {
-                    SettingRow(
-                        title = "Halfway reminder",
-                        checked = prefs.coaching.announceHalfway,
-                        enabled = prefs.coaching.speechEnabled,
-                        onCheckedChange = onAnnounceHalfwayToggled,
-                    )
-                }
-                item {
-                    SettingRow(
-                        title = "Count down the last seconds",
-                        checked = prefs.coaching.announceCountdown,
-                        enabled = prefs.coaching.speechEnabled,
-                        onCheckedChange = onAnnounceCountdownToggled,
+                        title = toggle.title,
+                        subtitle = toggle.subtitle,
+                        checked = toggle.read(prefs.coaching),
+                        // Every spoken cue is gated by the master switch; tones and haptics are
+                        // not, because they are what substitutes when speech is unavailable.
+                        enabled = prefs.coaching.speechEnabled || !toggle.needsSpeech,
+                        onCheckedChange = { onCoachingChanged(toggle.write(prefs.coaching, it)) },
                     )
                 }
 
@@ -371,11 +332,7 @@ private fun SettingsPreview() {
             onEquipmentToggled = { _, _ -> },
             onKeepScreenOnToggled = {},
             onAmoledToggled = {},
-            onSpeechToggled = {},
-            onAnnounceNextToggled = {},
-            onSpeakInstructionsToggled = {},
-            onAnnounceHalfwayToggled = {},
-            onAnnounceCountdownToggled = {},
+            onCoachingChanged = {},
             onEffortCeilingSelected = {},
         )
     }

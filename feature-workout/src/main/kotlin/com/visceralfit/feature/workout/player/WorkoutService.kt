@@ -11,7 +11,12 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.visceralfit.core.common.DefaultDispatcher
+import com.visceralfit.domain.coaching.CueFeedback
+import com.visceralfit.domain.coaching.SpeechCoach
+import com.visceralfit.domain.coaching.SpeechState
+import com.visceralfit.domain.model.CoachingPreferences
 import com.visceralfit.domain.model.Segment
+import com.visceralfit.domain.repository.PreferencesRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
@@ -32,9 +37,16 @@ import javax.inject.Inject
  * and unlike most foreground-service types `mediaPlayback` has no six-hour cap — which a
  * 90-minute session plus a forgotten pause could otherwise approach.
  *
- * The service owns no state of its own. [SessionCoordinator] holds it, and the service's
- * only jobs are to exist (so the process is not killed), to advance the clock, and to keep
- * the notification truthful.
+ * The service owns no session state of its own. [SessionCoordinator] holds it, and the
+ * service's jobs are to exist (so the process is not killed), to advance the clock, to keep the
+ * notification truthful, and to drive the coaching cues.
+ *
+ * WHY THE CUES ARE DRIVEN FROM HERE AND NOT FROM THE PLAYER SCREEN (phase 08): the screen can
+ * be gone. A user on a spin bike puts the phone face-down, or switches to their music app, and
+ * that is exactly when spoken coaching matters most — it is the only channel left. Cues driven
+ * from a composable would stop at the moment they became the point. The scheduler itself is a
+ * pure function of the session state ([CueScheduler]), so nothing about that decision makes it
+ * harder to test.
  */
 @AndroidEntryPoint
 class WorkoutService : LifecycleService() {
@@ -46,18 +58,52 @@ class WorkoutService : LifecycleService() {
     @DefaultDispatcher
     lateinit var defaultDispatcher: CoroutineDispatcher
 
+    @Inject
+    lateinit var speechCoach: SpeechCoach
+
+    @Inject
+    lateinit var cueFeedback: CueFeedback
+
+    @Inject
+    lateinit var preferencesRepository: PreferencesRepository
+
+    private val cueScheduler = CueScheduler()
+
     private var ticker: Job? = null
+
+    /**
+     * The coaching settings and the engine's availability, sampled onto fields the ticker can
+     * read without suspending.
+     *
+     * The ticker runs every 200 ms and must not `first()` a flow on each pass. Both values
+     * change rarely — a settings toggle, an engine that finishes initialising — so they are
+     * collected once into fields and read from there.
+     */
+    @Volatile
+    private var coaching: CoachingPreferences = CoachingPreferences()
+
+    @Volatile
+    private var speechAvailable: Boolean = false
 
     override fun onCreate() {
         super.onCreate()
         createChannel()
+        observeCoachingPreferences()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         when (intent?.action) {
-            ACTION_PAUSE -> coordinator.togglePause(nowMillis())
-            ACTION_SKIP -> coordinator.skip(nowMillis())
+            ACTION_PAUSE -> {
+                coordinator.togglePause(nowMillis())
+                // Stop mid-utterance rather than finishing a sentence about a segment the
+                // user has just paused. Nothing is replayed on resume.
+                if (coordinator.state.value?.isPaused == true) speechCoach.stop()
+            }
+            ACTION_SKIP -> {
+                coordinator.skip(nowMillis())
+                speechCoach.stop()
+            }
             ACTION_STOP -> {
                 coordinator.finish(nowMillis())
                 stopSelf()
@@ -78,7 +124,40 @@ class WorkoutService : LifecycleService() {
     override fun onDestroy() {
         ticker?.cancel()
         ticker = null
+        // Spec §8: leaking the engine leaks its IPC binding. The service is the only owner
+        // that knows when the session is really over, so it is the only place this can happen.
+        speechCoach.shutdown()
+        cueFeedback.release()
         super.onDestroy()
+    }
+
+    private fun observeCoachingPreferences() {
+        lifecycleScope.launch {
+            preferencesRepository.observe().collect { prefs ->
+                coaching = prefs.coaching
+                if (prefs.coaching.speechEnabled) {
+                    speechCoach.setRate(prefs.coaching.speechRate)
+                    speechCoach.setPitch(prefs.coaching.speechPitch)
+                }
+            }
+        }
+        lifecycleScope.launch {
+            speechCoach.state.collect { speechAvailable = it is SpeechState.Ready }
+        }
+    }
+
+    /**
+     * Hands one tick's worth of decisions to the speech engine and the tone generator.
+     *
+     * Deliberately not conditional on anything: every rule about what to say, when, and
+     * whether at all lives in [CueScheduler], where it is tested. A condition added here would
+     * be a rule with no test.
+     */
+    private fun deliver(batch: CueBatch) {
+        if (batch.isEmpty) return
+        batch.tone?.let(cueFeedback::play)
+        batch.haptic?.let(cueFeedback::vibrate)
+        batch.speech?.let(speechCoach::speak)
     }
 
     /**
@@ -94,13 +173,14 @@ class WorkoutService : LifecycleService() {
         ticker = lifecycleScope.launch(defaultDispatcher) {
             var lastNotified = 0L
             while (isActive) {
-                coordinator.tick(nowMillis())
+                val now = nowMillis()
+                coordinator.tick(now)
                 val state = coordinator.state.value
                 if (state == null || state.isFinished) {
                     stopSelf()
                     return@launch
                 }
-                val now = nowMillis()
+                deliver(cueScheduler.onTick(state, now, coaching, speechAvailable))
                 if (now - lastNotified >= NOTIFICATION_REFRESH_MILLIS) {
                     lastNotified = now
                     notificationManager().notify(NOTIFICATION_ID, buildNotification())

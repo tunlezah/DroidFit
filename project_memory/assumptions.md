@@ -82,7 +82,10 @@ modalities now default to enabled and available (D-0041). Original text follows 
   the workout runs without speech using tones and haptics.
 - **If wrong:** Degraded, not broken. Phase 08 must include a manual test with TTS
   disabled at the OS level.
-- **Status:** confirmed by design 2026-07-30 (mitigated rather than removed)
+- **Status:** mitigated in code 2026-08-02 (D-0043), **manual test still outstanding**. All four
+  `Unavailable` reasons now produce their own dismissible notice on the player, and
+  `CueSchedulerTest` asserts that an unavailable engine still tones and vibrates — so the fallback
+  is tested as logic. The manual test this assumption asked for has not been run; it is KI-0023.
 
 ### A-0006 — English (UK) only for v1
 - **Date:** 2026-07-30

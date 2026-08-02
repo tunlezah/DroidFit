@@ -9,6 +9,7 @@ Append-only log of choices with more than one defensible answer. Template:
 
 | Phase | Completed | New assumptions? | Notes |
 |---|---|---|---|
+| 08 — Coaching | 2026-08-02 | No new ones | The player speaks. `CueScheduler` drives every cue type in spec §1 from the service's tick, as a pure function of session state with per-cue freshness windows; tones and haptics substitute when speech is unavailable. `POST_NOTIFICATIONS` is requested at session start, closing KI-0016. Closes the cue half of KI-0018; A-0005 mitigated in code. **Both manual audio tests outstanding — KI-0023.** Six coaching switches that existed but did nothing are now reachable. D-0043, D-0044, D-0045, KI-0024 |
 | Fifth modality | 2026-08-02 | Yes — A-0012 | Mat Pilates split out of `BODYWEIGHT` as its own selectable category, and `supportsAerobicWork` made a constructor argument so a new modality cannot skip the question. Closes KI-0022. Catalogue 72 → 76, version 5. D-0042 |
 | Clearance and selection | 2026-07-31 | No new ones | A-0002 and A-0007 answered. Effort ceiling added, defaulting to threshold rather than vigorous. All four modalities enabled by default, and REQ-011's refusal now explained on screen. D-0040, D-0041 |
 | Modality correction | 2026-07-31 | No new ones | `FLOOR_PILATES` renamed to `BODYWEIGHT` and aerobic capability made a property of the modality, on the operator's correction. A user with no equipment can now be given real intervals. Closes KI-0020, supersedes part of D-0023. Catalogue 65 → 72. D-0039 |
@@ -813,3 +814,130 @@ Append-only log of choices with more than one defensible answer. Template:
   `WorkoutGeneratorInvariantTest` and `WorkoutGeneratorDeterminismTest` gained mat-Pilates modality
   sets, so the anchor-versus-intensity invariant runs over the new modality. Golden file
   re-baselined: the id changes shift the pool shuffle, and the diff was read before it was accepted.
+
+### D-0043 — The cue scheduler is a pure function of session state, with freshness windows
+- **Date:** 2026-08-02
+- **Phase:** 08 — Coaching
+- **Decision:** `CueScheduler` in `feature-workout` decides all coaching output for one instant from
+  `(SessionState, nowMillis, CoachingPreferences, speechAvailable)` and returns a `CueBatch` of at
+  most one utterance plus an optional tone and haptic. `WorkoutService` calls it on the same 200 ms
+  tick that advances the clock, and hands the result to `SpeechCoach` and the new `CueFeedback` port.
+- **Why the service and not the player screen:** the screen can be gone, and that is exactly when
+  spoken coaching is the point — phone face-down on a bike, or the user in their music app. Cues
+  driven from a composable would stop at the moment they became load-bearing. ADR-0008 already put
+  the clock in the service for the same reason; this follows it.
+- **Why freshness windows rather than firing instants (the central design choice):** a tick lands
+  every 200 ms and the process can be descheduled for seconds, so "fires exactly at T" is not
+  implementable. Each candidate instead computes how late *this* tick is for it and is dropped when
+  that exceeds its own `staleAfterMillis`. This makes the spec's "drop stale cues" a mechanism rather
+  than a special case, and it makes each cue's tolerance an explicit, arguable number:
+
+  | Cue | Window | Why that number |
+  |---|---|---|
+  | Countdown | 700 ms | "Three. Two. One." started later than this finishes after the boundary it counts to, so it would be a lie |
+  | Segment start | 3 s | Naming the exercise you are already doing stays useful for a few seconds |
+  | Safety warning | 5 s | It has to be heard; the widest window of any cue |
+  | Full instructions | 5 s | Useful at any point in a long segment |
+  | Everything else | 2 s (the default) | |
+
+- **Why a blocked cue is retried rather than queued:** the spec forbids queueing informational cues
+  because a queued "halfway" is spoken during the next interval, where it is simply wrong. Retrying
+  inside the cue's own freshness window has the same effect without a queue: a cue either gets
+  through while it is still true, or it is never spoken. There is nothing that can arrive late
+  because there is nowhere for it to wait.
+- **Why one utterance per tick:** two at once is the failure the whole design exists to avoid, so it
+  is prevented structurally rather than by a check. The candidate order is *not* the priority enum's
+  order — the countdown outranks the segment-start cue even though both are TRANSITION, because a
+  countdown is about a boundary that is seconds away while a segment-start cue describes something
+  the user can read off the screen.
+- **`CueFeedback` is a separate port, not a fallback inside `SpeechCoach`:** `cueTones` and
+  `hapticCues` are deliberately independent of `speechEnabled`, so tones are their own channel rather
+  than a degraded form of speech. Folding them in would make "I want the vibration and my music"
+  depend on speech having failed. The tones are genuinely rising and falling — two DTMF notes of
+  known pitch in sequence — because a direction cannot be expressed by one beep, and direction is
+  what makes the signal learnable in a single session.
+- **Timing constants chosen here, all of them arguable:** minimum utterance gap 1.5 s (the spec's);
+  next-exercise lead 5 s (the spec's); countdown lead 3 s (the spec's); boundary-signal tolerance
+  1 s; motivational floor 90 s (the spec's) and only in work segments of 40 s or more; full
+  instructions scheduled at `word count × 400 ms + 1.5 s` after segment start, where 400 ms/word is
+  150 words per minute — the same rate the catalogue's own spoken-cue word limits are derived from,
+  so the two agree by construction rather than by coincidence.
+- **Motivational wording, recorded because it is the most subjective content in the app:** "Strong.
+  Hold this.", "Stay with it.", "Good work. Keep the rhythm.", "Breathe steady.", "Nearly through
+  this one." Cycled in order so a line never lands twice running. The editorial rule is that they
+  describe effort and never outcome — "strong, hold this" is a fact about what the user is doing,
+  whereas anything about fat would be a claim about their body this app cannot make. Unreviewed by
+  anyone but the implementer and off by default; recorded as KI-0024.
+- **`ProhibitedClaims` moved to `:core:testing`:** it was a private list inside `:app`'s catalogue
+  test, which meant every string the app *says* was unchecked. A rule that covers only the place it
+  was first written is not a rule.
+- **Audio focus:** requested per utterance as `AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK`, abandoned on
+  every terminal path — done, error, stop, shutdown — and never held between cues. Cues route as
+  `USAGE_ASSISTANCE_NAVIGATION_GUIDANCE`, so they behave like satnav instructions: they follow the
+  user to their Bluetooth headphones and duck music rather than replacing it. Focus loss stops speech
+  mid-utterance and does not resume, which is the phone-call case.
+- **Not done, and recorded rather than glossed:** both of phase 08's manual exit criteria — a session
+  with TTS disabled at OS level, and a session with music playing to confirm it unducks — need a
+  device. KI-0023.
+- **Reverses if:** never as a shape. The constants are all arguable and the freshness windows in
+  particular should be revisited after one real session.
+- **Affects:** `CueScheduler`, `CueText`, `CueBatch`, `CueFeedback`/`CueTone`/`HapticCue`,
+  `AndroidCueFeedback`, `AndroidSpeechCoach` (audio focus, attributes, `shutdown` on the port),
+  `SpeechCoach`, `WorkoutService`, `WorkoutPlayerViewModel` and `WorkoutPlayerScreen` (the
+  unavailability notice), `ProhibitedClaims`, `ExerciseCatalogueValidationTest`.
+- **Verification:** `CueSchedulerTest` — 24 tests, one per timing rule in the spec, none of which
+  waits: the scheduler reads no clock, so a 20-minute session is driven by integers. `CueTextTest`
+  checks every fixed string against `ProhibitedClaims`, the 12-word in-work limit, and that the
+  safety cue names all three symptoms REQ-006 lists.
+
+### D-0044 — The notification permission is requested when a session starts, and never blocks it
+- **Date:** 2026-08-02
+- **Phase:** 08 (closes KI-0016)
+- **Decision:** `rememberSessionNotificationPermission` shows a rationale then requests
+  `POST_NOTIFICATIONS` at the moment the user starts a generated plan. Every path through it —
+  granted, denied, dialog dismissed, or an Android version where the permission does not exist —
+  ends by starting the session.
+- **Why at session start rather than at launch:** a prompt on first launch, before the user has seen
+  what the app does, is the pattern that trains people to tap Deny. Asked as they start their first
+  session, the rationale is about something happening now: the pause, skip and end controls on the
+  lock screen. That concrete benefit is what `framework/11_permissions_and_privacy.md` asks the
+  rationale to name, and session start is the only point at which one exists to name.
+- **Why it must never gate the session, stated as a rule:** the permission buys the lock-screen
+  controls and nothing else. The clock is in a foreground service that starts without it. A flow that
+  could leave a user who tapped Deny unable to train would be a worse defect than the missing
+  notification it was added to fix — so the request's result is deliberately *ignored* rather than
+  branched on, and `SessionNotificationPermissionTest` asserts there is no permission state in which
+  tapping Start does nothing.
+- **Why the decision lives in a plain class:** `SessionNotificationPermission` holds the three-way
+  choice with the platform behind four lambdas, so it is testable on the JVM with no Compose runtime
+  and no device. Below API 33 the permission does not exist, so `isNotificationPermissionGranted`
+  answers "granted" rather than making every caller know about the version split.
+- **Still unverified:** that the notification then *appears* on Android 16 is device work, part of
+  KI-0017. What is tested is that the app asks.
+- **Reverses if:** never. The only open question is the wording of the rationale.
+- **Affects:** `SessionNotificationPermission`, `WorkoutHomeScreen`.
+
+### D-0045 — The coaching settings are a table, and six switches that did nothing became reachable
+- **Date:** 2026-08-02
+- **Phase:** 08
+- **Decision:** `CoachingToggle`, an enum of the ten user-facing coaching switches with their copy
+  and their getter/setter pair, rendered by one `items()` call. `SettingsViewModel` exposes a single
+  `setCoaching(CoachingPreferences)` in place of five per-flag setters.
+- **What was actually wrong:** `CoachingPreferences` has eleven flags and spec §1 says every cue type
+  is independently switchable, but Settings surfaced five. The other six — rest countdown, remaining
+  time, motivational prompts, tones, haptics — existed in the model, did nothing at runtime, and had
+  no UI. Phase 08 made all of them do something, which turned an unfinished screen into a screen that
+  hides working features.
+- **Why a table rather than six more rows:** the shape is what caused the omission. Each flag cost a
+  composable, a lambda parameter on `SettingsScreen`, a wiring line in `SettingsRoute`, and a setter
+  on the ViewModel — four edits in three files, so stopping at five was the path of least resistance.
+  It also pushed `SettingsScreen` toward detekt's parameter limit, which would have made adding the
+  eleventh a refactor. One row in an enum is now the whole cost.
+- **The one column that carries real behaviour:** `needsSpeech`. Tones and haptics are *not* greyed
+  out when the master speech switch is off, because they are what substitutes for speech when it is
+  unavailable (spec §6) — disabling them with speech off would break the exact case they exist for.
+  Every genuinely spoken cue is gated by the master switch.
+- **Not exposed:** `speechRate` and `speechPitch`, the two non-boolean flags. They need a slider
+  rather than a switch and the service already applies them; left for the phase-10 settings work.
+- **Reverses if:** never; the table is strictly cheaper than what it replaced.
+- **Affects:** `CoachingToggle`, `SettingsScreen`, `SettingsViewModel`.

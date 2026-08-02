@@ -2,6 +2,8 @@ package com.visceralfit.feature.workout.player
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.visceralfit.domain.coaching.SpeechCoach
+import com.visceralfit.domain.coaching.SpeechState
 import com.visceralfit.domain.model.BlockKind
 import com.visceralfit.domain.model.CompletedSession
 import com.visceralfit.domain.model.Workout
@@ -34,15 +36,20 @@ class WorkoutPlayerViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
     private val preferencesRepository: PreferencesRepository,
     private val estimateEnergy: EstimateEnergyExpenditure,
+    speechCoach: SpeechCoach,
 ) : ViewModel() {
 
     private val summary = MutableStateFlow<SessionSummary?>(null)
+
+    private val speechNoticeDismissed = MutableStateFlow(false)
 
     val state: StateFlow<PlayerUiState> = combine(
         coordinator.state,
         preferencesRepository.observe(),
         summary,
-    ) { session, prefs, recorded ->
+        speechCoach.state,
+        speechNoticeDismissed,
+    ) { session, prefs, recorded, speech, dismissed ->
         when {
             recorded != null -> PlayerUiState.Finished(recorded)
             session == null -> PlayerUiState.NoSession
@@ -50,6 +57,7 @@ class WorkoutPlayerViewModel @Inject constructor(
                 session = session,
                 keepScreenOn = prefs.display.keepScreenOn,
                 machineMode = prefs.display.machineMode,
+                speechNotice = speechNotice(speech, prefs.coaching.speechEnabled, dismissed),
             )
         }
     }.stateIn(
@@ -107,6 +115,11 @@ class WorkoutPlayerViewModel @Inject constructor(
         }
     }
 
+    /** Hides the speech-unavailable notice for the rest of this session. */
+    fun dismissSpeechNotice() {
+        speechNoticeDismissed.value = true
+    }
+
     /** Called once the summary has been seen, so the player can be navigated away from. */
     fun dismissSummary() {
         summary.value = null
@@ -141,6 +154,36 @@ class WorkoutPlayerViewModel @Inject constructor(
 
     private companion object {
         const val STOP_TIMEOUT_MS = 5_000L
+
+        /**
+         * The message for an unavailable speech engine, or null when there is nothing to say.
+         *
+         * Four reasons, four messages (spec §6). They are distinguished because the *actions*
+         * they imply differ completely: missing voice data is something the user can fix in
+         * Android settings and the message says so, while a failed init is not, and saying
+         * "install voice data" to someone whose engine crashed sends them somewhere useless.
+         *
+         * `DISABLED_BY_USER` and `Initialising` both produce null. Telling a user that the
+         * feature they just switched off is off would be nagging, and a notice during
+         * initialisation would flash up on every cold start and then vanish.
+         */
+        fun speechNotice(state: SpeechState, speechEnabled: Boolean, dismissed: Boolean): String? = when {
+            dismissed || !speechEnabled -> null
+            state !is SpeechState.Unavailable -> null
+            else -> when (state.reason) {
+                SpeechState.Unavailable.Reason.NO_ENGINE_INSTALLED ->
+                    "No text-to-speech engine found. Your workout will use tones and vibration instead."
+
+                SpeechState.Unavailable.Reason.NO_VOICE_DATA_FOR_LOCALE ->
+                    "No voice data installed for your language. You can add it in Android settings, " +
+                        "or continue with tones and vibration."
+
+                SpeechState.Unavailable.Reason.ENGINE_INIT_FAILED ->
+                    "Spoken coaching is unavailable on this device right now."
+
+                SpeechState.Unavailable.Reason.DISABLED_BY_USER -> null
+            }
+        }
     }
 }
 
@@ -152,6 +195,15 @@ sealed interface PlayerUiState {
         val session: SessionState,
         val keepScreenOn: Boolean,
         val machineMode: Boolean,
+        /**
+         * Why spoken coaching is not working, or null when it is — or when the user turned it
+         * off, which is not a fault to report.
+         *
+         * Non-blocking and dismissible by contract (spec §6): the session runs identically
+         * without speech, so a notice that could stop a workout starting would be a defect
+         * worse than the silence it describes.
+         */
+        val speechNotice: String? = null,
     ) : PlayerUiState
 
     data class Finished(val summary: SessionSummary) : PlayerUiState

@@ -344,8 +344,12 @@ what went wrong survives.
   services still start without it; only the notification is suppressed.
 - **Impact:** the session itself is unaffected — this is the one saving grace. The clock, the
   service and the recording all work; the user simply has to reopen the app to control the session.
-- **Status:** open. Needs a rationale-then-request flow at the point the first session starts, which
-  is where the permission's purpose is obvious, rather than at launch.
+- **Status:** **fixed 2026-08-02 (D-0044).** `rememberSessionNotificationPermission` asks at the
+  moment a generated plan is started, with a rationale naming the concrete benefit — the
+  lock-screen pause, skip and end controls. Every path through it starts the session, including
+  Deny and dismissal, and `SessionNotificationPermissionTest` asserts there is no permission state
+  in which tapping Start does nothing. **Not yet verified on a device** — that it *asks* is tested,
+  that the notification then appears on Android 16 is part of KI-0017.
 
 ### KI-0017 — The player has never run on a device or emulator
 - **Date:** 2026-07-30
@@ -374,7 +378,9 @@ what went wrong survives.
   changed. Landscape (REQ-073) renders the portrait layout in a scrolling column.
 - **Cause:** Both are phase 08 and phase 13 work respectively. Recorded here because the player is
   usable without them and it would be easy to mistake "the player is done" for "phase 07 is done".
-- **Status:** open — phase 08 (cues) and phase 13 (landscape). Machine mode *is* implemented: the
+- **Status:** **cues fixed 2026-08-02 (D-0043); landscape still open — phase 13.** `CueScheduler`
+  drives `SpeechCoach` and `CueFeedback` from the service's tick, covering every cue type in the
+  spec, and 24 tests assert the timing rules with no waiting. Machine mode *is* implemented: the
   countdown scales to 148 sp and the technique block is dropped.
 
 ### KI-0019 — Week boundaries are fixed when the flow is collected
@@ -430,3 +436,40 @@ what went wrong survives.
   new modality cannot compile without answering it. The fifth modality added in the same change
   is mat Pilates, which is exactly the case this entry predicted would regress silently — it now
   answers false, and a mat-only session is titled "Mat Pilates: strength and control".
+
+### KI-0023 — Phase 08's two manual audio tests have not been run
+- **Date:** 2026-08-02
+- **Severity:** major
+- **Area:** `core:speech`, `feature-workout/player`
+- **Symptom:** Two of phase 08's exit criteria are explicitly manual and neither has been performed:
+  a full session with text-to-speech disabled at OS level, and a full session with music playing to
+  confirm the music unducks after every cue and never stays quiet.
+- **Why they cannot be automated:** both are about the platform's own behaviour, not the app's. The
+  ducking test in particular checks that `abandonAudioFocusRequest` reaches the audio policy service
+  on every terminal path of an utterance — a JVM test can assert the calls are made, which it does,
+  but not that the user's music comes back.
+- **What *is* covered:** `CueSchedulerTest` asserts tones and haptics still fire with speech disabled
+  and with the engine unavailable, so the substitution logic is tested. `AndroidSpeechCoach` abandons
+  focus on done, error, stop and shutdown, and requests
+  `AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK` — never `AUDIOFOCUS_GAIN`.
+- **Risk if wrong:** the ducking bug is the one the spec calls "the single most annoying thing an app
+  of this kind can do", and it is invisible without a device. A missed abandon path leaves the user's
+  music quiet for the rest of the session.
+- **Status:** open, and it closes at the same moment as KI-0017: sideload the APK, start a session
+  with music playing, then a second with TTS disabled in Android settings. Both are minutes of work
+  on the device and cannot be done from here.
+
+### KI-0024 — Motivational cue wording is unreviewed content
+- **Date:** 2026-08-02
+- **Severity:** minor
+- **Area:** `feature-workout/player/CueText`
+- **Symptom:** The five motivational lines — "Strong. Hold this.", "Stay with it.", "Good work. Keep
+  the rhythm.", "Breathe steady.", "Nearly through this one." — are the most subjective content in
+  the app and were written by the implementer with no review.
+- **Why it is worth an entry rather than a shrug:** the phase-08 prompt names this specific content as
+  needing recording precisely because tone is a matter of taste and an app that says the wrong thing
+  mid-interval is worse than one that says nothing. They are checked mechanically against
+  `ProhibitedClaims` and the 12-word limit, which catches health claims but has nothing to say about
+  whether they land.
+- **Status:** open, awaiting the operator's opinion. They are off by default
+  (`motivationalPrompts = false`), so nobody hears them until someone chooses to.

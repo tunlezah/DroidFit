@@ -1,5 +1,6 @@
 package com.visceralfit.app
 
+import com.visceralfit.core.testing.ProhibitedClaims
 import com.visceralfit.data.seed.ExerciseCatalogue
 import com.visceralfit.data.seed.SeedExercise
 import com.visceralfit.domain.model.ExperienceLevel
@@ -222,16 +223,12 @@ class ExerciseCatalogueValidationTest {
             RegexOption.IGNORE_CASE,
         )
 
-        val PROHIBITED_CLAIMS = listOf(
-            Regex("belly fat", RegexOption.IGNORE_CASE),
-            Regex("visceral fat", RegexOption.IGNORE_CASE),
-            Regex("spot[- ]reduc", RegexOption.IGNORE_CASE),
-            Regex("\\bmelts?\\b", RegexOption.IGNORE_CASE),
-            Regex("\\btorch(es|ing)?\\b", RegexOption.IGNORE_CASE),
-            Regex("burns? (body )?fat", RegexOption.IGNORE_CASE),
-            Regex("everyone can", RegexOption.IGNORE_CASE),
-            Regex("(fixes|cures) your", RegexOption.IGNORE_CASE),
-        )
+        /**
+         * Moved to `:core:testing` so the spoken cues are held to it too (D-0043). It used to
+         * be a private list here, which meant the rule covered only the place it was first
+         * written.
+         */
+        val PROHIBITED_CLAIMS = ProhibitedClaims.ALL
 
         val KNOWN_CAUTION_TAGS = setOf(
             "lower_back", "neck", "shoulder", "wrist", "knee",

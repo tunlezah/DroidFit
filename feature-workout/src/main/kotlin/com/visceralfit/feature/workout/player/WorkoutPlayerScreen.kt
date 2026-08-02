@@ -13,6 +13,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -35,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.visceralfit.core.designsystem.modifier.KeepScreenOn
 import com.visceralfit.core.designsystem.theme.VisceralFitTheme
+import com.visceralfit.domain.model.Exercise
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -63,6 +65,7 @@ fun WorkoutPlayerRoute(
             onSessionEnded()
         },
         onNoSession = onSessionEnded,
+        onDismissSpeechNotice = viewModel::dismissSpeechNotice,
     )
 }
 
@@ -74,6 +77,7 @@ internal fun WorkoutPlayerScreen(
     onEndSession: () -> Unit,
     onDismissSummary: () -> Unit,
     onNoSession: () -> Unit,
+    onDismissSpeechNotice: () -> Unit = {},
 ) {
     when (state) {
         PlayerUiState.NoSession -> NoSessionContent(onNoSession)
@@ -83,6 +87,7 @@ internal fun WorkoutPlayerScreen(
             onTogglePause = onTogglePause,
             onSkip = onSkip,
             onEndSession = onEndSession,
+            onDismissSpeechNotice = onDismissSpeechNotice,
         )
     }
 }
@@ -93,6 +98,7 @@ private fun RunningContent(
     onTogglePause: () -> Unit,
     onSkip: () -> Unit,
     onEndSession: () -> Unit,
+    onDismissSpeechNotice: () -> Unit,
 ) {
     val session = state.session
     KeepScreenOn(enabled = state.keepScreenOn && !session.isPaused)
@@ -110,6 +116,10 @@ private fun RunningContent(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        state.speechNotice?.let { notice ->
+            SpeechNotice(notice, onDismissSpeechNotice)
+        }
+
         Text(
             "${formatClock(session.remainingTotal)} remaining · " +
                 "segment ${session.segmentNumber} of ${session.segmentCount}",
@@ -164,22 +174,7 @@ private fun RunningContent(
         // Machine mode drops the technique block: nobody reads how-to steps at 90 rpm
         // (framework/10_screen_specs.md §4).
         if (!state.machineMode) {
-            session.currentSegment?.exercise?.let { exercise ->
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        exercise.howTo.forEach { step ->
-                            Text("• $step", style = MaterialTheme.typography.bodyMedium)
-                        }
-                        exercise.safetyNotes.firstOrNull()?.let { note ->
-                            Text(
-                                note,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.error,
-                            )
-                        }
-                    }
-                }
-            }
+            session.currentSegment?.exercise?.let { TechniqueCard(it) }
         }
 
         session.nextSegment?.let { next ->
@@ -227,6 +222,55 @@ private fun RunningContent(
                 TextButton(onClick = { confirmingExit = false }) { Text("Keep going") }
             },
         )
+    }
+}
+
+/**
+ * The spoken-coaching-unavailable notice (spec §6).
+ *
+ * A card at the top of the running session rather than a dialog, and dismissible, because the
+ * session is not degraded in any way the user has to act on: tones and vibration carry every
+ * boundary, and speech was never load-bearing. A dialog would demand attention in the middle of
+ * a warm-up for something the user can read whenever they look down.
+ */
+@Composable
+private fun SpeechNotice(message: String, onDismiss: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                message,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            TextButton(onClick = onDismiss, modifier = Modifier.align(Alignment.End)) {
+                Text("Got it")
+            }
+        }
+    }
+}
+
+/** The how-to steps and the first safety note, shown while the exercise is on screen. */
+@Composable
+private fun TechniqueCard(exercise: Exercise) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            exercise.howTo.forEach { step ->
+                Text("• $step", style = MaterialTheme.typography.bodyMedium)
+            }
+            exercise.safetyNotes.firstOrNull()?.let { note ->
+                Text(
+                    note,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+        }
     }
 }
 

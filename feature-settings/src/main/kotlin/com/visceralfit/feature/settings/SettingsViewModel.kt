@@ -2,6 +2,7 @@ package com.visceralfit.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.visceralfit.domain.model.CoachingPreferences
 import com.visceralfit.domain.model.EffortCeiling
 import com.visceralfit.domain.model.Modality
 import com.visceralfit.domain.model.UserPreferences
@@ -92,24 +93,17 @@ class SettingsViewModel @Inject constructor(
         preferencesRepository.update { it.copy(display = it.display.copy(amoledDarkMode = enabled)) }
     }
 
-    fun setSpeechEnabled(enabled: Boolean) = viewModelScope.launch {
-        preferencesRepository.update { it.copy(coaching = it.coaching.copy(speechEnabled = enabled)) }
-    }
-
-    fun setAnnounceNextExercise(enabled: Boolean) = viewModelScope.launch {
-        preferencesRepository.update { it.copy(coaching = it.coaching.copy(announceNextExercise = enabled)) }
-    }
-
-    fun setSpeakFullInstructions(enabled: Boolean) = viewModelScope.launch {
-        preferencesRepository.update { it.copy(coaching = it.coaching.copy(speakFullInstructions = enabled)) }
-    }
-
-    fun setAnnounceHalfway(enabled: Boolean) = viewModelScope.launch {
-        preferencesRepository.update { it.copy(coaching = it.coaching.copy(announceHalfway = enabled)) }
-    }
-
-    fun setAnnounceCountdown(enabled: Boolean) = viewModelScope.launch {
-        preferencesRepository.update { it.copy(coaching = it.coaching.copy(announceCountdown = enabled)) }
+    /**
+     * Replaces the whole coaching block rather than exposing one setter per flag.
+     *
+     * There are eleven of them and phase 08 made every one of them do something (D-0043), so
+     * per-flag setters meant eleven near-identical methods here and eleven lambdas threaded
+     * through the screen. The screen builds the new value with `copy`, which is the same
+     * expression either way, and adding a twelfth cue type now costs one row of UI instead of
+     * four edits in three files.
+     */
+    fun setCoaching(coaching: CoachingPreferences) = viewModelScope.launch {
+        preferencesRepository.update { it.copy(coaching = coaching) }
     }
 
     private companion object {
